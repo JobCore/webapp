@@ -47,7 +47,7 @@ export class ListItem extends React.Component {
      */
     renderTablesColumns(dataDcolumns) {
         return dataDcolumns.filter((col) => {
-          return (typeof(this.props.hiddenColumns) != 'undefined' && this.props.hiddenColumns.indexOf(col.toLowerCase()) == -1)
+            return (typeof (this.props.hiddenColumns) != 'undefined' && this.props.hiddenColumns.indexOf(col.toLowerCase()) == -1)
         }).map((value) => {
             return <td key={value} scope="col">{this.props.data[value].toString()}</td>;
         });

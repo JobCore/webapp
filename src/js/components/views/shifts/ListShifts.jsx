@@ -8,50 +8,50 @@ import shiftsStore from '../../../store/ShiftsStore.js';
 
 export class ListShifts extends React.Component {
 
-    /**
-    *
-    *   this.props = {
-    *   }
-    */
-    constructor() {
-        super();
+  /**
+  *
+  *   this.props = {
+  *   }
+  */
+  constructor() {
+    super();
 
-        this.state = {
-            data: shiftsStore.getAll('shift'),
-            modalOpened: false,
-            currentShift: { id: null }
-        }
+    this.state = {
+      data: shiftsStore.getAll('shift'),
+      modalOpened: false,
+      currentShift: { id: null }
     }
+  }
 
-    componentWillMount() {
-        shiftsStore.on('change', () => {
-            this.setState({
-                data: shiftsStore.getAll('shift')
-            });
-        });
-    }
+  componentWillMount() {
+    shiftsStore.on('change', () => {
+      this.setState({
+        data: shiftsStore.getAll('shift')
+      });
+    });
+  }
 
-    toggleModal(item) {
-        console.log("Render the modal!!!", item);
-        this.setState({
-            modalOpened: !this.state.modalOpened,
-            currentShift: item
-        });
-    }
-    
-    render(){
-      
-        return(
-          <div className="container-fluid">
-            <List items={this.state.data} type={'table'} onItemClick={this.toggleModal.bind(this)} hidden={['id']} />
-            <Modal show={(this.state.modalOpened && this.state.currentShift.id!=null)} onClose={this.toggleModal.bind(this)}>
-              <p>Venue: {this.state.currentShift.location}</p>
-              <p>Position: {this.state.currentShift.position}</p>
-              <p>Date: {Moment(this.state.currentShift.date).format('MMM Do YYYY')}</p>
-              <p>From {this.state.currentShift.start} to {this.state.currentShift.end}</p>
-            </Modal>
-          </div>
-        );
-    }
+  toggleModal(item) {
+    console.log("Render the modal!!!", item);
+    this.setState({
+      modalOpened: !this.state.modalOpened,
+      currentShift: item
+    });
+  }
+
+  render() {
+
+    return (
+      <div className="container-fluid">
+        <List items={this.state.data} type={'table'} onItemClick={this.toggleModal.bind(this)} hiddenColumns={['id']} />
+        <Modal show={(this.state.modalOpened && this.state.currentShift.id != null)} onClose={this.toggleModal.bind(this)}>
+          <p>Venue: {this.state.currentShift.location}</p>
+          <p>Position: {this.state.currentShift.position}</p>
+          <p>Date: {Moment(this.state.currentShift.date).format('MMM Do YYYY')}</p>
+          <p>From {this.state.currentShift.start} to {this.state.currentShift.end}</p>
+        </Modal>
+      </div>
+    );
+  }
 
 };

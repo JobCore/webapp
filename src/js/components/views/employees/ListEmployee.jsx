@@ -33,7 +33,7 @@ export class ListEmployee extends React.Component {
 
     return (
       <div className="container">
-        <List items={this.state.data} type={'table'} hiddenColumn={['id']}
+        <List items={this.state.data} type={'table'} hiddenColumns={['id']}
           columns={['name', 'lastname', 'responseTime']} />
       </div>
     );

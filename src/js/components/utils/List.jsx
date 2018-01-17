@@ -9,7 +9,7 @@ export class List extends React.Component {
   *   this.props = {
   *     data: the list of items to render
   *     makeURL: a function with the logic to generate the row link
-  *     hiddenColumn: list of column keys to hide, ex: ['id','url']
+  *     hiddenColumns: list of column keys to hide, ex: ['id','url']
   *   }
   */
   constructor() {
@@ -35,14 +35,14 @@ export class List extends React.Component {
     const tableColumns = this.getTableColumns();
 
     var rowsRender = this.props.items.map((item) => {
-      return <ListItem key={item.id} data={item} type={'table'} hiddenColumn={this.props.hidden}
+      return <ListItem key={item.id} data={item} type={'table'} hiddenColumns={this.props.hiddenColumns}
         onClick={this.props.onItemClick}
         columns={this.props.columns}
       />
     });
 
     var columnsRender = tableColumns.filter((col) => {
-      return (typeof (this.props.hiddenColumn) != 'undefined' && this.props.hiddenColumn.indexOf(col.toLowerCase()) == -1)
+      return (typeof (this.props.hiddenColumns) != 'undefined' && this.props.hiddenColumns.indexOf(col.toLowerCase()) == -1)
     }).map((col) => {
       return <th key={col} scope="col">{col}</th>
     });
