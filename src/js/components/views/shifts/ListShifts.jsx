@@ -2,41 +2,41 @@ import React from 'react';
 
 import Moment from 'moment'
 
-import {List} from '../../utils/List.jsx';
+import { List } from '../../utils/List.jsx';
 import Modal from '../../utils/Modal.jsx';
 import shiftsStore from '../../../store/ShiftsStore.js';
 
 export class ListShifts extends React.Component {
-    
+
     /**
     *
     *   this.props = {
     *   }
     */
-    constructor(){
-      super();
-      
-      this.state = {
-        data: shiftsStore.getAll('shift'),
-        modalOpened: false,
-        currentShift: {id:null}
-      }
+    constructor() {
+        super();
+
+        this.state = {
+            data: shiftsStore.getAll('shift'),
+            modalOpened: false,
+            currentShift: { id: null }
+        }
     }
-    
-    componentWillMount(){
-      shiftsStore.on('change', () => {
-        this.setState({
-          data: shiftsStore.getAll('shift')
+
+    componentWillMount() {
+        shiftsStore.on('change', () => {
+            this.setState({
+                data: shiftsStore.getAll('shift')
+            });
         });
-      });
     }
-    
-    toggleModal(item){
-      console.log("Render the modal!!!", item);
-      this.setState({
-        modalOpened: !this.state.modalOpened,
-        currentShift: item
-      });
+
+    toggleModal(item) {
+        console.log("Render the modal!!!", item);
+        this.setState({
+            modalOpened: !this.state.modalOpened,
+            currentShift: item
+        });
     }
     
     render(){
@@ -53,5 +53,5 @@ export class ListShifts extends React.Component {
           </div>
         );
     }
-    
+
 };
