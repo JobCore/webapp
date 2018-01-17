@@ -35,14 +35,14 @@ export class List extends React.Component {
         const tableColumns = this.getTableColumns();
       
         var rowsRender = this.props.items.map((item) => {
-          return <ListItem key={item.id} data={item} type={'table'} hidden={this.props.hidden} 
+          return <ListItem key={item.id} data={item} type={'table'} hiddenColumns={this.props.hiddenColumns} 
                   onClick={this.props.onItemClick} 
                   columns={this.props.columns} 
                   />
         });
         
         var columnsRender = tableColumns.filter((col) => {
-          return (typeof(this.props.hidden) != 'undefined' && this.props.hidden.indexOf(col.toLowerCase()) == -1)
+          return (typeof(this.props.hiddenColumns) != 'undefined' && this.props.hiddenColumns.indexOf(col.toLowerCase()) == -1)
         }).map((col) => {
           return <th key={col} scope="col">{col}</th>
         });

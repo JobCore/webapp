@@ -43,14 +43,6 @@ export class ListShifts extends React.Component {
       
         return(
           <div className="container-fluid">
-            <div className="row">
-              <div className="col-6">
-              <div>
-              <div className="col-6">
-              <div>
-              <div className="col-6">
-              <div>
-            <div>
             <List items={this.state.data} type={'table'} onItemClick={this.toggleModal.bind(this)} hidden={['id']} />
             <Modal show={(this.state.modalOpened && this.state.currentShift.id!=null)} onClose={this.toggleModal.bind(this)}>
               <p>Venue: {this.state.currentShift.location}</p>
