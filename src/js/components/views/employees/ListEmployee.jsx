@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import Moment from 'moment'
+import Moment from "moment";
 
-import { List } from '../../utils/List.jsx';
-import Modal from '../../utils/Modal.jsx';
-import shiftsStore from '../../../store/ShiftsStore.js';
+import { List } from "../../utils/List.jsx";
+import Modal from "../../utils/Modal.jsx";
+import shiftsStore from "../../../store/ShiftsStore.js";
 
 export class ListEmployee extends React.Component {
 
@@ -17,14 +17,14 @@ export class ListEmployee extends React.Component {
     super();
 
     this.state = {
-      data: shiftsStore.getAll('employee'),
-    }
+      data: shiftsStore.getAll("employee"),
+    };
   }
 
   componentWillMount() {
-    shiftsStore.on('change', () => {
+    shiftsStore.on("change", () => {
       this.setState({
-        data: shiftsStore.getAll('employee')
+        data: shiftsStore.getAll("employee"),
       });
     });
   }
@@ -33,10 +33,10 @@ export class ListEmployee extends React.Component {
 
     return (
       <div className="container">
-        <List items={this.state.data} type={'table'} hiddenColumns={['id']}
-          columns={['name', 'lastname', 'responseTime']} />
+        <List items={this.state.data} type={"table"} hiddenColumns={["id",]}
+          columns={["name", "lastname", "responseTime",]} />
       </div>
     );
   }
 
-};
+}

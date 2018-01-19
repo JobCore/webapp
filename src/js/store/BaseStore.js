@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
-import AppDispatcher from '../dispatcher.js';
+import { EventEmitter } from "events";
+import AppDispatcher from "../dispatcher.js";
 
 export default class BaseStore extends EventEmitter {
 
@@ -16,14 +16,14 @@ export default class BaseStore extends EventEmitter {
   }
 
   emitChange() {
-    this.emit('CHANGE');
+    this.emit("CHANGE");
   }
 
   addChangeListener(cb) {
-    this.on('CHANGE', cb)
+    this.on("CHANGE", cb);
   }
 
   removeChangeListener(cb) {
-    this.removeListener('CHANGE', cb);
+    this.removeListener("CHANGE", cb);
   }
 }

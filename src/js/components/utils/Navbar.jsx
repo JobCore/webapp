@@ -1,29 +1,29 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React from "react";
+import { NavLink } from "react-router-dom";
 
-import shiftsStore from '../../store/ShiftsStore.js';
+import shiftsStore from "../../store/ShiftsStore.js";
 
 export class Navbar extends React.Component {
-  
-  constructor(){
-    
+
+  constructor() {
+
     super();
-    
+
     this.state = {
-      data: shiftsStore.getAll('menu'),
-    }
+      data: shiftsStore.getAll("menu"),
+    };
   }
-  
-  render(){
-    
-    if(!this.props.authenticated) return(
+
+  render() {
+
+    if (!this.props.authenticated) return (
       <nav className="navbar navbar-expand-lg  navbar-dark sticky-footer bg-dark">
         <NavLink to="/" className="navbar-brand">JobCore</NavLink>
         <div className="navbar-nav ml-auto"><NavLink to="/login">Login</NavLink></div>
       </nav>
     );
 
-    return(
+    return (
       <nav className="navbar navbar-expand-lg  navbar-dark sticky-footer bg-dark" id="mainNav">
         <NavLink to="/" className="navbar-brand">JobCore</NavLink>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,7 @@ export class Navbar extends React.Component {
         </button>
         <div className="collapse navbar-collapse" id="navbarResponsive">
           <ul className="navbar-nav navbar-sidenav" id="exampleAccordion">
-            { this.renderMenuItems(this.state.data) }
+            {this.renderMenuItems(this.state.data)}
             <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
               <a className="nav-link" href="#">
                 <i className="fa fa-fw fa-link"></i>
@@ -137,7 +137,7 @@ export class Navbar extends React.Component {
               </form>
             </li>
             <li className="nav-item">
-              <a  onClick={this.props.onLogout} className="nav-link" data-toggle="modal" data-target="#exampleModal">
+              <a onClick={this.props.onLogout} className="nav-link" data-toggle="modal" data-target="#exampleModal">
                 <i className="fa fa-fw fa-sign-out"></i>Logout</a>
             </li>
           </ul>
@@ -145,69 +145,68 @@ export class Navbar extends React.Component {
       </nav>
     );
   }
-  
-  renderMenuItems(menuData){
+
+  renderMenuItems(menuData) {
     var items = menuData.map((item) => {
-        return this.renderNavItem(item);
+      return this.renderNavItem(item);
     });
-    
+
     return items;
-    
+
   }
-  
-  renderNavItem(navItemData){
-    
-    if(navItemData.links != null) return this.renderSidebarLink(navItemData);
+
+  renderNavItem(navItemData) {
+
+    if (navItemData.links != null) return this.renderSidebarLink(navItemData);
     else return this.renderSidebarLink(navItemData);
   }
-  
-  renderLikeADropDown(navItemData){
-    var links = navItemData.links.map(function(link){
+
+  renderLikeADropDown(navItemData) {
+    var links = navItemData.links.map(function (link) {
       return <a key={link.id} className="dropdown-item" href={link.url}>{link.label}</a>;
     });
     return (<li key={navItemData.id} className="nav-item dropdown">
-              <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {navItemData.label}
-              </a>
-              <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                {links}
-              </div>
-            </li>);
+      <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {navItemData.label}
+      </a>
+      <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+        {links}
+      </div>
+    </li>);
   }
-  
-  renderSidebarLink(navItemData){
-    if(Array.isArray(navItemData.links))
-    {
-      var links = navItemData.links.map(function(link){
+
+  renderSidebarLink(navItemData) {
+    if (Array.isArray(navItemData.links)) {
+      var links = navItemData.links.map(function (link) {
         return (<li key={link.id}><NavLink to={link.url}>{link.label}</NavLink></li>);
       });
       return (<li className="nav-item" data-toggle="tooltip" data-placement="right" title={navItemData.label}>
-                <a className="nav-link nav-link-collapse collapsed" data-toggle="collapse" href={"#sidebarAnchor"+navItemData.id} data-parent="#exampleAccordion">
-                  <i className={"fa fa-fw fa-"+navItemData.icon}></i>
-                  <span className="nav-link-text">{navItemData.label}</span>
-                </a>
-                <ul className="sidenav-second-level collapse" id={"sidebarAnchor"+navItemData.id}>
-                 {links}
-                </ul>
-              </li>);
+        <a className="nav-link nav-link-collapse collapsed" data-toggle="collapse" href={"#sidebarAnchor" + navItemData.id} data-parent="#exampleAccordion">
+          <i className={"fa fa-fw fa-" + navItemData.icon}></i>
+          <span className="nav-link-text">{navItemData.label}</span>
+        </a>
+        <ul className="sidenav-second-level collapse" id={"sidebarAnchor" + navItemData.id}>
+          {links}
+        </ul>
+      </li>);
     }
     else {
       return (<li className="nav-item" data-toggle="tooltip" data-placement="right" title={navItemData.label}>
-          <NavLink className="nav-link" to={navItemData.url}>
-            <i className={"fa fa-fw fa-"+navItemData.icon}></i>
-            <span className="nav-link-text">{navItemData.label}</span>
-          </NavLink>
-        </li>);
+        <NavLink className="nav-link" to={navItemData.url}>
+          <i className={"fa fa-fw fa-" + navItemData.icon}></i>
+          <span className="nav-link-text">{navItemData.label}</span>
+        </NavLink>
+      </li>);
     }
   }
-  
-  renderLikeALink(navItemData){
-    
+
+  renderLikeALink(navItemData) {
+
     return (<li key={navItemData.id} className="nav-item">
-              <a className="nav-link" href="#">
-                {navItemData.label}
-              </a>
-            </li>
-            );
+      <a className="nav-link" href="#">
+        {navItemData.label}
+      </a>
+    </li>
+    );
   }
-};
+}

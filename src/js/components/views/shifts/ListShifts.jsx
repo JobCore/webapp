@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import Moment from 'moment'
+import Moment from "moment";
 
-import { List } from '../../utils/List.jsx';
-import Modal from '../../utils/Modal.jsx';
-import shiftsStore from '../../../store/ShiftsStore.js';
+import { List } from "../../utils/List.jsx";
+import Modal from "../../utils/Modal.jsx";
+import shiftsStore from "../../../store/ShiftsStore.js";
 
 export class ListShifts extends React.Component {
 
@@ -17,16 +17,16 @@ export class ListShifts extends React.Component {
     super();
 
     this.state = {
-      data: shiftsStore.getAll('shift'),
+      data: shiftsStore.getAll("shift"),
       modalOpened: false,
-      currentShift: { id: null }
-    }
+      currentShift: { id: null, },
+    };
   }
 
   componentWillMount() {
-    shiftsStore.on('change', () => {
+    shiftsStore.on("change", () => {
       this.setState({
-        data: shiftsStore.getAll('shift')
+        data: shiftsStore.getAll("shift"),
       });
     });
   }
@@ -35,7 +35,7 @@ export class ListShifts extends React.Component {
     console.log("Render the modal!!!", item);
     this.setState({
       modalOpened: !this.state.modalOpened,
-      currentShift: item
+      currentShift: item,
     });
   }
 
@@ -43,15 +43,15 @@ export class ListShifts extends React.Component {
 
     return (
       <div className="container-fluid">
-        <List items={this.state.data} type={'table'} onItemClick={this.toggleModal.bind(this)} hiddenColumns={['id']} />
+        <List items={this.state.data} type={"table"} onItemClick={this.toggleModal.bind(this)} hiddenColumns={["id",]} />
         <Modal show={(this.state.modalOpened && this.state.currentShift.id != null)} onClose={this.toggleModal.bind(this)}>
           <p>Venue: {this.state.currentShift.location}</p>
           <p>Position: {this.state.currentShift.position}</p>
-          <p>Date: {Moment(this.state.currentShift.date).format('MMM Do YYYY')}</p>
+          <p>Date: {Moment(this.state.currentShift.date).format("MMM Do YYYY")}</p>
           <p>From {this.state.currentShift.start} to {this.state.currentShift.end}</p>
         </Modal>
       </div>
     );
   }
 
-};
+}
