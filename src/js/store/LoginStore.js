@@ -1,10 +1,8 @@
 import BaseStore from "./BaseStore.js";
-import AppDispatcher from "../dispatcher.js";
 
 class LoginStore extends BaseStore {
 
   constructor() {
-
     super();
     // First we register to the Dispatcher to listen for actions.
     this.subscribe(() => this._registerToActions.bind(this));
@@ -12,11 +10,12 @@ class LoginStore extends BaseStore {
   }
 
   _registerToActions(action) {
-    if (typeof (action) == "undefined") return;
+    if (typeof (action) === "undefined") return;
     switch (action.actionType) {
     case "USER_LOGGED_IN":
       console.log("The user has logged in");
       this._user = {
+        "id": "ale_01",
         "name": "Alejandro Sanchez",
       };
       this.emitChange();
@@ -32,7 +31,7 @@ class LoginStore extends BaseStore {
   }
 
   // Just getters for the properties it got from the action.
-  get user() {
+  getUser() {
     return this._user;
   }
 

@@ -29,24 +29,18 @@ export class Navbar extends React.Component {
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarResponsive">
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav navbar-sidenav" id="exampleAccordion">
             {this.renderMenuItems(this.state.data)}
-            <li className="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
-              <a className="nav-link" href="#">
-                <i className="fa fa-fw fa-link"></i>
-                <span className="nav-link-text">Link</span>
-              </a>
-            </li>
           </ul>
           <ul className="navbar-nav sidenav-toggler">
             <li className="nav-item">
-              <a className="nav-link text-center" id="sidenavToggler">
+              <a className="navBuilding-link text-center" id="sidenavToggler">
                 <i className="fa fa-fw fa-angle-left"></i>
               </a>
             </li>
           </ul>
-          <ul className="navbar-nav ml-auto">
+          <ul className="navbar-nav ml-auto d-md-none d-lg-flex">
             <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle mr-lg-2" id="messagesDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i className="fa fa-fw fa-envelope"></i>

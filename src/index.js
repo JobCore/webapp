@@ -1,12 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import $ from "jquery";
 import "bootstrap";
-import "../css/styles.scss";
-
-import { Layout } from "./components/Layout.jsx";
-
+import { Layout } from "./js/components/Layout.jsx";
+import "font-awesome/css/font-awesome.min.css";
+require("./css/main/styles.scss");
 
 // Add CSS files to bundle
 //require('../css/styles.scss');

@@ -26,9 +26,9 @@ export class ListItem extends React.Component {
 
     //if props.type has not been defined y pass the state.renderFunction value
     switch (this.props.type || this.state.renderFunction) {
-    case "table": return this.renderLikeTable(); break;
+    case "table": return this.renderLikeTable();
       //by default the component is going to render like a bootstrap card
-    default: return this.renderLikeCard(); break;
+    default: return this.renderLikeCard();
     }
 
   }
@@ -47,9 +47,9 @@ export class ListItem extends React.Component {
      */
   renderTablesColumns(dataDcolumns) {
     return dataDcolumns.filter((col) => {
-      return (typeof (this.props.hiddenColumns) != "undefined" && this.props.hiddenColumns.indexOf(col.toLowerCase()) == -1);
+      return (typeof (this.props.hiddenColumns) !== "undefined" && this.props.hiddenColumns.indexOf(col.toLowerCase()) === -1);
     }).map((value) => {
-      return <td key={value} scope="col">{this.props.data[value].toString()}</td>;
+      return <td key={value}>{this.props.data[value].toString()}</td>;
     });
 
   }
@@ -60,8 +60,18 @@ export class ListItem extends React.Component {
      */
   renderLikeTable() {
     var link = "";
-    if (typeof this.props.makeURL == "function") link = <td><Link to={this.props.makeURL(this.props.data)} className="btn btn-default">view</Link></td>;
-    else if (typeof this.props.onClick == "function") link = <td><a href="#" onClick={() => this.props.onClick(this.props.data)} className="btn btn-default">view</a></td>;
+    if (typeof this.props.makeURL === "function") {
+      link = (
+        <td>
+          <Link to={this.props.makeURL(this.props.data)} className="btn btn-default">view</Link>
+        </td>);
+    } else if (typeof this.props.onClick === "function") {
+      link = (
+        <td>
+          <a href="#" onClick={() => this.props.onClick(this.props.data)} className="btn btn-default">view</a>
+        </td>
+      );
+    }
 
     return (
       <tr className="list-item like-table">

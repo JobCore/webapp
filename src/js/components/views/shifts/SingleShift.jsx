@@ -21,7 +21,7 @@ export class SingleShift extends React.Component {
   componentWillMount() {
 
     var shift = shiftsStore.getById("shift", this.props.match.params.id);
-    if (typeof shift == "undefined" || shift == null) shift = { location: "404", };
+    if (typeof shift === "undefined" || shift == null) shift = { location: "404", };
     this.setState({ data: shift, });
   }
 

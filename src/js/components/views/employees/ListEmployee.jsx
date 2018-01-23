@@ -1,24 +1,12 @@
-import React from "react";
-
-import Moment from "moment";
+import React, { Component } from "react";
 
 import { List } from "../../utils/List.jsx";
-import Modal from "../../utils/Modal.jsx";
 import shiftsStore from "../../../store/ShiftsStore.js";
 
-export class ListEmployee extends React.Component {
+export class ListEmployee extends Component {
 
-  /**
-  *
-  *   this.props = {
-  *   }
-  */
-  constructor() {
-    super();
-
-    this.state = {
-      data: shiftsStore.getAll("employee"),
-    };
+  state = {
+    data: shiftsStore.getAll("employee"),
   }
 
   componentWillMount() {
@@ -30,13 +18,15 @@ export class ListEmployee extends React.Component {
   }
 
   render() {
-
     return (
-      <div className="container">
-        <List items={this.state.data} type={"table"} hiddenColumns={["id",]}
-          columns={["name", "lastname", "responseTime",]} />
+      <div className="container-fluid">
+        <List
+          makeURL={(data) => "/talent/" + data.id}
+          items={this.state.data}
+          type={"table"}
+          hiddenColumns={["id", "profilepicurl", "about", "roles", "favoritedlists",]}
+          columns={["Name", "Lastname", "Birthday", "Favorite?", "Response Time", "Hourly Rate", "Current Jobs", "Rating",]} />
       </div>
     );
   }
-
 }

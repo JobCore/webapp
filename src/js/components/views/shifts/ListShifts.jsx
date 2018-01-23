@@ -8,20 +8,11 @@ import shiftsStore from "../../../store/ShiftsStore.js";
 
 export class ListShifts extends React.Component {
 
-  /**
-  *
-  *   this.props = {
-  *   }
-  */
-  constructor() {
-    super();
-
-    this.state = {
-      data: shiftsStore.getAll("shift"),
-      modalOpened: false,
-      currentShift: { id: null, },
-    };
-  }
+  state = {
+    data: shiftsStore.getAll("shift"),
+    modalOpened: false,
+    currentShift: { id: null, },
+  };
 
   componentWillMount() {
     shiftsStore.on("change", () => {
@@ -40,11 +31,16 @@ export class ListShifts extends React.Component {
   }
 
   render() {
-
     return (
       <div className="container-fluid">
-        <List items={this.state.data} type={"table"} onItemClick={this.toggleModal.bind(this)} hiddenColumns={["id",]} />
-        <Modal show={(this.state.modalOpened && this.state.currentShift.id != null)} onClose={this.toggleModal.bind(this)}>
+        <List
+          items={this.state.data}
+          type={"table"}
+          onItemClick={this.toggleModal.bind(this)}
+          hiddenColumns={["id", "favoritesonly", "allowanyone",]} />
+        <Modal
+          show={(this.state.modalOpened && this.state.currentShift.id != null)}
+          onClose={this.toggleModal.bind(this)}>
           <p>Venue: {this.state.currentShift.location}</p>
           <p>Position: {this.state.currentShift.position}</p>
           <p>Date: {Moment(this.state.currentShift.date).format("MMM Do YYYY")}</p>
@@ -53,5 +49,4 @@ export class ListShifts extends React.Component {
       </div>
     );
   }
-
 }

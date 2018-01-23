@@ -1,11 +1,7 @@
 import { EventEmitter } from "events";
-import AppDispatcher from "../dispatcher.js";
+import AppDispatcher from "../../dispatcher.js";
 
 export default class BaseStore extends EventEmitter {
-
-  constructor() {
-    super();
-  }
 
   subscribe(actionSubscribe) {
     this._dispatchToken = AppDispatcher.register(actionSubscribe());

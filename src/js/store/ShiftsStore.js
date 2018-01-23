@@ -1,6 +1,5 @@
 import EventEmmiter from "events";
 
-import AppDispatcher from "../dispatcher.js";
 import Seeder from "./Seeder.js";
 
 class ShiftStore extends EventEmmiter {
@@ -23,15 +22,15 @@ class ShiftStore extends EventEmmiter {
 
   getAll(type) {
 
-    if (typeof this.model[type] == "undefined") throw "Invalid model type: " + type;
+    if (typeof this.model[type] === "undefined") throw new Error("Invalid model type: " + type);
     return this.model[type];
   }
 
   getById(type, id) {
 
-    if (typeof this.model[type] == "undefined") throw "Invalid model type: " + type;
+    if (typeof this.model[type] === "undefined") throw new Error("Invalid model type: " + type);
     return this.model[type].find((item) => {
-      return (item.id.toString() == id);
+      return (item.id.toString() === id.toString());
     });
   }
 }

@@ -1,8 +1,7 @@
 import React from "react";
+import { Selector } from "../utils/Selector";
 
 //import {starthub} from '../../../img/starthub.jpg';
-var starthub = require("../../../img/starthub.jpg");
-import { Selector } from "../utils/Selector.jsx";
 
 export class Home extends React.Component {
 
@@ -42,7 +41,7 @@ export class Home extends React.Component {
             <div className="row">
               <div className="col-lg-8 mx-auto">
                 <Selector hide={false} stuff={this.data} onChange={(newValue) => {
-                  if (newValue == "employee") this.setState({ hideSecondSelector: false, });
+                  if (newValue === "employee") this.setState({ hideSecondSelector: false, });
                 }} />
                 <Selector hide={this.state.hideSecondSelector} stuff={this.data2} />
                 <h2>About this page</h2>

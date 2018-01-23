@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export class Private extends React.Component {
 
@@ -121,7 +121,7 @@ export class Private extends React.Component {
                 <div className="card-body">
                   <h6 className="card-title mb-1"><a href="#">David Miller</a></h6>
                   <p className="card-text small">These waves are looking pretty good today!
-                          <a href="#">#surfsup</a>
+                    <a href="#">#surfsup</a>
                   </p>
                 </div>
                 <hr className="my-0" />
@@ -139,7 +139,7 @@ export class Private extends React.Component {
                     <img className="d-flex mr-3" src="http://placehold.it/45x45" alt="" />
                     <div className="media-body">
                       <h6 className="mt-0 mb-1"><a href="#">John Smith</a></h6>Very nice! I wish I was there! That looks amazing!
-                            <ul className="list-inline mb-0">
+                      <ul className="list-inline mb-0">
                         <li className="list-inline-item">
                           <a href="#">Like</a>
                         </li>
@@ -154,7 +154,7 @@ export class Private extends React.Component {
                         </a>
                         <div className="media-body">
                           <h6 className="mt-0 mb-1"><a href="#">David Miller</a></h6>Next time for sure!
-                                <ul className="list-inline mb-0">
+                          <ul className="list-inline mb-0">
                             <li className="list-inline-item">
                               <a href="#">Like</a>
                             </li>
@@ -177,7 +177,7 @@ export class Private extends React.Component {
                 <div className="card-body">
                   <h6 className="card-title mb-1"><a href="#">John Smith</a></h6>
                   <p className="card-text small">Another day at the office...
-                          <a href="#">#workinghardorhardlyworking</a>
+                    <a href="#">#workinghardorhardlyworking</a>
                   </p>
                 </div>
                 <hr className="my-0" />
@@ -195,7 +195,7 @@ export class Private extends React.Component {
                     <img className="d-flex mr-3" src="http://placehold.it/45x45" alt="" />
                     <div className="media-body">
                       <h6 className="mt-0 mb-1"><a href="#">Jessy Lucas</a></h6>Where did you get that camera?! I want one!
-                            <ul className="list-inline mb-0">
+                      <ul className="list-inline mb-0">
                         <li className="list-inline-item">
                           <a href="#">Like</a>
                         </li>
@@ -216,7 +216,7 @@ export class Private extends React.Component {
                 <div className="card-body">
                   <h6 className="card-title mb-1"><a href="#">Jeffery Wellings</a></h6>
                   <p className="card-text small">Nice shot from the skate park!
-                          <a href="#">#kickflip</a>
+                    <a href="#">#kickflip</a>
                     <a href="#">#holdmybeer</a>
                     <a href="#">#igotthis</a>
                   </p>
@@ -239,7 +239,7 @@ export class Private extends React.Component {
                 <div className="card-body">
                   <h6 className="card-title mb-1"><a href="#">David Miller</a></h6>
                   <p className="card-text small">It's hot, and I might be lost...
-                          <a href="#">#desert</a>
+                    <a href="#">#desert</a>
                     <a href="#">#water</a>
                     <a href="#">#anyonehavesomewater</a>
                     <a href="#">#noreally</a>
@@ -262,7 +262,7 @@ export class Private extends React.Component {
                     <img className="d-flex mr-3" src="http://placehold.it/45x45" alt="" />
                     <div className="media-body">
                       <h6 className="mt-0 mb-1"><a href="#">John Smith</a></h6>The oasis is a mile that way, or is that just a mirage?
-                            <ul className="list-inline mb-0">
+                      <ul className="list-inline mb-0">
                         <li className="list-inline-item">
                           <a href="#">Like</a>
                         </li>
@@ -278,7 +278,7 @@ export class Private extends React.Component {
                         <div className="media-body">
                           <h6 className="mt-0 mb-1"><a href="#">David Miller</a></h6>
                           <img className="img-fluid w-100 mb-1" src="https://unsplash.it/700/450?image=789" alt="" />I'm saved, I found a cactus. How do I open this thing?
-                                <ul className="list-inline mb-0">
+                          <ul className="list-inline mb-0">
                             <li className="list-inline-item">
                               <a href="#">Like</a>
                             </li>
@@ -314,8 +314,8 @@ export class Private extends React.Component {
                     <img className="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="" />
                     <div className="media-body">
                       <strong>David Miller</strong>posted a new article to
-                            <strong>David Miller Website</strong>.
-                            <div className="text-muted smaller">Today at 5:43 PM - 5m ago</div>
+                      <strong>David Miller Website</strong>.
+                      <div className="text-muted smaller">Today at 5:43 PM - 5m ago</div>
                     </div>
                   </div>
                 </a>
@@ -324,7 +324,7 @@ export class Private extends React.Component {
                     <img className="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="" />
                     <div className="media-body">
                       <strong>Samantha King</strong>sent you a new message!
-                            <div className="text-muted smaller">Today at 4:37 PM - 1hr ago</div>
+                      <div className="text-muted smaller">Today at 4:37 PM - 1hr ago</div>
                     </div>
                   </div>
                 </a>
@@ -333,8 +333,8 @@ export class Private extends React.Component {
                     <img className="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="" />
                     <div className="media-body">
                       <strong>Jeffery Wellings</strong>added a new photo to the album
-                            <strong>Beach</strong>.
-                            <div className="text-muted smaller">Today at 4:31 PM - 1hr ago</div>
+                      <strong>Beach</strong>.
+                      <div className="text-muted smaller">Today at 4:31 PM - 1hr ago</div>
                     </div>
                   </div>
                 </a>
@@ -344,9 +344,9 @@ export class Private extends React.Component {
                     <div className="media-body">
                       <i className="fa fa-code-fork"></i>
                       <strong>Monica Dennis</strong>forked the
-                            <strong>startbootstrap-sb-admin</strong>repository on
-                            <strong>GitHub</strong>.
-                            <div className="text-muted smaller">Today at 3:54 PM - 2hrs ago</div>
+                      <strong>startbootstrap-sb-admin</strong>repository on
+                      <strong>GitHub</strong>.
+                      <div className="text-muted smaller">Today at 3:54 PM - 2hrs ago</div>
                     </div>
                   </div>
                 </a>

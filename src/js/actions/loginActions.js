@@ -1,6 +1,6 @@
 // LoginAction.js
 
-import AppDispatcher from "../dispatcher.js";
+import AppDispatcher from "../../dispatcher.js";
 
 export default {
   loginUser: (history) => {

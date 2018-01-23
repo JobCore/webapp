@@ -35,8 +35,8 @@ export class Example extends React.Component {
     return (
       <div className='example'>
         {template}
-        {(this.state.display == "counter") ? (<Counter />) : ""}
-        {(this.state.display == "time") ? (<Time />) : ""}
+        {(this.state.display === "counter") ? (<Counter />) : ""}
+        {(this.state.display === "time") ? (<Time />) : ""}
       </div>
     );
   }

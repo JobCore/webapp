@@ -1,0 +1,221 @@
+.employee-details {
+  margin: 0;
+  padding: 20px 30px 0 30px;
+  height: 100%;
+
+  i {
+    padding-right: 10px;
+    color: #434343;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    h3 {
+      font-weight: bold;
+      font-size: 20px;
+    }
+  }
+
+  .first-col {
+    img {
+      background-color: #eee;
+      margin: 0 auto;
+      height: 200px;
+      width: 200px;
+    }
+
+    .stars {
+      margin: 5px auto 0 auto;
+    }
+
+    .jobs-summary {
+      margin-top: 20px;
+
+      ul {
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        width: 250px;
+
+        li {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+
+  .second-col {
+    padding-left: 0;
+
+    .header {
+      font-size: 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      font-weight: bold;
+      flex-wrap: wrap;
+
+      h3 {
+        margin-right: 30px;
+      }
+
+      .rate {
+        font-size: 16px;
+        color: #388E3C;
+      }
+    }
+
+    .about {
+      margin-top: 10px;
+    }
+
+    .activity {
+      margin-top: 10px;
+
+      ul {
+        margin-top: 20px;
+        box-sizing: border-box;
+        padding-left: 0;
+        width: 100%;
+
+        li {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          list-style: none;
+          padding-right: 10px;
+          margin-bottom: 10px;
+
+          p {
+            margin: 0;
+          }
+
+          p:first-child {
+            width: 100%;
+          }
+
+          .date {
+            font-size: .85em;
+            font-style: italic;
+            padding-left: 26px;
+            margin-top: 3px;
+          }
+        }
+      }
+    }
+  }
+
+  .third-col {
+    background-color: #e9ecef;
+    padding-top: 10px;
+
+    .btn {
+      outline: none !important;
+    }
+
+    .header {
+      border-bottom: 1px solid black;
+      padding-bottom: 20px;
+
+      .response-time {
+        width: 100%;
+        color: #c0392b;
+      }
+
+      .btn-offer {
+        width: 100%;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5em;
+        background: #ffd65e; /* Old browsers */
+        background: linear-gradient(to bottom, #f1c40f 0%,#f39c12 100%);
+      }
+    }
+
+    .favorite {
+      padding-top: 20px;
+
+      .message {
+        margin-top: 10px;
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .btn-favorite {
+        width: 100%;
+        background: #ffd65e; /* Old browsers */
+        background: linear-gradient(to bottom, #fadc83 0%,#febf01 100%);
+      }
+
+      .dropdown {
+        width: 100%;
+
+        .btn-split-left {
+          width: 85%;
+
+          &:hover,
+          &:focus {
+            border-color: #ffc107;
+            border-right: 1px solid black;
+            box-shadow: none;
+            cursor: default !important;
+          }
+        }
+
+        .dropdown-toggle {
+          width: 15%;
+          border-left: 1px solid black;
+        }
+
+        .dropdown-menu {
+          width: 100%;
+          margin-right: 40px;
+          padding: 10px 10px 0 10px;
+
+          button {
+            color: #eee;
+            background-color: #34495e;
+
+            i {
+              color: #eee;
+            }
+          }
+        }
+      }
+    }
+
+    .footer {
+      padding-top: 20px;
+      border-top: 1px solid black;
+      padding-bottom: 20px;
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+
+      .tags-list {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+
+        .tag {
+          padding: 8px;
+          margin-bottom: 10px;
+          margin-right: 10px;
+          background-color: #34495e;
+          color: #eee;
+        }
+      }
+    }
+  }
+}

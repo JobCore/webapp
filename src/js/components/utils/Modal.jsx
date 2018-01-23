@@ -55,7 +55,7 @@ class Modal extends React.Component {
   }
 
   renderSaveBtn() {
-    if (typeof this.props.saveLabel != "undefined") {
+    if (typeof this.props.saveLabel !== "undefined") {
       return (<button type="button" className="btn btn-primary">{this.props.saveLabel}</button>);
     }
     else {
