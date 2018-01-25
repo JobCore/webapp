@@ -16,15 +16,17 @@ class Seeder {
         let favoritesOnly = Faker.random.boolean();
         let allowAnyone = favoritesOnly ? false : true;
 
+        let date = `2018-0${Faker.random.number({ min: 1, max: 9, })}-${Faker.random.number({ min: 10, max: 31, })}`;
+
         return {
           id: Faker.random.uuid(),
           location: Faker.name.title() + " Building",
           position: Faker.name.jobTitle(),
-          date: Faker.date.future(),
+          date: date,
           start: "6:00pm",
           end: "9:00pm",
           favoritesOnly: favoritesOnly,
-          allowAnyone: allowAnyone,
+          status: allowAnyone,
         };
       },
       employer: function () {

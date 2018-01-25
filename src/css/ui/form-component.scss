@@ -1,0 +1,50 @@
+.form-component {
+  display: flex;
+  flex-direction: column;
+  color: #eee;
+
+  .title {
+    margin-top: 10px;
+    background-color: #34495e;
+    width: 150px;
+    padding: 5px 10px;
+    font-weight: bold;
+    margin-bottom: 0;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    text-align: center;
+  }
+
+  .inputs {
+    padding: 5px 20px 5px 20px;
+    height: 160px;
+    background-color: #34495e;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+    .form-group {
+      flex: 0 1 45%;
+      margin-bottom: 8px;
+
+      select.custom-select,
+      input.form-control {
+        height: 35px;
+        padding: 8px;
+      }
+    }
+
+    .switch-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        margin-right: 20px;
+      }
+    }
+  }
+}

@@ -12,10 +12,11 @@ export class Selector extends React.Component {
     });
 
     return (
-      <select onChange={(evt) => {
-        this.props.onChange(evt.target.value);
-      }
-      }>
+      <select className="custom-select" defaultValue="null"
+        onChange={(evt) => {
+          this.props.onChange(evt.target.value);
+        }}>
+        <option key="null" disabled value="null"> -- Select an Option -- </option>
         {stuffLikeHTML}
       </select>
     );

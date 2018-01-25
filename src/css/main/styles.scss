@@ -1,5 +1,7 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import '../ui/checkbox';
+@import '../ui/switch';
+@import '../ui/form-component';
 @import './sb-admin';
 @import '../view/home';
 @import '../view/login';
@@ -9,4 +11,23 @@
     width: 500px;
     margin: auto;
     margin-top: 100px;
+}
+
+.top-btn {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    display: flex;
+    justify-content: space-around;
+    width: 300px;
+}
+
+.no-match {
+    margin-top: 13px;
+}
+
+button {
+    i {
+        padding-right: 10px;
+    }
 }
