@@ -131,6 +131,14 @@ class EmployeeDetails extends Component {
     return rolesSummary;
   }
 
+  renderBadges = () => {
+    let badges = [];
+    this.state.data.badges.forEach(badge => {
+      badges.push(<span className="tag badge badge-pill">{badge}</span>);
+    });
+    return badges;
+  }
+
   renderDetails = () => {
     return (
       <div className={"row employee-details"}>
@@ -182,9 +190,7 @@ class EmployeeDetails extends Component {
           <div className="footer">
             <h3>Tags Earned</h3>
             <div className="tags-list">
-              <span className="tag badge badge-pill">English</span>
-              <span className="tag badge badge-pill">Spanish</span>
-              <span className="tag badge badge-pill">Responsible</span>
+              {this.renderBadges()}
             </div>
           </div>
         </div>

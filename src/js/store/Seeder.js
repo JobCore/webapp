@@ -36,12 +36,13 @@ class Seeder {
           favoriteLists: [
             "List #1", "List #2", "List #3",
           ],
+          availableBadges: [
+            "English-Proficient", "Spanish-Proficient", "Responsible", "Respecful", "Honest",
+          ],
         };
       },
       employee: function () {
-        const rolesAvailable = [
-          "Bartender", "Server", "Kitchen Assistant",
-        ];
+        const rolesAvailable = ["Bartender", "Server", "Kitchen Assistant",];
         const rolesTaken = Faker.random.number({ min: 1, max: rolesAvailable.length, });
         let roles = {};
         for (let i = 0; i < rolesTaken; i++) {
@@ -49,10 +50,40 @@ class Seeder {
           roles[role] = Faker.random.number({ min: 10, max: 50, });
         }
 
+        const availableBadges = [
+          "English-Proficient", "Spanish-Proficient", "Responsible", "Respecful", "Honest",
+        ];
+        const badgesGained = Faker.random.number({ min: 0, max: availableBadges.length, });
+        let badges = [];
+        for (let i = 0; i < badgesGained; i++) {
+          badges.push(availableBadges[i]);
+        }
+
         const favoritedLists = [];
         for (let i = 1; i <= Faker.random.number({ min: 0, max: 3, }); i++) {
           favoritedLists.push(`List #${i}`);
         }
+
+        function timeDifference(date1, date2) {
+          let difference = date1.getTime() - date2.getTime();
+          let minutesDifference = Math.abs(Math.floor(difference / 1000 / 60));
+          return minutesDifference;
+        }
+
+        let today = Date.now();
+        let year = new Date(today).getFullYear();
+        let month = new Date(today).getMonth();
+        let day = new Date(today).getDate();
+        let hours = new Date(today).getHours();
+        let minutes = new Date(today).getMinutes();
+
+        let responseTime = timeDifference(
+          new Date(today),
+          new Date(year, month,
+            day + Faker.random.number({ min: 0, max: 3, }),
+            hours + Faker.random.number({ min: 0, max: 1, }),
+            minutes + Faker.random.number({ min: 0, max: 20, }))
+        );
 
         return {
           id: Faker.random.uuid(),
@@ -60,7 +91,7 @@ class Seeder {
           lastname: Faker.name.lastName(),
           birthdate: Faker.date.past(),
           favorite: favoritedLists.length > 0,
-          responseTime: "30 minutes",
+          responseTime: responseTime,
           minHourlyRate: "$ " + Faker.random.number({ min: 10, max: 15, }) + "/hr",
           roles: roles,
           profilePicUrl: Faker.image.imageUrl(300, 300, "people"),
@@ -68,6 +99,7 @@ class Seeder {
           currentJobs: Faker.random.number({ min: 10, max: 35, }),
           rating: Faker.random.number({ min: 1, max: 5, precision: 0.5, }),
           favoritedLists: favoritedLists,
+          badges: badges,
         };
       },
       venue: function () {

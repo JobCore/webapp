@@ -120,7 +120,7 @@ export class ListShifts extends React.Component {
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         <div className="form">
-          <Form title="Filter Form">
+          <Form title="Filter Shifts" orderedAs="row">
             <div className="form-group">
               <label htmlFor="position">Position</label>
               <Selector

@@ -23,9 +23,9 @@ export class Layout extends React.Component {
     super();
 
     this.state = {
-      authenticated: true,
-      // user: null,
-      user: EmployerStore.getEmployer(),
+      authenticated: false,
+      user: null,
+      // user: EmployerStore.getEmployer(),
     };
   }
 
@@ -41,7 +41,7 @@ export class Layout extends React.Component {
     console.log("User autentication status: ", LoginStore.isLoggedIn());
     this.setState({
       authenticated: LoginStore.isLoggedIn(),
-      // user: EmployerStore.getEmployer(),
+      user: EmployerStore.getEmployer(),
     });
   }
 

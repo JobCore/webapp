@@ -6,7 +6,7 @@
   .title {
     margin-top: 10px;
     background-color: #34495e;
-    width: 150px;
+    width: 200px;
     padding: 5px 10px;
     font-weight: bold;
     margin-bottom: 0;
@@ -17,18 +17,13 @@
 
   .inputs {
     padding: 5px 20px 5px 20px;
-    height: 160px;
     background-color: #34495e;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
 
     .form-group {
-      flex: 0 1 45%;
       margin-bottom: 8px;
 
       select.custom-select,
@@ -45,6 +40,25 @@
       label {
         margin-right: 20px;
       }
+    }
+  }
+
+  .inputs-as-column {
+    flex-direction: column;
+    width: 50%;
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .inputs-as-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .form-group {
+      flex: 0 1 45%;
     }
   }
 }

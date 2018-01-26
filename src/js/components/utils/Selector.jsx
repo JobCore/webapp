@@ -16,7 +16,7 @@ export class Selector extends React.Component {
         onChange={(evt) => {
           this.props.onChange(evt.target.value);
         }}>
-        <option key="null" disabled value="null"> -- Select an Option -- </option>
+        <option key="null" disabled value="null" data-measure={this.props.measure || null}> -- Select an Option -- </option>
         {stuffLikeHTML}
       </select>
     );
