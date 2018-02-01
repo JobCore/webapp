@@ -1,11 +1,11 @@
 import React from "react";
 
 import Moment from "moment";
-
-import { List } from "../../utils/List.jsx";
 import Modal from "../../utils/Modal.jsx";
-import shiftsStore from "../../../store/ShiftsStore.js";
 import Form from "../../utils/Form";
+import shiftsStore from "../../../store/ShiftsStore.js";
+import FilterConfigStore from "../../../store/FilterConfigStore";
+import { List } from "../../utils/List.jsx";
 import { Selector } from "../../utils/Selector";
 
 export class ListShifts extends React.Component {
@@ -16,21 +16,32 @@ export class ListShifts extends React.Component {
     modalOpened: false,
     currentShift: { id: null, },
     filterConfig: {
-      position: null,
-      location: null,
-      date: null,
-      status: null,
+      ...FilterConfigStore.getConfigFor("shiftList"),
     },
     shouldListUpdate: true,
   };
 
-  componentDidMount() {
-    this.updateListOnFilter();
-  }
-
   componentDidUpdate() {
     this.updateListOnFilter();
   }
+
+  componentWillMount() {
+    FilterConfigStore.on("change", this.setConfig);
+    this.updateListOnFilter();
+  }
+
+  componentWillUnmount() {
+    FilterConfigStore.removeListener("change", this.setConfig);
+  }
+
+  setConfig = () => {
+    this.setState({
+      filterConfig: {
+        ...FilterConfigStore.getConfigFor("shiftList"),
+      },
+    });
+  }
+
 
   toggleModal(item) {
     console.log("Render the modal!!!", item);
@@ -52,18 +63,22 @@ export class ListShifts extends React.Component {
   createOptionsObject = (category) => {
     let data = this.state.data;
     let object = [];
-    data.map(item => object.push(
-      { name: item[category], value: item[category], }
-    ));
+
+    let uniqueCategoryItem = [];
+
+    data.map(item => {
+      if (!uniqueCategoryItem.includes(item[category])) {
+        object.push({ name: item[category], value: item[category], });
+        uniqueCategoryItem.push(item[category]);
+      }
+      return object;
+    });
     return object;
   }
 
   updateFilterConfig = (value, configOption) => {
-    let updatedFilterConfig = { ...this.state.filterConfig, };
-    updatedFilterConfig[configOption] = value;
-
+    FilterConfigStore.updateConfig(value, configOption, "shiftList");
     this.setState({
-      filterConfig: updatedFilterConfig,
       shouldListUpdate: true,
     });
   }
@@ -103,16 +118,8 @@ export class ListShifts extends React.Component {
   }
 
   clearFilters = () => {
-    let filters = {
-      position: null,
-      location: null,
-      date: null,
-      status: null,
-    };
-    this.setState({
-      filterConfig: filters,
-      shouldListUpdate: true,
-    });
+    FilterConfigStore.clearConfigFor("shiftList");
+    this.setState({ shouldListUpdate: true, });
     document.getElementById("form-component").reset();
   }
 
@@ -124,6 +131,7 @@ export class ListShifts extends React.Component {
             <div className="form-group">
               <label htmlFor="position">Position</label>
               <Selector
+                defaultValue={this.state.filterConfig.position}
                 hide={false}
                 stuff={this.createOptionsObject("position")}
                 onChange={value => this.updateFilterConfig(value, "position")} />
@@ -131,6 +139,7 @@ export class ListShifts extends React.Component {
             <div className="form-group">
               <label htmlFor="Location">Location</label>
               <Selector
+                defaultValue={this.state.filterConfig.location}
                 hide={false}
                 stuff={this.createOptionsObject("location")}
                 onChange={value => this.updateFilterConfig(value, "location")} />
@@ -138,20 +147,25 @@ export class ListShifts extends React.Component {
             <div className="form-group">
               <label htmlFor="date">Date</label>
               <input className="form-control" type="date"
+                value={this.state.filterConfig.date || ""}
                 name="date" id="date"
                 onChange={event => this.updateFilterConfig(event.target.value, "date")} />
             </div>
             <div className="form-group switch-group">
               <label htmlFor="status">Status</label>
               <input type="checkbox" className="switch"
+                checked={this.state.filterConfig.status || ""}
                 onChange={event => this.updateFilterConfig(event.target.checked, "status")} />
             </div>
           </Form>
         </div>
         <div className="top-btn">
-          <button className="btn btn-primary" onClick={this.clearFilters}>
-            Clear filters
-          </button>
+          {
+            this.getFiterableOptions().length > 0 &&
+            <button className="btn btn-primary" onClick={this.clearFilters}>
+              Clear filters
+            </button>
+          }
           <button className="btn btn-success">
             <i className="fa fa-plus" aria-hidden="true"></i>
             <span>Create a new shift</span>

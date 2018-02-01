@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import shiftsStore from "../../../store/ShiftsStore";
 import { Redirect } from "react-router-dom";
+
 import ReactStars from "react-stars";
 import ProfilePic from "../../utils/ProfilePic";
 import Modal from "../../utils/Modal";
+import employeeStore from "../../../store/EmployeeStore";
 
 // import "../../../../css/view/employee_details.scss";
 
@@ -15,22 +16,17 @@ class EmployeeDetails extends Component {
    **/
 
   state = {
-    data: shiftsStore.getById("employee", this.props.match.params.id),
+    data: employeeStore.getById(this.props.match.params.id),
     modalOpened: false,
   }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log(this.state.data);
-  //   console.log(nextState.data);
-  // }
 
   renderFavorites = () => {
 
     let message = this.state.data.favorite ? "This person is already one of your favorites in the following lists:" : null;
 
-    let favoritedLists = this.state.data.favorite ? this.state.data.favoritedLists.map(role => {
-      if (this.state.data.favoritedLists.indexOf(role) !== -1) {
-        return <li key={role}>{role}</li>;
+    let favoritedLists = this.state.data.favorite ? this.state.data.favoritedLists.map(position => {
+      if (this.state.data.favoritedLists.indexOf(position) !== -1) {
+        return <li key={position}>{position}</li>;
       } else {
         return null;
       }
@@ -79,9 +75,10 @@ class EmployeeDetails extends Component {
           </div>
         </div>
 
+
         <div className="message">
           <p>{message}</p>
-          <ul className="favorite-roles-list">
+          <ul className="favorite-positions-list">
             {favoritedLists}
           </ul>
         </div>
@@ -105,19 +102,19 @@ class EmployeeDetails extends Component {
   };
 
 
-  renderRolesListItems = () => {
-    let rolesElement = Object.entries(this.state.data.roles).map(key => {
+  renderPositionsListItems = () => {
+    let positionsElement = Object.entries(this.state.data.positions).map(key => {
       return (
         <li key={key[0]}>
           <span>{key[0]}: </span><span>{key[1]} jobs</span>
         </li>
       );
     });
-    return rolesElement;
+    return positionsElement;
   }
 
-  renderRolesSummary = () => {
-    let rolesSummary = Object.entries(this.state.data.roles).map(key => {
+  renderPositionsSummary = () => {
+    let positionsSummary = Object.entries(this.state.data.positions).map(key => {
       return (
         <li key={key[0]}>
           <p>
@@ -128,7 +125,7 @@ class EmployeeDetails extends Component {
         </li>
       );
     });
-    return rolesSummary;
+    return positionsSummary;
   }
 
   renderBadges = () => {
@@ -153,7 +150,7 @@ class EmployeeDetails extends Component {
           <div className="jobs-summary">
             <h3>Doing {this.state.data.currentJobs} jobs</h3>
             <ul>
-              {this.renderRolesListItems()}
+              {this.renderPositionsListItems()}
             </ul>
           </div>
         </div>
@@ -169,7 +166,7 @@ class EmployeeDetails extends Component {
           <div className="activity">
             <h3>Recent Activity Reported</h3>
             <ul>
-              {this.renderRolesSummary()}
+              {this.renderPositionsSummary()}
             </ul>
           </div>
         </div>
@@ -187,12 +184,15 @@ class EmployeeDetails extends Component {
 
           {this.renderFavorites()}
 
-          <div className="footer">
-            <h3>Tags Earned</h3>
-            <div className="tags-list">
-              {this.renderBadges()}
+          {
+            this.renderBadges().length > 0 &&
+            <div className="footer">
+              <h3>Tags Earned</h3>
+              <div className="tags-list">
+                {this.renderBadges()}
+              </div>
             </div>
-          </div>
+          }
         </div>
       </div >
     );

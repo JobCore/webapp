@@ -1,4 +1,5 @@
 import Faker from "faker";
+import moment from "moment";
 
 class Seeder {
   make(count, type) {
@@ -13,6 +14,10 @@ class Seeder {
   constructor() {
     this.create = {
       shift: function () {
+        const positionsAvailable = [
+          "Baker", "Sever", "Kitchen Asistant", "Coordinator", "Chef", "Bartender",
+        ];
+
         let favoritesOnly = Faker.random.boolean();
         let allowAnyone = favoritesOnly ? false : true;
 
@@ -21,7 +26,7 @@ class Seeder {
         return {
           id: Faker.random.uuid(),
           location: Faker.name.title() + " Building",
-          position: Faker.name.jobTitle(),
+          position: positionsAvailable[Faker.random.number({ min: 0, max: positionsAvailable.length - 1, })],
           date: date,
           start: "6:00pm",
           end: "9:00pm",
@@ -42,12 +47,15 @@ class Seeder {
         };
       },
       employee: function () {
-        const rolesAvailable = ["Bartender", "Server", "Kitchen Assistant",];
-        const rolesTaken = Faker.random.number({ min: 1, max: rolesAvailable.length, });
-        let roles = {};
-        for (let i = 0; i < rolesTaken; i++) {
-          let role = rolesAvailable[i];
-          roles[role] = Faker.random.number({ min: 10, max: 50, });
+        const positionsAvailable = [
+          "Baker", "Sever", "Kitchen Asistant", "Coordinator", "Chef", "Bartender",
+        ];
+
+        const positionsTaken = Faker.random.number({ min: 1, max: positionsAvailable.length, });
+        let positions = {};
+        for (let i = 0; i < positionsTaken; i++) {
+          let position = positionsAvailable[i];
+          positions[position] = Faker.random.number({ min: 10, max: 20, });
         }
 
         const availableBadges = [
@@ -85,6 +93,19 @@ class Seeder {
             minutes + Faker.random.number({ min: 0, max: 20, }))
         );
 
+        let date = `2018-0${Faker.random.number({ min: 1, max: 9, })}-${Faker.random.number({ min: 10, max: 31, })}`;
+
+        let unavailableTimes = [];
+        for (let i = 0; i < Faker.random.number({ min: 1, max: 4, }); i++) {
+          unavailableTimes.push(
+            {
+              fromTime: moment(new Date(date)).subtract(Faker.random.number({ min: 1, max: 6, }), "hours").format("H:mm"),
+              untilTime: moment(new Date(date)).add(Faker.random.number({ min: 0, max: 3, }), "hours").format("H:mm"),
+              date: moment(new Date(date)).add(Faker.random.number({ min: 1, max: 12, }), "days").format("YYYY-MM-DD"),
+            }
+          );
+        }
+
         return {
           id: Faker.random.uuid(),
           name: Faker.name.firstName(),
@@ -93,13 +114,14 @@ class Seeder {
           favorite: favoritedLists.length > 0,
           responseTime: responseTime,
           minHourlyRate: "$ " + Faker.random.number({ min: 10, max: 15, }) + "/hr",
-          roles: roles,
+          positions: positions,
           profilePicUrl: Faker.image.imageUrl(300, 300, "people"),
           about: Faker.lorem.paragraph(),
           currentJobs: Faker.random.number({ min: 10, max: 35, }),
           rating: Faker.random.number({ min: 1, max: 5, precision: 0.5, }),
           favoritedLists: favoritedLists,
           badges: badges,
+          unavailableTimes: unavailableTimes,
         };
       },
       venue: function () {

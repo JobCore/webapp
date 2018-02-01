@@ -12,7 +12,6 @@ class ShiftStore extends EventEmmiter {
     this.model.shift = Seeder.make(20, "shift");
     this.model.venue = Seeder.make(20, "venue");
     this.model.menu = Seeder.make(1, "menu");
-    this.model.employee = Seeder.make(20, "employee");
   }
 
   addShift() {

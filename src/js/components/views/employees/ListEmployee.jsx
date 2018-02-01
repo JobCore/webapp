@@ -1,40 +1,47 @@
 import React, { Component } from "react";
 
-import { List } from "../../utils/List.jsx";
 import shiftsStore from "../../../store/ShiftsStore.js";
 import Form from "../../utils/Form";
-import { Selector } from "../../utils/Selector";
 import Select from "react-select";
-import "react-select/dist/react-select.css";
 import EmployerStore from "../../../store/EmployerStore";
+import EmployeeStore from "../../../store/EmployeeStore";
+import FilterConfigStore from "../../../store/FilterConfigStore";
+import { Selector } from "../../utils/Selector";
+import { List } from "../../utils/List.jsx";
+
+import "react-select/dist/react-select.css";
 
 export class ListEmployee extends Component {
   state = {
-    data: shiftsStore.getAll("employee"),
+    employee: EmployeeStore.getAll(),
+    shift: shiftsStore.getAll("shift"),
     filteredData: [],
     filterConfig: {
-      rating: null,
-      responseTime: null,
-      badges: null,
+      ...FilterConfigStore.getConfigFor("employeeList"),
     },
     availableBadges: EmployerStore.getEmployer().availableBadges,
     shouldListUpdate: true,
   }
 
-  // componentWillMount() {
-  //   shiftsStore.on("change", () => {
-  //     this.setState({
-  //       data: shiftsStore.getAll("employee"),
-  //     });
-  //   });
-  // }
-
-  componentDidMount() {
+  componentDidUpdate() {
     this.updateListOnFilter();
   }
 
-  componentDidUpdate() {
+  componentWillMount() {
+    FilterConfigStore.on("change", this.setConfig);
     this.updateListOnFilter();
+  }
+
+  componentWillUnmount() {
+    FilterConfigStore.removeListener("change", this.setConfig);
+  }
+
+  setConfig = () => {
+    this.setState({
+      filterConfig: {
+        ...FilterConfigStore.getConfigFor("employeeList"),
+      },
+    });
   }
 
   shouldListFilter = () => {
@@ -49,25 +56,35 @@ export class ListEmployee extends Component {
   createOptionsObject = (category) => {
     let data = [...this.state.availableBadges,];
     let object = [];
-    data.forEach(item => object.push(
-      { label: item, value: item, }
-    ));
+    data.forEach(item => object.push({ label: item, value: item, }));
+    return object;
+  }
+
+  createSelectorOptionsObject = (category) => {
+    let data = this.state.shift;
+    let object = [];
+    let uniqueCategoryItem = [];
+    data.map(item => {
+      if (!uniqueCategoryItem.includes(item[category])) {
+        object.push({ name: item[category], value: item[category], });
+        uniqueCategoryItem.push(item[category]);
+      }
+    });
     return object;
   }
 
   updateFilterConfig = (value, configOption) => {
-    let updatedFilterConfig = { ...this.state.filterConfig, };
     if (configOption === "badges") {
-      updatedFilterConfig[configOption] = [];
-      value.forEach(option => updatedFilterConfig[configOption].push(option.value));
-      updatedFilterConfig[configOption] =
-        updatedFilterConfig[configOption].length === 0 ? null : updatedFilterConfig[configOption];
+      // Badges are an object, they need to be turned into an array
+      let transformedValue = [];
+      value.forEach(option => transformedValue.push(option.value));
+      transformedValue = transformedValue.length > 0 ? null : transformedValue;
+      FilterConfigStore.updateConfig(transformedValue, configOption, "employeeList");
     } else {
-      updatedFilterConfig[configOption] = value;
+      FilterConfigStore.updateConfig(value, configOption, "employeeList");
     }
 
     this.setState({
-      filterConfig: updatedFilterConfig,
       shouldListUpdate: true,
     });
   }
@@ -75,19 +92,56 @@ export class ListEmployee extends Component {
   filterList = (listItems, filterOption) => {
     let filterOptionValue = this.state.filterConfig[filterOption];
     let filteredList;
+    /* Remove prepended 'shift' or 'profile' of FilterConfigStore
+       so that it matches Employee or Shift model atribute name */
+    filterOption = filterOption.match(/[^(shift|profile)]\w+/g)[0];
+    filterOption = filterOption.charAt(0).toLowerCase() + filterOption.slice(1);
 
     if (filterOption === "responseTime") {
-      filteredList = listItems.filter(
-        item => item[filterOption] <= filterOptionValue
-      );
+      filteredList = listItems.filter(item => item["responseTime"] <= filterOptionValue);
     } else if (filterOption === "badges" && filterOptionValue.length > 0) {
-      filterOptionValue.forEach((optionValue, index) => {
-        filteredList = listItems.filter(
-          item => item["badges"].includes(optionValue)
-        );
+      filterOptionValue.forEach(valuesObj => {
+        filteredList = listItems.filter(item => item[filterOption].includes(valuesObj.value));
       });
     } else if (filterOption === "badges" && filterOptionValue.length === 0) {
-      filteredList = this.state.data;
+      filteredList = this.state.employee;
+    } else if (filterOption === "position") {
+      filteredList = listItems.filter(item => Object.keys(item["positions"]).includes(filterOptionValue));
+    } else if (filterOption === "minHourlyRate") {
+      filteredList = listItems.filter(item => parseFloat(item[filterOption].match(/\d+/g)) <= filterOptionValue);
+    } else if (filterOption === "rating") {
+      filteredList = listItems.filter(
+        item => item[filterOption] >= filterOptionValue
+      );
+    } else if (filterOption === "fromTime" || filterOption === "untilTime" || filterOption === "date") {
+      if (this.state.filterConfig.shiftFromTime != null && this.state.filterConfig.shiftFromTime.length !== 0 &&
+        this.state.filterConfig.shiftUntilTime != null && this.state.filterConfig.shiftUntilTime.length !== 0 &&
+        this.state.filterConfig.shiftDate != null && this.state.filterConfig.shiftDate.length !== 0) {
+        let filterFromTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftFromTime);
+        let filterUntilTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftUntilTime);
+        let filterDate = this.state.filterConfig.shiftDate;
+
+        filteredList = listItems.filter(item => {
+          for (let i = 0; i < item.unavailableTimes.length; i++) {
+
+            const times = item.unavailableTimes[i];
+            const date = item.unavailableTimes[i].date;
+            let fromTime = this.convertHoursStringIntoNumber(times.fromTime);
+            let untilTime = this.convertHoursStringIntoNumber(times.untilTime);
+
+            if ((((filterFromTime >= fromTime && filterFromTime <= untilTime) ||
+              (filterUntilTime >= fromTime && filterUntilTime <= untilTime)) ||
+              (filterUntilTime >= untilTime && filterFromTime <= fromTime)) &&
+              date === filterDate) {
+              return false;
+            }
+          }
+          return true;
+        });
+      } else {
+        filteredList = this.state.filteredData.length > 0 ?
+          this.state.filteredData : this.state.employee;
+      }
     } else {
       filteredList = listItems.filter(
         item => item[filterOption] === filterOptionValue
@@ -96,16 +150,23 @@ export class ListEmployee extends Component {
     return filteredList;
   }
 
+  convertHoursStringIntoNumber = (string) => {
+    let result = string.match(/\d+/g);
+    if (result[0] === "00") result[0] = 24;
+    result = parseInt(result.join(""), 10);
+    return result;
+  }
+
   updateListOnFilter = () => {
     if (this.state.shouldListUpdate) {
-      let updatedListItems = [...this.state.data,];
+      let updatedListItems = [...this.state.employee,];
       let filterableOptions = this.getFiterableOptions();
       if (filterableOptions.length > 0) {
         filterableOptions.forEach(option => {
           updatedListItems = this.filterList(updatedListItems, option);
         });
       } else {
-        updatedListItems = this.state.data;
+        updatedListItems = this.state.employee;
       }
       this.setState({
         filteredData: updatedListItems,
@@ -123,32 +184,37 @@ export class ListEmployee extends Component {
   }
 
   clearFilters = () => {
-    let filters = {
-      rating: null,
-      responseTime: null,
-      badges: null,
-    };
-    this.setState({
-      filterConfig: filters,
-      shouldListUpdate: true,
-    });
-    document.getElementById("form-component").reset();
+    FilterConfigStore.clearConfigFor("employeeList");
+    this.setState({ shouldListUpdate: true, });
+    let forms = document.getElementsByClassName("form-component");
+    for (const form of forms) form.reset();
   }
 
   render() {
+    // console.log(this.state.filteredData.length, this.state.filteredData);
+    // console.log("FILTER", this.state.filterConfig);
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
-        <div className="form">
+        <div className="form-area">
           <Form title="Filter by Profile" orderedAs="column">
             <div className="form-group">
-              <label htmlFor="rating">Minimum rating</label>
-              <input className="form-control" type="number"
-                id="rating" name="rating" min="0" max="5" step="0.5" placeholder="0"
-                onChange={event => this.updateFilterConfig(parseFloat(event.target.value), "rating")} />
+              <label htmlFor="profileRating">Minimum rating</label>
+              <div className="input-group">
+                <div className="input-group-prepend">
+                  <span className="input-group-text">
+                    <i className="fa fa-star" aria-hidden="true"></i>
+                  </span>
+                </div>
+                <input className="form-control" type="number"
+                  id="profileRating" name="profileRating" min="0" max="5" step="0.5" placeholder="0"
+                  value={this.state.filterConfig.profileRating || ""}
+                  onChange={event => this.updateFilterConfig(parseFloat(event.target.value), "profileRating")} />
+              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="response-time">Response time</label>
+              <label htmlFor="profileResponseTime">Response time</label>
               <Selector
+                defaultValue={this.state.filterConfig.profileResponseTime}
                 hide={false}
                 stuff={
                   [
@@ -161,26 +227,73 @@ export class ListEmployee extends Component {
                     { name: "48 hr or less", value: 2880, },
                   ]
                 }
-                onChange={value => this.updateFilterConfig(value, "responseTime")} />
+                onChange={value => this.updateFilterConfig(value, "profileResponseTime")} />
             </div>
             <div className="form-group switch-group">
-              <label htmlFor="badges">Badges</label>
+              <label htmlFor="profileBadges">Badges</label>
               <Select
-                defaultValue={[]}
                 clearable={false}
                 multi={true}
-                options={
-                  this.createOptionsObject("availableBadges")
-                }
-                value={this.state.filterConfig.badges}
-                onChange={option => this.updateFilterConfig(option, "badges")}
+                options={this.createOptionsObject("availableBadges")}
+                value={this.state.filterConfig.profileBadges || []}
+                onChange={option => this.updateFilterConfig(option, "profileBadges")}
               />
             </div>
           </Form>
+
+          <Form title="Filter by Shift" orderedAs="column">
+            <div className="form-group">
+              <label htmlFor="shiftDate">Date</label>
+              <input className="form-control" type="date" name="shiftDate" id="shiftDate"
+                value={this.state.filterConfig.shiftDate || ""}
+                onChange={event => this.updateFilterConfig(event.target.value, "shiftDate")} />
+            </div>
+            <div className="form-group date-from-to">
+              <label className="from-time" htmlFor="shiftFromTime">From</label>
+              <input className="form-control" type="time" name="shiftFromTime" id="shiftFromTime"
+                value={this.state.filterConfig.shiftFromTime || ""}
+                onChange={event => this.updateFilterConfig(event.target.value, "shiftFromTime")} />
+              <label className="until-time" htmlFor="shiftUntilTime">To</label>
+              <input className="form-control" type="time" name="shiftUntilTime" id="shiftUntilTime"
+                value={this.state.filterConfig.shiftUntilTime || ""}
+                onChange={event => this.updateFilterConfig(event.target.value, "shiftUntilTime")} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="position">Position</label>
+              <Selector
+                defaultValue={this.state.filterConfig.shiftPosition}
+                hide={false}
+                stuff={this.createSelectorOptionsObject("position")}
+                onChange={value => this.updateFilterConfig(value, "shiftPosition")} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="shiftMinHourlyRate">Minimum Hourly Rate</label>
+              <div className="input-group">
+                <div className="input-group-prepend">
+                  <span className="input-group-text">$</span>
+                </div>
+                <input className="form-control" type="number"
+                  id="shiftMinHourlyRate" name="shiftMinHourlyRate" min="0" step="1" placeholder="0"
+                  value={this.state.filterConfig.shiftMinHourlyRate || ""}
+                  onChange={event => this.updateFilterConfig(parseFloat(event.target.value), "shiftMinHourlyRate")} />
+                <div className="input-group-append">
+                  <span className="input-group-text">/hr</span>
+                </div>
+              </div>
+            </div>
+          </Form>
+
         </div>
         <div className="top-btn">
-          <button className="btn btn-primary" onClick={this.clearFilters}>
-            Clear filters
+          {
+            this.getFiterableOptions().length > 0 &&
+            <button className="btn btn-primary" onClick={this.clearFilters}>
+              Clear filters
+            </button>
+          }
+          <button className="btn btn-success">
+            <i className="fa fa-plus" aria-hidden="true"></i>
+            <span>Create a new shift</span>
           </button>
         </div>
         {this.state.filteredData.length > 0 ? (
@@ -188,8 +301,8 @@ export class ListEmployee extends Component {
             makeURL={(data) => "/talent/" + data.id}
             items={this.state.filteredData}
             type={"table"}
-            hiddenColumns={["id", "profilepicurl", "about", "roles", "favoritedlists", "badges",]}
-            columns={["Name", "Lastname", "Birthday", "Favorite?", "Response Time", "Hourly Rate", "Current Jobs", "Rating",]} />
+            hiddenColumns={["id", "profilepicurl", "birthdate", "about", "favoritedlists", "currentjobs", "positions", "badges", "unavailabletimes",]}
+            columns={["Name", "Lastname", "Favorite?", "Response Time", "Hourly Rate", "Rating",]} />
         ) : (
           <h3 className="no-match">No employees matching this criteria</h3>
         )}

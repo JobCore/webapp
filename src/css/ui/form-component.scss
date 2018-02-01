@@ -16,7 +16,7 @@
   }
 
   .inputs {
-    padding: 5px 20px 5px 20px;
+    padding: 10px 20px 2px 20px;
     background-color: #34495e;
     display: flex;
     border-top-right-radius: 5px;
@@ -25,27 +25,50 @@
 
     .form-group {
       margin-bottom: 8px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      label {
+        flex-basis: 160px;
+        margin-bottom: 0;
+      }
 
       select.custom-select,
       input.form-control {
         height: 35px;
         padding: 8px;
       }
+
+      .input-group,
+      select.custom-select,
+      input.form-control,
+      .Select {
+        flex: 1;
+      }
+
+      .date-from-to {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .until-time {
+        text-align: center;
+      }
+
+      input[type="number"] {
+        border: none;
+      }
     }
 
-    .switch-group {
-      display: flex;
-      flex-direction: column;
-
-      label {
-        margin-right: 20px;
-      }
+    .input-group-text {
+      height: 35px;
     }
   }
 
   .inputs-as-column {
     flex-direction: column;
-    width: 50%;
+    width: 100%;
 
     .form-group {
       flex: 1;

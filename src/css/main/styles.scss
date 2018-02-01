@@ -13,13 +13,29 @@
     margin-top: 100px;
 }
 
+.form-area {
+    display: flex;
+    justify-content: space-between;
+
+    .form-component {
+        flex: 1;
+    }
+
+    .form-component:first-child {
+        margin-right: 20px;
+    }
+}
+
 .top-btn {
     position: absolute;
     top: 0;
     right: 15px;
     display: flex;
-    justify-content: space-around;
-    width: 300px;
+    justify-content: flex-end;
+
+    button:last-child {
+        margin-left: 20px;
+    }
 }
 
 .no-match {
