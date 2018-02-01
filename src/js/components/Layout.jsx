@@ -23,9 +23,9 @@ export class Layout extends React.Component {
     super();
 
     this.state = {
-      authenticated: false,
-      user: null,
-      // user: EmployerStore.getEmployer(),
+      authenticated: true,
+      // user: null,
+      user: EmployerStore.getEmployer(),
     };
   }
 

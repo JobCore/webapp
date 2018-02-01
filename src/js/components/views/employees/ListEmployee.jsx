@@ -1,20 +1,19 @@
 import React, { Component } from "react";
 
-import shiftsStore from "../../../store/ShiftsStore.js";
-import Form from "../../utils/Form";
-import Select from "react-select";
-import EmployerStore from "../../../store/EmployerStore";
-import EmployeeStore from "../../../store/EmployeeStore";
-import FilterConfigStore from "../../../store/FilterConfigStore";
 import { Selector } from "../../utils/Selector";
 import { List } from "../../utils/List.jsx";
-
+import EmployerStore from "../../../store/EmployerStore";
+import EmployeeStore from "../../../store/EmployeeStore";
+import ShiftsStore from "../../../store/ShiftsStore.js";
+import FilterConfigStore from "../../../store/FilterConfigStore";
+import Form from "../../utils/Form";
+import Select from "react-select";
 import "react-select/dist/react-select.css";
 
 export class ListEmployee extends Component {
   state = {
     employee: EmployeeStore.getAll(),
-    shift: shiftsStore.getAll("shift"),
+    shift: ShiftsStore.getAll("shift"),
     filteredData: [],
     filterConfig: {
       ...FilterConfigStore.getConfigFor("employeeList"),
@@ -175,6 +174,19 @@ export class ListEmployee extends Component {
     }
   }
 
+  setFilterConfigByShift = (option) => {
+    if (option != null && option.length !== 0) {
+      let shift = ShiftsStore.getById("shift", option.value);
+      this.updateFilterConfig(shift.id, "selectedShift");
+      this.updateFilterConfig(shift.date, "shiftDate");
+      this.updateFilterConfig(shift.start, "shiftFromTime");
+      this.updateFilterConfig(shift.end, "shiftUntilTime");
+      this.updateFilterConfig(shift.position, "shiftPosition");
+    } else {
+      this.updateFilterConfig(null, "selectedShift");
+    }
+  }
+
   getFiterableOptions = () => {
     let options = [...Object.keys({ ...this.state.filterConfig, }),];
     let filteredOptions = options.filter(option => {
@@ -195,7 +207,7 @@ export class ListEmployee extends Component {
     // console.log("FILTER", this.state.filterConfig);
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
-        <div className="form-area">
+        <div className="form-area" >
           <Form title="Filter by Profile" orderedAs="column">
             <div className="form-group">
               <label htmlFor="profileRating">Minimum rating</label>
@@ -241,7 +253,9 @@ export class ListEmployee extends Component {
             </div>
           </Form>
 
-          <Form title="Filter by Shift" orderedAs="column">
+          <Form title="Filter by Shift" orderedAs="column"
+            shifts={this.state.shift} onSelectChange={this.setFilterConfigByShift}
+            selectedShift={this.state.filterConfig.selectedShift}>
             <div className="form-group">
               <label htmlFor="shiftDate">Date</label>
               <input className="form-control" type="date" name="shiftDate" id="shiftDate"
@@ -284,6 +298,7 @@ export class ListEmployee extends Component {
           </Form>
 
         </div>
+
         <div className="top-btn">
           {
             this.getFiterableOptions().length > 0 &&
@@ -296,6 +311,7 @@ export class ListEmployee extends Component {
             <span>Create a new shift</span>
           </button>
         </div>
+
         {this.state.filteredData.length > 0 ? (
           <List
             makeURL={(data) => "/talent/" + data.id}

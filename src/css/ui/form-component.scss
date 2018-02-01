@@ -6,13 +6,38 @@
   .title {
     margin-top: 10px;
     background-color: #34495e;
-    width: 200px;
+    width: max-content;
     padding: 5px 10px;
     font-weight: bold;
     margin-bottom: 0;
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
+    margin-bottom: 0;
     text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .Select.header-select {
+    margin-top: 10px;
+    margin-bottom: 1px;
+  }
+
+  .Select.header-select,
+  .Select.header-select .Select-control {
+    width: 240px;
+    height: 35px;
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    .Select-placeholder {
+      color: #34495e;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
   }
 
   .inputs {

@@ -28,8 +28,8 @@ class Seeder {
           location: Faker.name.title() + " Building",
           position: positionsAvailable[Faker.random.number({ min: 0, max: positionsAvailable.length - 1, })],
           date: date,
-          start: "6:00pm",
-          end: "9:00pm",
+          start: moment(new Date(date)).subtract(Faker.random.number({ min: 1, max: 6, }), "hours").format("H:mm"),
+          end: moment(new Date(date)).add(Faker.random.number({ min: 0, max: 3, }), "hours").format("H:mm"),
           favoritesOnly: favoritesOnly,
           status: allowAnyone,
         };

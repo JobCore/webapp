@@ -21,6 +21,7 @@ class FilterConfigStore extends EventEmmiter {
       shiftUntilTime: null,
       shiftPosition: null,
       shiftMinHourlyRate: null,
+      selectedShift: null,
     };
   };
 
