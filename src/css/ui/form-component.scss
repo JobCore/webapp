@@ -4,6 +4,7 @@
   color: #eee;
 
   .title {
+    height: 40px;
     margin-top: 10px;
     background-color: #34495e;
     width: max-content;
@@ -27,8 +28,8 @@
 
   .Select.header-select,
   .Select.header-select .Select-control {
-    width: 240px;
-    height: 35px;
+    width: 250px;
+    height: 39px;
     border-bottom: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
