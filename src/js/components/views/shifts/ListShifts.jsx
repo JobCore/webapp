@@ -126,7 +126,7 @@ export class ListShifts extends React.Component {
   render() {
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
-        <div className="form">
+        <div className="form-area">
           <Form title="Filter Shifts" orderedAs="row">
             <div className="form-group">
               <label htmlFor="position">Position</label>
@@ -178,8 +178,8 @@ export class ListShifts extends React.Component {
             onItemClick={this.toggleModal.bind(this)}
             hiddenColumns={["id", "favoritesonly",]} />
         ) : (
-          <h3 className="no-match">No shifts matching this criteria</h3>
-        )}
+            <h3 className="no-match">No shifts matching this criteria</h3>
+          )}
         <Modal
           show={(this.state.modalOpened && this.state.currentShift.id != null)}
           onClose={this.toggleModal.bind(this)}>

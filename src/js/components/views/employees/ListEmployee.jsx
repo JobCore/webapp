@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Select from "react-select";
+import "react-select/dist/react-select.css";
 
 import { Selector } from "../../utils/Selector";
 import { List } from "../../utils/List.jsx";
@@ -7,8 +9,6 @@ import EmployeeStore from "../../../store/EmployeeStore";
 import ShiftsStore from "../../../store/ShiftsStore.js";
 import FilterConfigStore from "../../../store/FilterConfigStore";
 import Form from "../../utils/Form";
-import Select from "react-select";
-import "react-select/dist/react-select.css";
 
 export class ListEmployee extends Component {
   state = {
@@ -68,6 +68,7 @@ export class ListEmployee extends Component {
         object.push({ name: item[category], value: item[category], });
         uniqueCategoryItem.push(item[category]);
       }
+      return 1;
     });
     return object;
   }
@@ -202,6 +203,13 @@ export class ListEmployee extends Component {
     for (const form of forms) form.reset();
   }
 
+  sortByRating = (order) => {
+    const list = [...this.state.employee];
+    document.querySelector('.sort-input').checked = false;
+    let sortedList = list.sort((a, b) => order === "asc" ? a.rating - b.rating : b.rating - a.rating);
+    this.setState({ employee: sortedList, shouldListUpdate: true });
+  }
+
   render() {
     // console.log(this.state.filteredData.length, this.state.filteredData);
     // console.log("FILTER", this.state.filterConfig);
@@ -314,14 +322,14 @@ export class ListEmployee extends Component {
 
         {this.state.filteredData.length > 0 ? (
           <List
+            type={"card"}
             makeURL={(data) => "/talent/" + data.id}
             items={this.state.filteredData}
-            type={"table"}
-            hiddenColumns={["id", "profilepicurl", "birthdate", "about", "favoritedlists", "currentjobs", "positions", "badges", "unavailabletimes",]}
-            columns={["Name", "Lastname", "Favorite?", "Response Time", "Hourly Rate", "Rating",]} />
+            sort={this.sortByRating}
+            showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />
         ) : (
-          <h3 className="no-match">No employees matching this criteria</h3>
-        )}
+            <h3 className="no-match">No employees matching this criteria</h3>
+          )}
       </div>
     );
   }

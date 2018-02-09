@@ -26,9 +26,10 @@ export class ListItem extends React.Component {
 
     //if props.type has not been defined y pass the state.renderFunction value
     switch (this.props.type || this.state.renderFunction) {
-    case "table": return this.renderLikeTable();
+      case "table": return this.renderLikeTable();
       //by default the component is going to render like a bootstrap card
-    default: return this.renderLikeCard();
+      case "card": return this.renderLikeCard();
+      default: return this.props.data;
     }
 
   }
@@ -88,8 +89,15 @@ export class ListItem extends React.Component {
   renderLikeCard() {
     return (
       <div className="list-item like-card">
-        <p className="heading">{this.props.heading}</p>
-        <p className="sub-heading">{this.props.subheading}</p>
+        <div className="content">
+          <h5 className="heading">{this.props.heading}</h5>
+          <div className="sub-heading">
+            {this.props.subheading}
+          </div>
+        </div>
+        <div className="side">
+          <Link to={this.props.makeURL(this.props.data)} className="search"></Link>
+        </div>
       </div>
     );
   }

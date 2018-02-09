@@ -131,12 +131,14 @@ class EmployeeDetails extends Component {
   renderBadges = () => {
     let badges = [];
     this.state.data.badges.forEach(badge => {
-      badges.push(<span className="tag badge badge-pill">{badge}</span>);
+      badges.push(<span key={badge} className="tag badge badge-pill">{badge}</span>);
     });
     return badges;
   }
 
   renderDetails = () => {
+    let responseTime = this.state.data.responseTime;
+    responseTime = responseTime > 59 ? Math.ceil(responseTime / 60) + " hour(s)" : responseTime + " minute(s)";
     return (
       <div className={"row employee-details"}>
         <div className="col col-md-3 first-col">
@@ -175,7 +177,7 @@ class EmployeeDetails extends Component {
           <div className="header">
             <p className="response-time">
               <i className="fa fa-hourglass-end" aria-hidden="true"></i>
-              Answers in: {this.state.data.responseTime}
+              Answers in: {responseTime}
             </p>
             <button type="button" className="btn btn-warning btn-offer">
               Offer a Shift

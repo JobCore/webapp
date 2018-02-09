@@ -125,6 +125,10 @@
       .response-time {
         width: 100%;
         color: #c0392b;
+
+        .fa-hourglass-end {
+          margin-right: 10px;
+        }
       }
 
       .btn-offer {

@@ -89,8 +89,6 @@ export class Layout extends React.Component {
                 )} />
                 <Route render={() => <p className="text-center mt-5">Not found</p>} />
               </Switch>
-              <div>
-              </div>
               <footer className="sticky-footer">
                 <div className="container">
                   <div className="text-center">

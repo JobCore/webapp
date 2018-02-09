@@ -1,0 +1,190 @@
+.cards {
+  height: 579px;
+  overflow-y: auto;
+}
+
+.sort-area {
+  position: relative;
+
+  .sort-input {
+    display: none;
+  }
+}
+
+.sort-label {
+  margin: 0;
+  font-size: 1.33rem;
+
+  &:after {
+    margin-left: 5px;
+    font-size: 1.1rem;
+    font-family: "FontAwesome";
+    content: "\f0d7";
+  }
+
+  .sort-input:checked + & {
+    &:after {
+      content: "\f0d8";
+    }
+  }
+
+}
+
+.sort-input + .sort-label + div {
+  display: none;
+  width: 100%;
+  position: absolute;
+}
+
+.sort-input:checked + .sort-label  + div {
+  display: flex;
+  margin-top: 2px;
+  flex-direction: column;
+  border: 1px solid #777;
+
+  button {
+    border: none;
+    width: 100%;
+    padding: 3px;
+    background-color: #fff;
+
+    &:hover {
+      background-color: #fff6dc;
+      cursor: pointer;
+    }
+  }
+}
+
+.like-card {
+  border-bottom: 1px solid #ddd;
+  padding: 5px 0 10px 0;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background-color: #fff6dc;
+  }
+
+  .content {
+    flex: 1;
+  }
+
+  .btn {
+    outline: none !important;
+  }
+
+  .search {
+      flex-basis: 55px;
+      padding: 8px;
+      margin-right: 10px;
+      color: white;
+      font-weight: bold;
+      font-size: 1.3em;
+      background: #ffd65e; /* Old browsers */
+      background: linear-gradient(to bottom, #fadc83 0%,#febf01 100%);
+      border: 1px solid #f39c12;
+      border-radius: 5px;
+      text-decoration: none;
+
+      &:before {
+        font-family: "FontAwesome";
+        content: "\f002";
+      }
+
+      &:hover {
+        background: #ffd65e; /* Old browsers */
+        background: linear-gradient(to bottom, #f1c40f 0%,#f39c12 100%);
+      }
+  }
+
+  .card-header {
+    border-bottom: 1px solid #333;
+    margin: 0;
+  }
+
+  .heading {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .sub-heading {
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: center;
+
+    & span:first-child {
+      padding: 2px 0;
+    }
+
+    .rating,
+    .badges,
+    .currentJobs,
+    .favorite,
+    .responseTime,{
+      align-self: center;
+      padding: 3px 10px;
+      height: 25px;
+      font-size: 13px;
+    }
+
+    .currentJobs {
+      &:before {
+        content: "in ";
+      }
+
+      &:after {
+        content: " jobs(s)";
+      }
+
+    }
+
+    .favorite {
+      &:before {
+        background-color: #FFD700;
+        border-radius: 50%;
+        color: #eee;
+        font-family: "FontAwesome";
+        padding: 2px;
+        margin-right: 8px;
+        content: "\f005";
+      }
+
+      &:after {
+        content: "Marked as favorite";
+      }
+    }
+
+    .responseTime {
+      &:before {
+        font-family: "FontAwesome";
+        content: "\f253";
+        margin-right: 4px;
+        padding: 2px;
+      }
+
+      &.fast {
+        color: #2980b9;
+      }
+
+      &.warning {
+        color: #e74c3c;
+      }
+    }
+
+    .badges {
+      display: flex;
+      flex-direction: row;
+
+      .badge {
+        padding: 4px;
+        margin-right: 5px;
+        background-color: #34495e;
+        color: #eee;
+        align-self: center;
+      }
+    }
+  }
+}
