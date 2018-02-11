@@ -15,6 +15,7 @@ import { ListEmployee } from "./views/employees/ListEmployee.jsx";
 import LoginStore from "../store/LoginStore.js";
 import LoginActions from "../actions/loginActions.js";
 import EmployerStore from "../store/EmployerStore";
+import FavoriteEmployeesList from "./views/employees/FavoriteEmployeesList";
 //import {SingleEmployee} from './views/shifts/ListShifts.jsx';
 
 export class Layout extends React.Component {
@@ -45,17 +46,6 @@ export class Layout extends React.Component {
     });
   }
 
-  addNewListHandler = (event) => {
-    const updatedUserState = { ...this.state.user, };
-    const updatedLists = [...updatedUserState.favoriteLists,];
-    updatedLists.push(event.target.value);
-    event.target.innerHTML = "";
-    updatedUserState.favoriteLists = updatedLists;
-
-    this.setState({ user: updatedUserState, });
-    return event.target.value;
-  }
-
   renderLogin() {
     return (<BrowserRouter>
       <Route path='/' component={Login} />
@@ -65,41 +55,33 @@ export class Layout extends React.Component {
   render() {
     if (!this.state.authenticated) return this.renderLogin();
     return (
-      <div>
-        <BrowserRouter>
-          <div>
-            <Navbar authenticated={this.state.authenticated} onLogout={() => {
-              LoginActions.logoutUser(createBrowserHistory());
-            }} />
-            <div className="content-wrapper">
-              <Switch>
-                <Route exact path='/' component={Home} />
-                <Route exact path='/examples' component={Example} />
-                <Route exact path='/private' component={Private} />
-                <Route exact path='/shift/list' component={ListShifts} />
-                <Route exact path='/talent/list' component={ListEmployee} />
-                <Route exact path='/talent/favorites'
-                  render={() => <p className="text-center mt-5">Not found</p>} />
-                <Route exact path='/shift/:id' component={SingleShift} />
-                <Route exact path='/talent/:id' render={props => (
-                  <EmployeeDetails
-                    favoriteLists={this.state.user.favoriteLists}
-                    addNewList={this.addNewListHandler}
-                    {...props} />
-                )} />
-                <Route render={() => <p className="text-center mt-5">Not found</p>} />
-              </Switch>
-              <footer className="sticky-footer">
-                <div className="container">
-                  <div className="text-center">
-                    <small>Copyright © Job Core Inc</small>
-                  </div>
+      <BrowserRouter>
+        <div>
+          <Navbar authenticated={this.state.authenticated} onLogout={() => {
+            LoginActions.logoutUser(createBrowserHistory());
+          }} />
+          <div className="content-wrapper">
+            <Switch>
+              <Route exact path='/' component={Home} />
+              <Route exact path='/examples' component={Example} />
+              <Route exact path='/private' component={Private} />
+              <Route exact path='/shift/list' component={ListShifts} />
+              <Route exact path='/shift/:id' component={SingleShift} />
+              <Route exact path='/talent/favorites' component={FavoriteEmployeesList} />
+              <Route exact path='/talent/list' component={ListEmployee} />
+              <Route exact path='/talent/:id' component={EmployeeDetails} />
+              <Route render={() => <p className="text-center mt-5">Not found</p>} />
+            </Switch>
+            <footer className="sticky-footer">
+              <div className="container">
+                <div className="text-center">
+                  <small>Copyright © Job Core Inc</small>
                 </div>
-              </footer>
-            </div>
+              </div>
+            </footer>
           </div>
-        </BrowserRouter>
-      </div>
+        </div>
+      </BrowserRouter>
     );
   }
 }

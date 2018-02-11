@@ -38,9 +38,11 @@ class Seeder {
         return {
           id: Faker.random.uuid(),
           name: Faker.name.firstName() + " " + Faker.name.lastName(),
-          favoriteLists: [
-            "List #1", "List #2", "List #3",
-          ],
+          favoriteLists: {
+            "List #1": [],
+            "List #2": [],
+            "List #3": []
+          },
           availableBadges: [
             "English-Proficient", "Spanish-Proficient", "Responsible", "Respecful", "Honest",
           ],
@@ -65,11 +67,6 @@ class Seeder {
         let badges = [];
         for (let i = 0; i < badgesGained; i++) {
           badges.push(availableBadges[i]);
-        }
-
-        const favoritedLists = [];
-        for (let i = 1; i <= Faker.random.number({ min: 0, max: 3, }); i++) {
-          favoritedLists.push(`List #${i}`);
         }
 
         function timeDifference(date1, date2) {
@@ -111,7 +108,6 @@ class Seeder {
           name: Faker.name.firstName(),
           lastname: Faker.name.lastName(),
           birthdate: Faker.date.past(),
-          favorite: favoritedLists.length > 0,
           responseTime: responseTime,
           minHourlyRate: "$ " + Faker.random.number({ min: 10, max: 15, }) + "/hr",
           positions: positions,
@@ -119,7 +115,6 @@ class Seeder {
           about: Faker.lorem.paragraph(),
           currentJobs: Faker.random.number({ min: 10, max: 35, }),
           rating: Faker.random.number({ min: 1, max: 5, precision: 0.5, }),
-          favoritedLists: favoritedLists,
           badges: badges,
           unavailableTimes: unavailableTimes,
         };

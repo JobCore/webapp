@@ -22,6 +22,7 @@ export class ListEmployee extends Component {
     shouldListUpdate: true,
   }
 
+
   componentDidUpdate() {
     this.updateListOnFilter();
   }
@@ -322,6 +323,7 @@ export class ListEmployee extends Component {
 
         {this.state.filteredData.length > 0 ? (
           <List
+            classes="employee-list"
             type={"card"}
             makeURL={(data) => "/talent/" + data.id}
             items={this.state.filteredData}

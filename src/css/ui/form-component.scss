@@ -37,7 +37,6 @@
     .Select-placeholder {
       color: #34495e;
       font-weight: bold;
-      font-size: 1.25rem;
     }
   }
 
@@ -50,6 +49,7 @@
     border-bottom-left-radius: 5px;
 
     .form-group {
+      min-width: 370px;
       margin-bottom: 8px;
       display: flex;
       justify-content: flex-start;
@@ -73,17 +73,21 @@
         flex: 1;
       }
 
-      .date-from-to {
-        display: flex;
-        flex-direction: row;
-      }
-
       .until-time {
         text-align: center;
       }
 
       input[type="number"] {
         border: none;
+      }
+    }
+
+    .date-from-to {
+      display: flex;
+      flex-direction: row;
+
+      label.from-time {
+        min-width: 160px;
       }
     }
 
@@ -107,7 +111,8 @@
     justify-content: space-between;
 
     .form-group {
-      flex: 0 1 45%;
+      flex-basis: 48%;
+      display: flex;
     }
   }
 }

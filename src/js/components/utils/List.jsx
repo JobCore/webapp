@@ -2,6 +2,7 @@ import React from "react";
 
 import { ListItem } from "./ListItem.jsx";
 import ReactStars from "react-stars";
+import EmployerStore from "../../store/EmployerStore";
 
 export class List extends React.Component {
 
@@ -37,7 +38,7 @@ export class List extends React.Component {
     }
 
     return (
-      <div className="results-list">
+      <div className={`results-list ${this.props.classes || ""}`}>
         <div style={{ display: "none", }} className="btn-group" role="group" aria-label="Basic example">
           <button type="button" className="btn btn-secondary">Left</button>
           <button type="button" className="btn btn-secondary">Middle</button>
@@ -128,6 +129,9 @@ export class List extends React.Component {
         formatedSubheading = options.map(
           option => {
             switch (option) {
+              case "favorite":
+                if (!EmployerStore.isEmployeeInFavoriteList(item.id)) { return "" }
+                return <span className={option} key={option}>{item[option]}</span>;
               case "rating":
                 if (!item[option]) { return "" }
                 return (

@@ -4,7 +4,8 @@ import { Redirect } from "react-router-dom";
 import ReactStars from "react-stars";
 import ProfilePic from "../../utils/ProfilePic";
 import Modal from "../../utils/Modal";
-import employeeStore from "../../../store/EmployeeStore";
+import EmployeeStore from "../../../store/EmployeeStore";
+import EmployerStore from "../../../store/EmployerStore";
 
 // import "../../../../css/view/employee_details.scss";
 
@@ -16,30 +17,60 @@ class EmployeeDetails extends Component {
    **/
 
   state = {
-    data: employeeStore.getById(this.props.match.params.id),
+    employee: EmployeeStore.getById(this.props.match.params.id),
+    employer: EmployerStore.getEmployer(),
     modalOpened: false,
   }
 
+  setEmployer = () => {
+    this.setState({
+      employer: EmployerStore.getEmployer()
+    });
+  }
+
+  componentWillMount() {
+    EmployerStore.on("change", this.setEmployer);
+  }
+
+  componentWillUnmount() {
+    EmployerStore.removeListener("change", this.setEmployer);
+  }
+
+  employeeIsFavorite = () => {
+    let favLists = this.state.employer.favoriteLists;
+    let isFavorite = false;
+    let favoritedInLists = [];
+    Object.keys(favLists).map(key => {
+      if (favLists[key].includes(this.state.employee.id)) {
+        isFavorite = true;
+        favoritedInLists.push(key);
+      };
+      return 1;
+    });
+    return { isFavorite, favoritedInLists };
+  }
+
   renderFavorites = () => {
+    const favInfo = this.employeeIsFavorite();
+    const employerFavLists = Object.keys(this.state.employer.favoriteLists);
+    let message = favInfo.isFavorite ? "This person is already one of your favorites in the following lists:" : null;
 
-    let message = this.state.data.favorite ? "This person is already one of your favorites in the following lists:" : null;
+    let favoritedLists = favInfo.favoritedInLists.length > 0 ? favInfo.favoritedInLists.map(list => <li key={list}>{list}</li>) : null;
 
-    let favoritedLists = this.state.data.favorite ? this.state.data.favoritedLists.map(position => {
-      if (this.state.data.favoritedLists.indexOf(position) !== -1) {
-        return <li key={position}>{position}</li>;
-      } else {
-        return null;
-      }
-    }) : null;
-
-    let favoriteCheckboxes = this.props.favoriteLists.map(list => {
-      let isChecked = this.state.data.favoritedLists.indexOf(list) !== -1;
+    let favoriteCheckboxes = employerFavLists.map(list => {
+      let isChecked = favInfo.favoritedInLists.includes(list);
       return (
         <div className="cntr" key={list}>
           <label htmlFor={list} className="label-cbx">
             <input id={list} type="checkbox" name={list}
               className="invisible" checked={isChecked} value={list}
-              onChange={event => this.updateFavoritesHandler(event)} />
+              onChange={event => {
+                if (event.target.checked) {
+                  EmployerStore.addEmployeeToFavList(this.state.employee.id, list);
+                } else {
+                  EmployerStore.removeEmployeeFromFavList(this.state.employee.id, list);
+                }
+              }} />
             <div className="checkbox">
               <svg width="20px" height="20px" viewBox="0 0 20 20">
                 <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
@@ -87,7 +118,7 @@ class EmployeeDetails extends Component {
   }
 
   updateFavoritesHandler = (event) => {
-    const updatedDataState = { ...this.state.data, };
+    const updatedDataState = { ...this.state.employee, };
     const updatedLists = [...updatedDataState.favoritedLists,];
     if (event.target.checked) {
       updatedLists.push(event.target.value);
@@ -103,7 +134,7 @@ class EmployeeDetails extends Component {
 
 
   renderPositionsListItems = () => {
-    let positionsElement = Object.entries(this.state.data.positions).map(key => {
+    let positionsElement = Object.entries(this.state.employee.positions).map(key => {
       return (
         <li key={key[0]}>
           <span>{key[0]}: </span><span>{key[1]} jobs</span>
@@ -114,7 +145,7 @@ class EmployeeDetails extends Component {
   }
 
   renderPositionsSummary = () => {
-    let positionsSummary = Object.entries(this.state.data.positions).map(key => {
+    let positionsSummary = Object.entries(this.state.employee.positions).map(key => {
       return (
         <li key={key[0]}>
           <p>
@@ -130,27 +161,27 @@ class EmployeeDetails extends Component {
 
   renderBadges = () => {
     let badges = [];
-    this.state.data.badges.forEach(badge => {
+    this.state.employee.badges.forEach(badge => {
       badges.push(<span key={badge} className="tag badge badge-pill">{badge}</span>);
     });
     return badges;
   }
 
   renderDetails = () => {
-    let responseTime = this.state.data.responseTime;
+    let responseTime = this.state.employee.responseTime;
     responseTime = responseTime > 59 ? Math.ceil(responseTime / 60) + " hour(s)" : responseTime + " minute(s)";
     return (
       <div className={"row employee-details"}>
         <div className="col col-md-3 first-col">
           <ProfilePic
             rounded
-            imageUrl={this.state.data.profilePicUrl}
+            imageUrl={this.state.employee.profilePicUrl}
           />
           <div className="stars">
-            <ReactStars size={40} value={this.state.data.rating} edit={false} />
+            <ReactStars size={40} value={this.state.employee.rating} edit={false} />
           </div>
           <div className="jobs-summary">
-            <h3>Doing {this.state.data.currentJobs} jobs</h3>
+            <h3>Doing {this.state.employee.currentJobs} jobs</h3>
             <ul>
               {this.renderPositionsListItems()}
             </ul>
@@ -159,11 +190,11 @@ class EmployeeDetails extends Component {
 
         <div className="col col-md-5 second-col">
           <div className="header">
-            <h3>{`${this.state.data.name} ${this.state.data.lastname}`}</h3>
-            <span className="rate">{this.state.data.minHourlyRate} Minimum Rate</span>
+            <h3>{`${this.state.employee.name} ${this.state.employee.lastname}`}</h3>
+            <span className="rate">{this.state.employee.minHourlyRate} Minimum Rate</span>
           </div>
           <div className="about">
-            <p>{this.state.data.about}</p>
+            <p>{this.state.employee.about}</p>
           </div>
           <div className="activity">
             <h3>Recent Activity Reported</h3>
@@ -207,7 +238,7 @@ class EmployeeDetails extends Component {
   }
 
   render() {
-    if (this.state.data === undefined) {
+    if (this.state.employee === undefined) {
       return <Redirect from={this.props.match.url} to="/talent/list" />;
     } else {
       return (
@@ -223,7 +254,7 @@ class EmployeeDetails extends Component {
                 id="new-favorite" placeholder="Name your new list"
                 onKeyPress={event => {
                   if (event.key === "Enter") {
-                    this.props.addNewList(event);
+                    EmployerStore.addNewList(event);
                     this.toggleModal();
                   }
                 }} />

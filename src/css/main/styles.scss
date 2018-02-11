@@ -8,6 +8,7 @@
 @import '../view/login';
 @import '../view/list';
 @import '../view/employee-details';
+@import '../view/favorites-list';
 
 html {
     font-size: 16px;
@@ -21,7 +22,8 @@ html {
 
 .form-area {
     display: flex;
-    justify-content: space-between;
+    flex: 1;
+    min-height: fit-content;
 
     .form-component {
         flex: 1;
