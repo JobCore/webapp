@@ -97,6 +97,11 @@ export class ListItem extends React.Component {
         </div>
         <div className="side">
           <Link to={this.props.makeURL(this.props.data)} className="search"></Link>
+          {
+            this.props.removeCard &&
+            // eslint-disable-next-line
+            <button className="delete" onClick={this.props.removeCard}></button>
+          }
         </div>
       </div>
     );

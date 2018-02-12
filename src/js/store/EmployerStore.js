@@ -9,29 +9,37 @@ class EmployerStore extends EventEmmiter {
     this.employer = Seeder.make(1, "employer");
   }
 
-  addEmployer() {
+  addEmployer = () => {
     this.employer.push(Seeder.make(1, "employer"));
     this.emit("change");
   }
 
-  getEmployer() {
+  getEmployer = () => {
     return this.employer;
   }
 
-  addNewList(event) {
+  addNewList = (event) => {
     this.employer.favoriteLists[event.target.value] = [];
     this.emit("change");
   }
 
-  addEmployeeToFavList(id, list) {
+  addEmployeeToFavList = (id, list) => {
     this.employer.favoriteLists[list].push(id);
     this.emit("change");
   }
 
-  removeEmployeeFromFavList(id, list) {
-    let index = this.employer.favoriteLists[list].indexOf(id);
-    this.employer.favoriteLists[list].splice(index, 1);
-    this.emit("change");
+  removeEmployeeFromFavList = (id, list) => {
+    if (!list) {
+      for (const key in this.employer.favoriteLists) {
+        let index = this.employer.favoriteLists[key].indexOf(id);
+        if (index !== -1) this.employer.favoriteLists[key].splice(index, 1);
+      }
+      this.emit("change");
+    } else {
+      let index = this.employer.favoriteLists[list].indexOf(id);
+      this.employer.favoriteLists[list].splice(index, 1);
+      this.emit("change");
+    }
   }
 
   isEmployeeInFavoriteList = (id) => {
@@ -41,7 +49,7 @@ class EmployerStore extends EventEmmiter {
     return isFavorite;
   }
 
-  getFavorites() {
+  getFavorites = () => {
     let favorites = [];
     const lists = this.employer.favoriteLists;
     for (const key in lists) {

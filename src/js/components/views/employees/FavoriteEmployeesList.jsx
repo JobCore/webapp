@@ -20,11 +20,19 @@ class FavoriteEmployeesList extends Component {
 
   componentWillMount() {
     FilterConfigStore.on("change", this.setConfig);
+    EmployerStore.on("change", this.getFavorites);
     this.updateListOnFilter();
   }
 
   componentWillUnmount() {
     FilterConfigStore.removeListener("change", this.setConfig);
+    EmployerStore.removeListener("change", this.getFavorites);
+  }
+
+  getFavorites = () => {
+    this.setState({
+      employee: EmployerStore.getFavorites()
+    });
   }
 
   setConfig = () => {
@@ -129,6 +137,12 @@ class FavoriteEmployeesList extends Component {
     this.setState({ employee: sortedList, shouldListUpdate: true });
   }
 
+  removeEmployee = (id) => {
+    let list = null;
+    EmployerStore.removeEmployeeFromFavList(id, list);
+    this.setState({ shouldListUpdate: true });
+  }
+
   render() {
     return (
       <div className="container-fluid favorites-area" style={{ position: "relative", }}>
@@ -151,6 +165,7 @@ class FavoriteEmployeesList extends Component {
             classes="favorites-list"
             type={"card"}
             makeURL={(data) => "/talent/" + data.id}
+            removeItem={this.removeEmployee}
             items={this.state.filteredData}
             sort={this.sortByRating}
             showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />

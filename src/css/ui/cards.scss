@@ -72,11 +72,20 @@
     outline: none !important;
   }
 
-  .search {
-      flex-basis: 55px;
-      padding: 8px;
-      margin-right: 10px;
-      color: white;
+  .side {
+    display: flex;
+    align-items: center;
+    width: 100px;
+    justify-content: space-between;
+  }
+
+  .search,
+  .delete {
+      outline: none;
+      display: table;
+      width: 40px;
+      height: 40px;
+      color: #434343;
       font-weight: bold;
       font-size: 1.3em;
       background: #ffd65e; /* Old browsers */
@@ -86,14 +95,31 @@
       text-decoration: none;
 
       &:before {
+        display: table-cell;
+        vertical-align: middle;
         font-family: "FontAwesome";
-        content: "\f002";
+        padding: 0 0 0 8px;
       }
 
       &:hover {
         background: #ffd65e; /* Old browsers */
         background: linear-gradient(to bottom, #f1c40f 0%,#f39c12 100%);
+        cursor: pointer;
       }
+  }
+
+  .search {
+    &:before {
+      content: "\f002";
+    }
+  }
+
+  .delete {
+    color: #434343;
+    &:before {
+      padding: 0 0 0 5px;
+      content:"\f014";
+    }
   }
 
   .card-header {

@@ -169,6 +169,7 @@ export class List extends React.Component {
         type={"card"}
         heading={`${item.name} ${item.lastname}`}
         subheading={formatedSubheading}
+        removeCard={this.props.removeItem ? () => this.props.removeItem(item.id) : null}
         makeURL={this.props.makeURL}
       />;
     });
