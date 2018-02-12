@@ -69,27 +69,6 @@ class Seeder {
           badges.push(availableBadges[i]);
         }
 
-        function timeDifference(date1, date2) {
-          let difference = date1.getTime() - date2.getTime();
-          let minutesDifference = Math.abs(Math.floor(difference / 1000 / 60));
-          return minutesDifference;
-        }
-
-        let today = Date.now();
-        let year = new Date(today).getFullYear();
-        let month = new Date(today).getMonth();
-        let day = new Date(today).getDate();
-        let hours = new Date(today).getHours();
-        let minutes = new Date(today).getMinutes();
-
-        let responseTime = timeDifference(
-          new Date(today),
-          new Date(year, month,
-            day + Faker.random.number({ min: 0, max: 3, }),
-            hours + Faker.random.number({ min: 0, max: 1, }),
-            minutes + Faker.random.number({ min: 0, max: 20, }))
-        );
-
         let date = `2018-0${Faker.random.number({ min: 1, max: 9, })}-${Faker.random.number({ min: 10, max: 31, })}`;
 
         let unavailableTimes = [];
@@ -108,7 +87,7 @@ class Seeder {
           name: Faker.name.firstName(),
           lastname: Faker.name.lastName(),
           birthdate: Faker.date.past(),
-          responseTime: responseTime,
+          responseTime: Faker.random.number({min: 10, max: 4200}),
           minHourlyRate: "$ " + Faker.random.number({ min: 10, max: 15, }) + "/hr",
           positions: positions,
           profilePicUrl: Faker.image.imageUrl(300, 300, "people"),
