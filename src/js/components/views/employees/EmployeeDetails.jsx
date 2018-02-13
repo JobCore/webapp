@@ -1,13 +1,11 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
+import swal from 'sweetalert2';
 
 import ReactStars from "react-stars";
 import ProfilePic from "../../utils/ProfilePic";
-import Modal from "../../utils/Modal";
 import EmployeeStore from "../../../store/EmployeeStore";
 import EmployerStore from "../../../store/EmployerStore";
-
-// import "../../../../css/view/employee_details.scss";
 
 class EmployeeDetails extends Component {
 
@@ -19,7 +17,6 @@ class EmployeeDetails extends Component {
   state = {
     employee: EmployeeStore.getById(this.props.match.params.id),
     employer: EmployerStore.getEmployer(),
-    modalOpened: false,
   }
 
   setEmployer = () => {
@@ -97,8 +94,27 @@ class EmployeeDetails extends Component {
               {favoriteCheckboxes}
             </div>
             <div className="form-group">
-              <button className="btn btn-default btn-block"
-                onClick={this.toggleModal}>
+              <button className="btn btn-default btn-block" onClick={() => swal({
+                position: 'top',
+                title: 'Create a new list',
+                input: 'text',
+                type: 'info',
+                showCloseButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+                confirmButtonColor: '#d33',
+                cancelButtonText: 'Cancel',
+                cancelButtonColor: '#3085d6',
+              }).then(result => {
+                if (result.value) {
+                  EmployerStore.addNewList(result.value);
+                  swal({
+                    position: 'top',
+                    type: "success",
+                    html: 'List created'
+                  })
+                }
+              })}>
                 <i className="fa fa-plus" aria-hidden="true"></i>
                 <span>New List</span>
               </button>
@@ -231,12 +247,6 @@ class EmployeeDetails extends Component {
     );
   }
 
-  toggleModal = () => {
-    this.setState({
-      modalOpened: !this.state.modalOpened,
-    });
-  }
-
   render() {
     if (this.state.employee === undefined) {
       return <Redirect from={this.props.match.url} to="/talent/list" />;
@@ -244,25 +254,6 @@ class EmployeeDetails extends Component {
       return (
         <div>
           {this.renderDetails()}
-          <Modal
-            show={(this.state.modalOpened)}
-            onClose={this.toggleModal}>
-            <h4>Create New List</h4>
-            <div className="form-group">
-              <label htmlFor="exampleInputEmail1">Name</label>
-              <input name="favorite" className="form-control" type="text"
-                id="new-favorite" placeholder="Name your new list"
-                onKeyPress={event => {
-                  if (event.key === "Enter") {
-                    EmployerStore.addNewList(event);
-                    this.toggleModal();
-                  }
-                }} />
-              <small id="listHelp" className="form-text text-muted">To help you filter your favorite talents.</small>
-              <small id="listHelp" className="form-text text-muted">Press Enter to create.</small>
-            </div>
-
-          </Modal>
         </div>
       );
     }

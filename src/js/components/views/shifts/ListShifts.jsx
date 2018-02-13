@@ -43,7 +43,7 @@ export class ListShifts extends React.Component {
   }
 
 
-  toggleModal(item) {
+  toggleModal = (item) => {
     console.log("Render the modal!!!", item);
     this.setState({
       modalOpened: !this.state.modalOpened,
@@ -181,8 +181,9 @@ export class ListShifts extends React.Component {
             <h3 className="no-match">No shifts matching this criteria</h3>
           )}
         <Modal
+          header="Shift"
           show={(this.state.modalOpened && this.state.currentShift.id != null)}
-          onClose={this.toggleModal.bind(this)}>
+          onClose={this.toggleModal}>
           <p>Venue: {this.state.currentShift.location}</p>
           <p>Position: {this.state.currentShift.position}</p>
           <p>Date: {Moment(this.state.currentShift.date).format("MMM Do YYYY")}</p>

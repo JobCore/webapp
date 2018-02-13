@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import swal from 'sweetalert2';
+
 import { List } from '../../utils/List';
 import EmployerStore from '../../../store/EmployerStore';
 import FilterConfigStore from '../../../store/FilterConfigStore';
+import Modal from '../../utils/Modal';
 
 class FavoriteEmployeesList extends Component {
   state = {
@@ -12,6 +15,9 @@ class FavoriteEmployeesList extends Component {
     },
     availableBadges: EmployerStore.getEmployer().availableBadges,
     shouldListUpdate: true,
+    modalOpened: false,
+    editing: null,
+    editingLists: []
   }
 
   componentDidUpdate() {
@@ -40,6 +46,12 @@ class FavoriteEmployeesList extends Component {
       filterConfig: {
         ...FilterConfigStore.getConfigFor("employeeList"),
       },
+    });
+  }
+
+  toggleModal = () => {
+    this.setState({
+      modalOpened: !this.state.modalOpened
     });
   }
 
@@ -143,6 +155,80 @@ class FavoriteEmployeesList extends Component {
     this.setState({ shouldListUpdate: true });
   }
 
+  editList = (listName) => {
+    if (this.state.editingLists.length < 1) {
+      let updatedEditingLists = [...this.state.editingLists];
+      updatedEditingLists.push(listName);
+      this.setState({
+        editingLists: updatedEditingLists,
+        editing: updatedEditingLists.length > 0
+      })
+    }
+  }
+
+  finishEditingList = (type, prevListName) => {
+    let updatedEditingLists = [...this.state.editingLists];
+    const index = updatedEditingLists.indexOf(prevListName);
+    updatedEditingLists.splice(index, 1);
+
+    if (type === "save") {
+      const newListName = document.querySelector('#list').value;
+      if (newListName.length > 0) EmployerStore.renameFavoritesLists(prevListName, newListName);
+    }
+    this.setState({
+      editingLists: updatedEditingLists,
+      editing: updatedEditingLists.length > 0,
+      shouldListUpdate: true,
+    })
+  }
+
+  renderFavLists = () => {
+    let lists = [];
+    Object.keys(EmployerStore.getFavoritesLists()).map(list => {
+      let message = EmployerStore.getFavoritesListsEmployeeIds(list).length > 0 ?
+        `It contains ${EmployerStore.getFavoritesListsEmployeeIds(list).length} candidate(s) already favorited, <br/>
+        you won't be able to recover it after deletion.`
+        :
+        `The list is empty. <br/> You can delete it safely.`;
+
+      let htmlList = this.state.editing && this.state.editingLists.includes(list) ?
+        <li key={list}>
+          <input type="text" name="list" id="list" placeholder={list} required />
+          <div className="side-edit">
+            <button className="save" onClick={() => this.finishEditingList("save", list)}></button>
+            <button className="cancel" onClick={() => this.finishEditingList("cancel", list)}></button>
+          </div>
+        </li>
+        :
+        <li key={list}>
+          <p>{list}</p>
+          <div className="side">
+            <button className="edit" onClick={() => this.editList(list)}></button>
+            <button className="delete" onClick={() => swal({
+              position: 'top',
+              title: 'Are you sure you want <br/> to delete this list?',
+              type: 'info',
+              html: message,
+              showCloseButton: true,
+              showCancelButton: true,
+              confirmButtonText: 'Confirm',
+              confirmButtonColor: '#d33',
+              cancelButtonText: 'Cancel',
+              cancelButtonColor: '#3085d6',
+            }).then(result => {
+              if (result.value) {
+                EmployerStore.removeFavoritesLists(list);
+                this.setState({ shouldListUpdate: true });
+              }
+            })}></button>
+          </div>
+        </li>;
+
+      return lists.push(htmlList)
+    })
+    return lists;
+  }
+
   render() {
     return (
       <div className="container-fluid favorites-area" style={{ position: "relative", }}>
@@ -155,7 +241,7 @@ class FavoriteEmployeesList extends Component {
               Clear filters
             </button>
           }
-          <button className="btn btn-warning">
+          <button className="btn btn-warning" onClick={this.toggleModal}>
             Manage Favorites List
           </button>
         </div>
@@ -172,6 +258,39 @@ class FavoriteEmployeesList extends Component {
         ) : (
             <h3 className="no-match">No employees matching this criteria</h3>
           )}
+
+        <Modal
+          size="fullscreen"
+          header="Manage your lists"
+          show={this.state.modalOpened}
+          onClose={this.toggleModal}>
+          <ul className="lists">
+            {this.renderFavLists()}
+          </ul>
+          <button className="btn btn-primary btn-block" onClick={() => swal({
+            position: 'top',
+            title: 'Create a new list',
+            input: 'text',
+            type: 'info',
+            showCloseButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            confirmButtonColor: '#d33',
+            cancelButtonText: 'Cancel',
+            cancelButtonColor: '#3085d6',
+          }).then(result => {
+            if (result.value) {
+              EmployerStore.addNewList(result.value);
+              swal({
+                position: 'top',
+                type: "success",
+                html: 'List created'
+              })
+            }
+          })}>
+            + New List
+          </button>
+        </Modal>
       </div>
     )
   }
