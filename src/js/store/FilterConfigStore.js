@@ -23,6 +23,9 @@ class FilterConfigStore extends EventEmmiter {
       shiftMinHourlyRate: null,
       selectedShift: null,
     };
+    this.favoritesListConfig = {
+      favoritesList: null,
+    }
   };
 
   getConfigFor(listName) {

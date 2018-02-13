@@ -73,8 +73,9 @@ class EmployerStore extends EventEmmiter {
   }
 
   /**
-   *
-   *
+   * Check if Employee is in any of the favorites lis
+   * @param {string} id Id of the employee
+   * @returns {bool}
    * @memberof EmployerStore
    */
   isEmployeeInFavoriteList = (id) => {
@@ -85,18 +86,23 @@ class EmployerStore extends EventEmmiter {
   }
 
   /**
-   * Returns an array witg all the employees marked as favorite on any list
+   * Returns an array with all the employees marked as favorite on any list
    * @returns {array}
    * @memberof EmployerStore
    */
-  getFavorites = () => {
+  getFavorites = (listName) => {
     let favorites = [];
-    const lists = this.employer.favoriteLists;
-    for (const key in lists) {
-      lists[key].forEach(employeeId => {
-        let employee = EmployeeStore.getById(employeeId);
-        if (!favorites.includes(employee)) { favorites.push(employee)};
-      })
+    if (listName && listName != null) {
+      const idArr = this.getFavoritesListsEmployeeIds(listName);
+      idArr.forEach(id => favorites.push(EmployeeStore.getById(id)));
+    } else {
+      const lists = this.employer.favoriteLists;
+      for (const key in lists) {
+        lists[key].forEach(employeeId => {
+          let employee = EmployeeStore.getById(employeeId);
+          if (!favorites.includes(employee)) { favorites.push(employee)};
+        })
+      }
     }
     return favorites;
   }

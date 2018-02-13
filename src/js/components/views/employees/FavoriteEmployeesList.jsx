@@ -1,33 +1,30 @@
 import React, { Component } from 'react';
 import swal from 'sweetalert2';
+import Select from "react-select";
 
 import { List } from '../../utils/List';
 import EmployerStore from '../../../store/EmployerStore';
 import FilterConfigStore from '../../../store/FilterConfigStore';
 import Modal from '../../utils/Modal';
+import Form from '../../utils/Form';
 
 class FavoriteEmployeesList extends Component {
   state = {
-    employee: EmployerStore.getFavorites(),
-    filteredData: [],
+    employee: EmployerStore.getFavorites(
+      FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
     filterConfig: {
-      ...FilterConfigStore.getConfigFor("employeeList"),
+      ...FilterConfigStore.getConfigFor("favoritesList"),
     },
-    availableBadges: EmployerStore.getEmployer().availableBadges,
+    favoritesLists: EmployerStore.getFavoritesLists(),
     shouldListUpdate: true,
     modalOpened: false,
     editing: null,
     editingLists: []
   }
 
-  componentDidUpdate() {
-    this.updateListOnFilter();
-  }
-
   componentWillMount() {
     FilterConfigStore.on("change", this.setConfig);
     EmployerStore.on("change", this.getFavorites);
-    this.updateListOnFilter();
   }
 
   componentWillUnmount() {
@@ -35,16 +32,26 @@ class FavoriteEmployeesList extends Component {
     EmployerStore.removeListener("change", this.getFavorites);
   }
 
+  createOptionsObject = (category) => {
+    let data = { ...this.state.favoritesLists, };
+    data = Object.keys(data);
+    let object = [];
+    data.forEach(item => object.push({ label: item, value: item, }));
+    return object;
+  }
+
   getFavorites = () => {
     this.setState({
-      employee: EmployerStore.getFavorites()
+      employee: EmployerStore.getFavorites(
+        FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
+      favoritesLists: EmployerStore.getFavoritesLists(),
     });
   }
 
   setConfig = () => {
     this.setState({
       filterConfig: {
-        ...FilterConfigStore.getConfigFor("employeeList"),
+        ...FilterConfigStore.getConfigFor("favoritesList"),
       },
     });
   }
@@ -63,85 +70,6 @@ class FavoriteEmployeesList extends Component {
     return filteredOptions;
   }
 
-  filterList = (listItems, filterOption) => {
-    let filterOptionValue = this.state.filterConfig[filterOption];
-    let filteredList;
-    /* Remove prepended 'shift' or 'profile' of FilterConfigStore
-       so that it matches Employee or Shift model atribute name */
-    filterOption = filterOption.match(/[^(shift|profile)]\w+/g)[0];
-    filterOption = filterOption.charAt(0).toLowerCase() + filterOption.slice(1);
-
-    if (filterOption === "responseTime") {
-      filteredList = listItems.filter(item => item["responseTime"] <= filterOptionValue);
-    } else if (filterOption === "badges" && filterOptionValue.length > 0) {
-      filterOptionValue.forEach(valuesObj => {
-        filteredList = listItems.filter(item => item[filterOption].includes(valuesObj.value));
-      });
-    } else if (filterOption === "badges" && filterOptionValue.length === 0) {
-      filteredList = this.state.employee;
-    } else if (filterOption === "position") {
-      filteredList = listItems.filter(item => Object.keys(item["positions"]).includes(filterOptionValue));
-    } else if (filterOption === "minHourlyRate") {
-      filteredList = listItems.filter(item => parseFloat(item[filterOption].match(/\d+/g)) <= filterOptionValue);
-    } else if (filterOption === "rating") {
-      filteredList = listItems.filter(
-        item => item[filterOption] >= filterOptionValue
-      );
-    } else if (filterOption === "fromTime" || filterOption === "untilTime" || filterOption === "date") {
-      if (this.state.filterConfig.shiftFromTime != null && this.state.filterConfig.shiftFromTime.length !== 0 &&
-        this.state.filterConfig.shiftUntilTime != null && this.state.filterConfig.shiftUntilTime.length !== 0 &&
-        this.state.filterConfig.shiftDate != null && this.state.filterConfig.shiftDate.length !== 0) {
-        let filterFromTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftFromTime);
-        let filterUntilTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftUntilTime);
-        let filterDate = this.state.filterConfig.shiftDate;
-
-        filteredList = listItems.filter(item => {
-          for (let i = 0; i < item.unavailableTimes.length; i++) {
-
-            const times = item.unavailableTimes[i];
-            const date = item.unavailableTimes[i].date;
-            let fromTime = this.convertHoursStringIntoNumber(times.fromTime);
-            let untilTime = this.convertHoursStringIntoNumber(times.untilTime);
-
-            if ((((filterFromTime >= fromTime && filterFromTime <= untilTime) ||
-              (filterUntilTime >= fromTime && filterUntilTime <= untilTime)) ||
-              (filterUntilTime >= untilTime && filterFromTime <= fromTime)) &&
-              date === filterDate) {
-              return false;
-            }
-          }
-          return true;
-        });
-      } else {
-        filteredList = this.state.filteredData.length > 0 ?
-          this.state.filteredData : this.state.employee;
-      }
-    } else {
-      filteredList = listItems.filter(
-        item => item[filterOption] === filterOptionValue
-      );
-    }
-    return filteredList;
-  }
-
-  updateListOnFilter = () => {
-    if (this.state.shouldListUpdate) {
-      let updatedListItems = [...this.state.employee,];
-      let filterableOptions = this.getFiterableOptions();
-      if (filterableOptions.length > 0) {
-        filterableOptions.forEach(option => {
-          updatedListItems = this.filterList(updatedListItems, option);
-        });
-      } else {
-        updatedListItems = this.state.employee;
-      }
-      this.setState({
-        filteredData: updatedListItems,
-        shouldListUpdate: false,
-      });
-    }
-  }
-
   sortByRating = (order) => {
     const list = [...this.state.employee];
     document.querySelector('.sort-input').checked = false;
@@ -150,7 +78,7 @@ class FavoriteEmployeesList extends Component {
   }
 
   removeEmployee = (id) => {
-    let list = null;
+    let list = this.state.filterConfig.favoritesList || null;
     EmployerStore.removeEmployeeFromFavList(id, list);
     this.setState({ shouldListUpdate: true });
   }
@@ -229,10 +157,43 @@ class FavoriteEmployeesList extends Component {
     return lists;
   }
 
+  clearFilters = () => {
+    FilterConfigStore.clearConfigFor("favoritesList");
+    this.setState({
+      employee: EmployerStore.getFavorites(
+        FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
+      shouldListUpdate: true,
+    });
+    let forms = document.getElementsByClassName("form-component");
+    for (const form of forms) form.reset();
+  }
+
   render() {
     return (
       <div className="container-fluid favorites-area" style={{ position: "relative", }}>
-        <h1>Favorites</h1>
+        <div className="form-area" >
+          <Form title="Filter by List" orderedAs="column">
+            <div className="form-group">
+              <label htmlFor="profileRating">Favorites Lists</label>
+              <Select
+                clearable={false}
+                options={this.createOptionsObject("favoritesList")}
+                value={
+                  {
+                    value: this.state.filterConfig.favoritesList,
+                    label: this.state.filterConfig.favoritesList
+                  } || []}
+                onChange={option => {
+                  FilterConfigStore.updateConfig(option.value, "favoritesList", "favoritesList")
+                  this.setState({
+                    employee: EmployerStore.getFavorites(
+                      FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
+                    shouldListUpdate: true,
+                  })
+                }} />
+            </div>
+          </Form>
+        </div>
 
         <div className="top-btn">
           {
@@ -246,13 +207,13 @@ class FavoriteEmployeesList extends Component {
           </button>
         </div>
 
-        {this.state.filteredData.length > 0 ? (
+        {this.state.employee.length > 0 ? (
           <List
             classes="favorites-list"
             type={"card"}
             makeURL={(data) => "/talent/" + data.id}
             removeItem={this.removeEmployee}
-            items={this.state.filteredData}
+            items={this.state.employee}
             sort={this.sortByRating}
             showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />
         ) : (
