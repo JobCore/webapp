@@ -38,6 +38,7 @@ class Seeder {
         return {
           id: Faker.random.uuid(),
           name: Faker.name.firstName() + " " + Faker.name.lastName(),
+          location: Faker.address.streetName,
           favoriteLists: {
             "List #1": [],
             "List #2": [],

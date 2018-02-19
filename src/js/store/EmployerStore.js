@@ -116,6 +116,18 @@ class EmployerStore extends EventEmmiter {
     return this.employer.favoriteLists;
   }
 
+  getListWhereEmployeeIsFavorite = (id) => {
+    let favLists = this.employer.favoriteLists;
+    let favoritedInLists = [];
+    Object.keys(favLists).map(key => {
+      if (favLists[key].includes(id)) {
+        favoritedInLists.push(key);
+      };
+      return 1;
+    });
+    return favoritedInLists;
+  }
+
   /**
    * Get Employee Ids from a certain list
    * @param {string} listName List to get employees from

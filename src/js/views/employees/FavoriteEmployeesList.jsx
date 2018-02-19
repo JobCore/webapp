@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import swal from 'sweetalert2';
+import SweetAlert from 'react-bootstrap-sweetalert';
 import Select from "react-select";
 
 import { List } from '../../components/utils/List';
@@ -19,7 +20,10 @@ export class FavoriteEmployeesList extends Component {
     shouldListUpdate: true,
     modalOpened: false,
     editing: null,
-    editingLists: []
+    editingLists: [],
+    showAlert: false,
+    selectedEmployee: null,
+    selectedList: []
   }
 
   componentWillMount() {
@@ -57,9 +61,16 @@ export class FavoriteEmployeesList extends Component {
   }
 
   toggleModal = () => {
-    this.setState({
-      modalOpened: !this.state.modalOpened
-    });
+    this.setState((prevState, props) => ({
+      modalOpened: !prevState.modalOpened
+    }));
+  }
+
+  toggleAlert = (id = null) => {
+    this.setState((prevState, props) => ({
+      selectedEmployee: id,
+      showAlert: !prevState.showAlert
+    }));
   }
 
   getFiterableOptions = () => {
@@ -77,10 +88,15 @@ export class FavoriteEmployeesList extends Component {
     this.setState({ employee: sortedList, shouldListUpdate: true });
   }
 
-  removeEmployee = (id) => {
-    let list = this.state.filterConfig.favoritesList || null;
-    EmployerStore.removeEmployeeFromFavList(id, list);
-    this.setState({ shouldListUpdate: true });
+  removeEmployee = () => {
+    this.state.selectedList.map(list =>
+      EmployerStore.removeEmployeeFromFavList(this.state.selectedEmployee, list)
+    );
+    this.setState({
+      selectedEmployee: null,
+      showAlert: false,
+      shouldListUpdate: true
+    });
   }
 
   editList = (listName) => {
@@ -157,6 +173,41 @@ export class FavoriteEmployeesList extends Component {
     return lists;
   }
 
+  selectList = (isChecked, list) => (
+    this.setState((prevState, props) => {
+      if (!isChecked) {
+        return { selectedList: prevState.selectedList.filter(item => item !== list) }
+      }
+      return {
+        selectedList: prevState.selectedList.concat(list)
+      }
+    })
+  )
+
+  renderListCheckboxes = id => {
+    let favoritedLists = EmployerStore.getListWhereEmployeeIsFavorite(id);
+
+    let favoriteCheckboxes = favoritedLists.map(list => {
+      return (
+        <div className="cntr" key={list} style={{ marginBottom: '8px' }}>
+          <label htmlFor={list} className="label-cbx">
+            <input id={list} type="checkbox" name={list}
+              className="invisible" value={list} checked={this.state.selectedList.includes(list)}
+              onChange={event => this.selectList(event.target.checked, list)} />
+            <div className="checkbox">
+              <svg width="20px" height="20px" viewBox="0 0 20 20">
+                <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
+                <polyline points="4 11 8 15 16 6"></polyline>
+              </svg>
+            </div>
+            <span>{list}</span>
+          </label>
+        </div>
+      );
+    });
+    return favoriteCheckboxes;
+  }
+
   clearFilters = () => {
     FilterConfigStore.clearConfigFor("favoritesList");
     this.setState({
@@ -207,18 +258,17 @@ export class FavoriteEmployeesList extends Component {
           </button>
         </div>
 
-        {this.state.employee.length > 0 ? (
-          <List
+        {this.state.employee.length > 0 ?
+          (<List
             classes="favorites-list"
             type={"card"}
             makeURL={(data) => "/talent/" + data.id}
-            removeItem={this.removeEmployee}
+            removeItem={this.toggleAlert}
             items={this.state.employee}
             sort={this.sortByRating}
-            showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />
-        ) : (
-            <h3 className="no-match">No employees matching this criteria</h3>
-          )}
+            showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />)
+          : (<h3 className="no-match">No employees matching this criteria</h3>)
+        }
 
         <Modal
           size="fullscreen"
@@ -252,7 +302,30 @@ export class FavoriteEmployeesList extends Component {
             + New List
           </button>
         </Modal>
-      </div>
+
+        <SweetAlert
+          type="info"
+          show={this.state.showAlert}
+          showCancel
+          onCancel={this.toggleAlert}
+          cancelBtnText="Cancel"
+          cancelBtnBsStyle="danger"
+          onConfirm={this.removeEmployee}
+          confirmBtnBsStyle="primary"
+          confirmBtnText="Confirm"
+          title="From where would you like to remove the employee?"
+        >
+          <div id="checkboxes">
+            {this.renderListCheckboxes(this.state.selectedEmployee)}
+            <button
+              style={{ marginTop: '5px' }}
+              onClick={() => document.querySelectorAll('#checkboxes input').forEach(el => el.click())}
+              className="btn btn-primary btn-block">
+              Select All
+            </button>
+          </div>
+        </SweetAlert>
+      </div >
     )
   }
 }

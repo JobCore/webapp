@@ -7,7 +7,7 @@ class EmployeeStore extends EventEmmiter {
   constructor() {
     super();
     this.model = {};
-    this.model.employee = Seeder.make(200, "employee");
+    this.model.employee = Seeder.make(20, "employee");
   }
 
   addEmployee() {
