@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
 import shiftsStore from "../../store/ShiftsStore.js";
 
-export class Navbar extends React.Component {
+export class Navbar extends Component {
 
   constructor() {
 

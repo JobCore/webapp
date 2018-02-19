@@ -1,32 +1,33 @@
-import React from "react";
+import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import createBrowserHistory from "history/createBrowserHistory";
 
-import { Navbar } from "./utils/Navbar.jsx";
-import { Home } from "./views/Home.jsx";
-import { Login } from "./views/Login.jsx";
-import { Example } from "./views/Example.jsx";
-import { Private } from "./views/Private.jsx";
-import { ListShifts } from "./views/shifts/ListShifts.jsx";
-import { SingleShift } from "./views/shifts/SingleShift.jsx";
-import EmployeeDetails from "./views/employees/EmployeeDetails.jsx";
-import { ListEmployee } from "./views/employees/ListEmployee.jsx";
+import { Navbar } from "./utils/Navbar";
 
-import LoginStore from "../store/LoginStore.js";
-import LoginActions from "../actions/loginActions.js";
+import LoginStore from "../store/LoginStore";
+import LoginActions from "../actions/loginActions";
 import EmployerStore from "../store/EmployerStore";
-import FavoriteEmployeesList from "./views/employees/FavoriteEmployeesList";
-//import {SingleEmployee} from './views/shifts/ListShifts.jsx';
 
-export class Layout extends React.Component {
+import { Home } from "../views/Home";
+import { Login } from "../views/Login";
+import { Example } from "../views/Example";
+import { Private } from "../views/Private";
+import { ListShifts } from "../views/shifts/ListShifts";
+import { SingleShift } from "../views/shifts/SingleShift";
+import { EmployeeDetails } from "../views/employees/EmployeeDetails";
+import { ListEmployee } from "../views/employees/ListEmployee";
+import { FavoriteEmployeesList } from "../views/employees/FavoriteEmployeesList";
+
+
+export class Layout extends Component {
 
   constructor() {
     super();
 
     this.state = {
-      authenticated: false,
-      user: null,
-      // user: EmployerStore.getEmployer(),
+      authenticated: true,
+      // user: null,
+      user: EmployerStore.getEmployer(),
     };
   }
 

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-export class Time extends React.Component {
+export class Time extends Component {
 
   constructor(props) {
 

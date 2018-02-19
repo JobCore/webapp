@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-export class Private extends React.Component {
+export class Private extends Component {
 
   render() {
 

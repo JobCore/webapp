@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 
 import { Counter } from "./examples/Counter.jsx";
 import { Time } from "./examples/Time.jsx";
 
-export class Example extends React.Component {
+export class Example extends Component {
 
   constructor(props) {
 

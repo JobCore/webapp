@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-export class EmployeeCard extends React.Component {
+export class EmployeeCard extends Component {
 
   constructor() {
 
@@ -17,11 +17,10 @@ export class EmployeeCard extends React.Component {
 
   render() {
 
-    if (typeof (this.props.type) != "undefined") this.renderFunction = "table";
+    if (typeof (this.props.type) !== "undefined") this.renderFunction = "table";
     switch (this.renderFunction) {
-    default:
-      return this.renderLikeTable(this.data);
-      break;
+      default:
+        return this.renderLikeTable(this.data);
     }
 
   }

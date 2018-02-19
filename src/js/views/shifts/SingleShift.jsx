@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 
-import shiftsStore from "../../../store/ShiftsStore.js";
+import shiftsStore from "../../store/ShiftsStore.js";
 
-export class SingleShift extends React.Component {
+export class SingleShift extends Component {
 
   /**
   *

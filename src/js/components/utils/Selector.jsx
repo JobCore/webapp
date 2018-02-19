@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-export class Selector extends React.Component {
+export class Selector extends Component {
 
   render() {
 

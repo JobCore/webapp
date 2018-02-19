@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 
-import { Selector } from "../../utils/Selector";
-import { List } from "../../utils/List.jsx";
-import EmployerStore from "../../../store/EmployerStore";
-import EmployeeStore from "../../../store/EmployeeStore";
-import ShiftsStore from "../../../store/ShiftsStore.js";
-import FilterConfigStore from "../../../store/FilterConfigStore";
-import Form from "../../utils/Form";
+import { Selector } from "../../components/utils/Selector";
+import { List } from "../../components/utils/List.jsx";
+import Form from "../../components/utils/Form";
+import EmployerStore from "../../store/EmployerStore";
+import EmployeeStore from "../../store/EmployeeStore";
+import ShiftsStore from "../../store/ShiftsStore.js";
+import FilterConfigStore from "../../store/FilterConfigStore";
 
 export class ListEmployee extends Component {
   state = {

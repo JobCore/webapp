@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import swal from 'sweetalert2';
 import Select from "react-select";
 
-import { List } from '../../utils/List';
-import EmployerStore from '../../../store/EmployerStore';
-import FilterConfigStore from '../../../store/FilterConfigStore';
-import Modal from '../../utils/Modal';
-import Form from '../../utils/Form';
+import { List } from '../../components/utils/List';
+import Modal from '../../components/utils/Modal';
+import Form from '../../components/utils/Form';
+import EmployerStore from '../../store/EmployerStore';
+import FilterConfigStore from '../../store/FilterConfigStore';
 
-class FavoriteEmployeesList extends Component {
+export class FavoriteEmployeesList extends Component {
   state = {
     employee: EmployerStore.getFavorites(
       FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
@@ -256,5 +256,3 @@ class FavoriteEmployeesList extends Component {
     )
   }
 }
-
-export default FavoriteEmployeesList;

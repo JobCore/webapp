@@ -1,10 +1,10 @@
-import React from "react";
+import React, { Component } from "react";
 
 import { ListItem } from "./ListItem.jsx";
 import ReactStars from "react-stars";
 import EmployerStore from "../../store/EmployerStore";
 
-export class List extends React.Component {
+export class List extends Component {
 
   /**
   *   #### type = "table"

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 
-export class Counter extends React.Component {
+export class Counter extends Component {
 
   constructor(props) {
 

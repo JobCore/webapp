@@ -3,11 +3,11 @@ import { Redirect } from "react-router-dom";
 import swal from 'sweetalert2';
 
 import ReactStars from "react-stars";
-import ProfilePic from "../../utils/ProfilePic";
-import EmployeeStore from "../../../store/EmployeeStore";
-import EmployerStore from "../../../store/EmployerStore";
+import ProfilePic from "../../components/utils/ProfilePic";
+import EmployeeStore from "../../store/EmployeeStore";
+import EmployerStore from "../../store/EmployerStore";
 
-class EmployeeDetails extends Component {
+export class EmployeeDetails extends Component {
 
   /**
    * React Stars API documentation
@@ -259,5 +259,3 @@ class EmployeeDetails extends Component {
     }
   }
 }
-
-export default EmployeeDetails;

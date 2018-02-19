@@ -1,7 +1,7 @@
-import React from "react";
-import LoginActions from "../../actions/loginActions.js";
+import React, { Component } from "react";
+import LoginActions from "../actions/loginActions.js";
 
-export class Login extends React.Component {
+export class Login extends Component {
 
   render() {
 

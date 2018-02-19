@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
-export class ListItem extends React.Component {
+export class ListItem extends Component {
 
   /**
     *

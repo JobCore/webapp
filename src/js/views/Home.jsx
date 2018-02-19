@@ -1,9 +1,9 @@
-import React from "react";
-import { Selector } from "../utils/Selector";
+import React, { Component } from "react";
+import { Selector } from "../components/utils/Selector";
 
 //import {starthub} from '../../../img/starthub.jpg';
 
-export class Home extends React.Component {
+export class Home extends Component {
 
   constructor() {
 

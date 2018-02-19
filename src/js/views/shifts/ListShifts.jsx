@@ -1,14 +1,14 @@
-import React from "react";
+import React, { Component } from "react";
 
 import Moment from "moment";
-import Modal from "../../utils/Modal.jsx";
-import Form from "../../utils/Form";
-import shiftsStore from "../../../store/ShiftsStore.js";
-import FilterConfigStore from "../../../store/FilterConfigStore";
-import { List } from "../../utils/List.jsx";
-import { Selector } from "../../utils/Selector";
+import Modal from "../../components/utils/Modal.jsx";
+import Form from "../../components/utils/Form";
+import { List } from "../../components/utils/List.jsx";
+import { Selector } from "../../components/utils/Selector";
+import shiftsStore from "../../store/ShiftsStore.js";
+import FilterConfigStore from "../../store/FilterConfigStore";
 
-export class ListShifts extends React.Component {
+export class ListShifts extends Component {
 
   state = {
     data: shiftsStore.getAll("shift"),
