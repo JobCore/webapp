@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
 import shiftsStore from "../../store/ShiftsStore.js";
+import uuidv4 from 'uuid';
 
 export class Navbar extends Component {
 
@@ -157,9 +158,9 @@ export class Navbar extends Component {
 
   renderLikeADropDown(navItemData) {
     var links = navItemData.links.map(function (link) {
-      return <a key={link.id} className="dropdown-item" href={link.url}>{link.label}</a>;
+      return <a key={uuidv4()} className="dropdown-item" href={link.url}>{link.label}</a>;
     });
-    return (<li key={navItemData.id} className="nav-item dropdown">
+    return (<li key={uuidv4()} className="nav-item dropdown">
       <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {navItemData.label}
       </a>
@@ -172,9 +173,9 @@ export class Navbar extends Component {
   renderSidebarLink(navItemData) {
     if (Array.isArray(navItemData.links)) {
       var links = navItemData.links.map(function (link) {
-        return (<li key={link.id}><NavLink to={link.url}>{link.label}</NavLink></li>);
+        return (<li key={uuidv4()}><NavLink to={link.url}>{link.label}</NavLink></li>);
       });
-      return (<li className="nav-item" data-toggle="tooltip" data-placement="right" title={navItemData.label}>
+      return (<li key={uuidv4()} className="nav-item" data-toggle="tooltip" data-placement="right" title={navItemData.label}>
         <a className="nav-link nav-link-collapse collapsed" data-toggle="collapse" href={"#sidebarAnchor" + navItemData.id} data-parent="#exampleAccordion">
           <i className={"fa fa-fw fa-" + navItemData.icon}></i>
           <span className="nav-link-text">{navItemData.label}</span>
@@ -185,7 +186,7 @@ export class Navbar extends Component {
       </li>);
     }
     else {
-      return (<li className="nav-item" data-toggle="tooltip" data-placement="right" title={navItemData.label}>
+      return (<li key={uuidv4()} className="nav-item" data-toggle="tooltip" data-placement="right" title={navItemData.label}>
         <NavLink className="nav-link" to={navItemData.url}>
           <i className={"fa fa-fw fa-" + navItemData.icon}></i>
           <span className="nav-link-text">{navItemData.label}</span>
@@ -196,7 +197,7 @@ export class Navbar extends Component {
 
   renderLikeALink(navItemData) {
 
-    return (<li key={navItemData.id} className="nav-item">
+    return (<li key={uuidv4()} className="nav-item">
       <a className="nav-link" href="#">
         {navItemData.label}
       </a>
