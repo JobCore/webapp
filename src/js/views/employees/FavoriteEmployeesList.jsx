@@ -83,10 +83,22 @@ export class FavoriteEmployeesList extends Component {
     return filteredOptions;
   }
 
-  sortByRating = (order) => {
+  sortBy = (order) => {
     const list = [...this.state.employee];
+    let sortedList;
     document.querySelector('.sort-input').checked = false;
-    let sortedList = list.sort((a, b) => order === "asc" ? a.rating - b.rating : b.rating - a.rating);
+    switch (order) {
+      case 'name':
+        sortedList = list.sort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          return 0;
+        });
+        break;
+      default:
+        sortedList = list.sort((a, b) => a[order] - b[order]);
+        break;
+    }
     this.setState({ employee: sortedList, shouldListUpdate: true });
   }
 
@@ -266,7 +278,7 @@ export class FavoriteEmployeesList extends Component {
             makeURL={(data) => "/talent/" + data.id}
             removeItem={this.toggleAlert}
             items={this.state.employee}
-            sort={this.sortByRating}
+            sort={this.sortBy}
             showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />)
           : (<h3 className="no-match">No employees matching this criteria</h3>)
         }

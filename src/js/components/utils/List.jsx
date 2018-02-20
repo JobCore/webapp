@@ -49,10 +49,11 @@ export class List extends Component {
             this.props.items[0].rating ?
               <div className="sort-area">
                 <input className="sort-input" type="checkbox" name="sort" id="sort" />
-                <label className="sort-label" htmlFor="sort">Sort by Rating</label>
+                <label className="sort-label" htmlFor="sort">Sort by</label>
                 <div>
-                  <button onClick={() => this.props.sort("asc")}>Ascending</button>
-                  <button onClick={() => this.props.sort("desc")}>Descending</button>
+                  <button onClick={() => this.props.sort("name")}>Name</button>
+                  <button onClick={() => this.props.sort("rating")}>Rating</button>
+                  <button onClick={() => this.props.sort("responseTime")}>Response Time</button>
                 </div>
               </div> :
               null}

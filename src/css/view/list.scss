@@ -8,4 +8,18 @@
   h3 {
     margin: 0;
   }
+
+  .sort-area {
+    .sort-label + div {
+      position: absolute;
+      width: max-content;
+      right: 0px;
+
+      button {
+        padding: 0 10px;
+        text-align: left;
+        font-size: 1.1rem;
+      }
+    }
+  }
 }
