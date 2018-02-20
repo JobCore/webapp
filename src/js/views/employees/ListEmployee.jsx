@@ -115,12 +115,10 @@ export class ListEmployee extends Component {
       filteredList = listItems.filter(
         item => item[filterOption] >= filterOptionValue
       );
-    } else if (filterOption === "fromTime" || filterOption === "untilTime" || filterOption === "date") {
+    } else if (filterOption === "fromTime" || filterOption === "date") {
       if (this.state.filterConfig.shiftFromTime != null && this.state.filterConfig.shiftFromTime.length !== 0 &&
-        this.state.filterConfig.shiftUntilTime != null && this.state.filterConfig.shiftUntilTime.length !== 0 &&
         this.state.filterConfig.shiftDate != null && this.state.filterConfig.shiftDate.length !== 0) {
         let filterFromTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftFromTime);
-        let filterUntilTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftUntilTime);
         let filterDate = this.state.filterConfig.shiftDate;
 
         filteredList = listItems.filter(item => {
@@ -129,12 +127,8 @@ export class ListEmployee extends Component {
             const times = item.unavailableTimes[i];
             const date = item.unavailableTimes[i].date;
             let fromTime = this.convertHoursStringIntoNumber(times.fromTime);
-            let untilTime = this.convertHoursStringIntoNumber(times.untilTime);
 
-            if ((((filterFromTime >= fromTime && filterFromTime <= untilTime) ||
-              (filterUntilTime >= fromTime && filterUntilTime <= untilTime)) ||
-              (filterUntilTime >= untilTime && filterFromTime <= fromTime)) &&
-              date === filterDate) {
+            if ((filterFromTime >= fromTime) && (date === filterDate)) {
               return false;
             }
           }
@@ -183,7 +177,6 @@ export class ListEmployee extends Component {
       this.updateFilterConfig(shift.id, "selectedShift");
       this.updateFilterConfig(shift.date, "shiftDate");
       this.updateFilterConfig(shift.start, "shiftFromTime");
-      this.updateFilterConfig(shift.end, "shiftUntilTime");
       this.updateFilterConfig(shift.position, "shiftPosition");
     } else {
       this.updateFilterConfig(null, "selectedShift");
@@ -193,7 +186,7 @@ export class ListEmployee extends Component {
   getFiterableOptions = () => {
     let options = [...Object.keys({ ...this.state.filterConfig, }),];
     let filteredOptions = options.filter(option => {
-      return this.state.filterConfig[option] !== null;
+      return this.state.filterConfig[option] !== null && option !== 'selectedShift';
     });
     return filteredOptions;
   }
@@ -225,8 +218,8 @@ export class ListEmployee extends Component {
   }
 
   render() {
-    // console.log(this.state.filteredData.length, this.state.filteredData);
-    // console.log("FILTER", this.state.filterConfig);
+    console.log(this.state.filteredData.length, this.state.filteredData);
+    console.log("FILTER", this.state.filterConfig);
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         <div className="form-area" >
@@ -289,10 +282,6 @@ export class ListEmployee extends Component {
               <input className="form-control" type="time" name="shiftFromTime" id="shiftFromTime"
                 value={this.state.filterConfig.shiftFromTime || ""}
                 onChange={event => this.updateFilterConfig(event.target.value, "shiftFromTime")} />
-              <label className="until-time" htmlFor="shiftUntilTime">To</label>
-              <input className="form-control" type="time" name="shiftUntilTime" id="shiftUntilTime"
-                value={this.state.filterConfig.shiftUntilTime || ""}
-                onChange={event => this.updateFilterConfig(event.target.value, "shiftUntilTime")} />
             </div>
             <div className="form-group">
               <label htmlFor="position">Position</label>

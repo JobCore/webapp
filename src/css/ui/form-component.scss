@@ -74,21 +74,8 @@
         flex: 1;
       }
 
-      .until-time {
-        text-align: center;
-      }
-
       input[type="number"] {
         border: none;
-      }
-    }
-
-    .date-from-to {
-      display: flex;
-      flex-direction: row;
-
-      label.from-time {
-        min-width: 160px;
       }
     }
 

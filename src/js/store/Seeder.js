@@ -77,7 +77,6 @@ class Seeder {
           unavailableTimes.push(
             {
               fromTime: moment(new Date(date)).subtract(Faker.random.number({ min: 1, max: 6, }), "hours").format("H:mm"),
-              untilTime: moment(new Date(date)).add(Faker.random.number({ min: 0, max: 3, }), "hours").format("H:mm"),
               date: moment(new Date(date)).add(Faker.random.number({ min: 1, max: 12, }), "days").format("YYYY-MM-DD"),
             }
           );
