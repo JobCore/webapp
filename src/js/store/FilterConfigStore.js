@@ -1,5 +1,7 @@
 import EventEmmiter from "events";
 
+import AppDispatcher from '../../dispatcher';
+
 class FilterConfigStore extends EventEmmiter {
 
   constructor() {
@@ -46,5 +48,21 @@ class FilterConfigStore extends EventEmmiter {
     this[listName + "Config"] = updatedConfig;
     this.emit("change");
   }
+
+  handleActions(action) {
+    switch (action.type) {
+      case 'UPDATE_CONFIG':
+        this.updateConfig(action.value, action.configOption, action.listName);
+        break;
+      case 'CLEAR_CONFIG':
+        this.clearConfigFor(action.listName);
+        break;
+      default:
+        break;
+    }
+  }
 }
-export default new FilterConfigStore();
+const filterConfigStore = new FilterConfigStore();
+AppDispatcher.register(action => filterConfigStore.handleActions(action));
+
+export default filterConfigStore;

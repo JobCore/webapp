@@ -8,6 +8,8 @@ import Modal from '../../components/utils/Modal';
 import Form from '../../components/utils/Form';
 import EmployerStore from '../../store/EmployerStore';
 import FilterConfigStore from '../../store/FilterConfigStore';
+import * as FilterActions from '../../actions/filterActions';
+import * as EmployerActions from '../../actions/employerActions';
 
 export class FavoriteEmployeesList extends Component {
   state = {
@@ -90,7 +92,7 @@ export class FavoriteEmployeesList extends Component {
 
   removeEmployee = () => {
     this.state.selectedList.map(list =>
-      EmployerStore.removeEmployeeFromFavList(this.state.selectedEmployee, list)
+      EmployerActions.removeEmployeeFromFavList(this.state.selectedEmployee, list)
     );
     this.setState({
       selectedEmployee: null,
@@ -117,7 +119,7 @@ export class FavoriteEmployeesList extends Component {
 
     if (type === "save") {
       const newListName = document.querySelector('#list').value;
-      if (newListName.length > 0) EmployerStore.renameFavoritesLists(prevListName, newListName);
+      if (newListName.length > 0) EmployerActions.renameFavoritesLists(prevListName, newListName);
     }
     this.setState({
       editingLists: updatedEditingLists,
@@ -161,7 +163,7 @@ export class FavoriteEmployeesList extends Component {
               cancelButtonColor: '#3085d6',
             }).then(result => {
               if (result.value) {
-                EmployerStore.removeFavoritesLists(list);
+                EmployerActions.removeFavoritesLists(list);
                 this.setState({ shouldListUpdate: true });
               }
             })}></button>
@@ -209,11 +211,10 @@ export class FavoriteEmployeesList extends Component {
   }
 
   clearFilters = () => {
-    FilterConfigStore.clearConfigFor("favoritesList");
+    FilterActions.clearConfigFor("favoritesList");
     this.setState({
       employee: EmployerStore.getFavorites(
-        FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
-      shouldListUpdate: true,
+        FilterConfigStore.getConfigFor("favoritesList").favoritesList || "")
     });
     let forms = document.getElementsByClassName("form-component");
     for (const form of forms) form.reset();
@@ -235,7 +236,7 @@ export class FavoriteEmployeesList extends Component {
                     label: this.state.filterConfig.favoritesList
                   } || []}
                 onChange={option => {
-                  FilterConfigStore.updateConfig(option.value, "favoritesList", "favoritesList")
+                  FilterActions.updateConfig(option.value, "favoritesList", "favoritesList")
                   this.setState({
                     employee: EmployerStore.getFavorites(
                       FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
@@ -291,7 +292,7 @@ export class FavoriteEmployeesList extends Component {
             cancelButtonColor: '#3085d6',
           }).then(result => {
             if (result.value) {
-              EmployerStore.addNewList(result.value);
+              EmployerActions.addNewList(result.value);
               swal({
                 position: 'top',
                 type: "success",

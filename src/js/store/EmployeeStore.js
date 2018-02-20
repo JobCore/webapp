@@ -1,4 +1,5 @@
 import EventEmmiter from "events";
+import AppDispatcher from '../../dispatcher';
 
 import Seeder from "./Seeder.js";
 
@@ -24,5 +25,19 @@ class EmployeeStore extends EventEmmiter {
       return (item.id.toString() === id.toString());
     });
   }
+
+  handleActions(action) {
+    switch (action.type) {
+      case 'ADD_EMPLOYEE':
+        this.addEmployee();
+        break;
+      default:
+        break;
+    }
+  }
 }
-export default new EmployeeStore();
+
+const employeeStore = new EmployeeStore();
+AppDispatcher.register(action => employeeStore.handleActions(action));
+
+export default employeeStore;

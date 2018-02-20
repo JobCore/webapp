@@ -7,6 +7,7 @@ import { List } from "../../components/utils/List.jsx";
 import { Selector } from "../../components/utils/Selector";
 import shiftsStore from "../../store/ShiftsStore.js";
 import FilterConfigStore from "../../store/FilterConfigStore";
+import * as FilterActions from '../../actions/filterActions';
 
 export class ListShifts extends Component {
 
@@ -77,7 +78,7 @@ export class ListShifts extends Component {
   }
 
   updateFilterConfig = (value, configOption) => {
-    FilterConfigStore.updateConfig(value, configOption, "shiftList");
+    FilterActions.updateConfig(value, configOption, "shiftList");
     this.setState({
       shouldListUpdate: true,
     });
@@ -118,7 +119,7 @@ export class ListShifts extends Component {
   }
 
   clearFilters = () => {
-    FilterConfigStore.clearConfigFor("shiftList");
+    FilterActions.clearConfigFor("shiftList");
     this.setState({ shouldListUpdate: true, });
     document.getElementById("form-component").reset();
   }

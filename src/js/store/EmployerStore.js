@@ -1,4 +1,5 @@
 import EventEmmiter from "events";
+import AppDispatcher from '../../dispatcher';
 import EmployeeStore from "./EmployeeStore";
 
 import Seeder from "./Seeder.js";
@@ -37,6 +38,17 @@ class EmployerStore extends EventEmmiter {
    */
   addNewList = (listName) => {
     this.employer.favoriteLists[listName] = [];
+    this.emit("change");
+  }
+
+  /**
+   * Delete list from Employer's Favorites Lists
+   * @param {string} listName List to be deleted
+   * @memberof EmployerStore
+   */
+  removeFavoritesLists = (listName) => {
+    const lists = this.employer.favoriteLists;
+    delete lists[listName];
     this.emit("change");
   }
 
@@ -139,17 +151,6 @@ class EmployerStore extends EventEmmiter {
   }
 
   /**
-   * Delete list from Employer's Favorites Lists
-   * @param {string} listName List to be deleted
-   * @memberof EmployerStore
-   */
-  removeFavoritesLists = (listName) => {
-    const lists = this.employer.favoriteLists;
-    delete lists[listName];
-    this.emit("change");
-  }
-
-  /**
    * Renames a list from employer's favorites lists
    * @param {string} prevListName List to be replaced
    * @param {string} newListName New list name
@@ -160,5 +161,34 @@ class EmployerStore extends EventEmmiter {
     delete this.employer.favoriteLists[prevListName];
     this.emit("change");
   }
+
+  handleActions(action) {
+    switch (action.type) {
+      case 'ADD_EMPLOYER':
+        this.addEmployer();
+        break;
+      case 'ADD_NEW_FAVORITE_LIST':
+        this.addNewList(action.listName);
+        break;
+      case 'REMOVE_FAVORITE_LIST':
+        this.removeFavoritesLists(action.listName);
+        break;
+      case 'RENAME_FAVORITE_LIST':
+        this.renameFavoritesLists(action.prevListName, action.newListName);
+        break;
+      case 'ADD_EMPLOYEE_TO_FAVORITE_LIST':
+        this.addEmployeeToFavList(action.id, action.list);
+        break;
+      case 'REMOVE_EMPLOYEE_FROM_FAVORITE_LIST':
+        this.removeEmployeeFromFavList(action.id, action.list);
+        break;
+      default:
+        break;
+    }
+  }
 }
-export default new EmployerStore();
+
+const employerStore = new EmployerStore();
+AppDispatcher.register(action => employerStore.handleActions(action));
+
+export default employerStore;

@@ -9,6 +9,7 @@ import EmployerStore from "../../store/EmployerStore";
 import EmployeeStore from "../../store/EmployeeStore";
 import ShiftsStore from "../../store/ShiftsStore.js";
 import FilterConfigStore from "../../store/FilterConfigStore";
+import * as FilterActions from '../../actions/filterActions';
 
 export class ListEmployee extends Component {
   state = {
@@ -80,9 +81,9 @@ export class ListEmployee extends Component {
       let transformedValue = [];
       value.forEach(option => transformedValue.push(option.value));
       transformedValue = transformedValue.length > 0 ? null : transformedValue;
-      FilterConfigStore.updateConfig(transformedValue, configOption, "employeeList");
+      FilterActions.updateConfig(transformedValue, configOption, "employeeList");
     } else {
-      FilterConfigStore.updateConfig(value, configOption, "employeeList");
+      FilterActions.updateConfig(value, configOption, "employeeList");
     }
 
     this.setState({
@@ -198,7 +199,7 @@ export class ListEmployee extends Component {
   }
 
   clearFilters = () => {
-    FilterConfigStore.clearConfigFor("employeeList");
+    FilterActions.clearConfigFor("employeeList");
     this.setState({ shouldListUpdate: true, });
     let forms = document.getElementsByClassName("form-component");
     for (const form of forms) form.reset();

@@ -6,6 +6,7 @@ import ReactStars from "react-stars";
 import ProfilePic from "../../components/utils/ProfilePic";
 import EmployeeStore from "../../store/EmployeeStore";
 import EmployerStore from "../../store/EmployerStore";
+import * as EmployerActions from '../../actions/employerActions';
 
 export class EmployeeDetails extends Component {
 
@@ -63,9 +64,9 @@ export class EmployeeDetails extends Component {
               className="invisible" checked={isChecked} value={list}
               onChange={event => {
                 if (event.target.checked) {
-                  EmployerStore.addEmployeeToFavList(this.state.employee.id, list);
+                  EmployerActions.addEmployeeToFavList(this.state.employee.id, list);
                 } else {
-                  EmployerStore.removeEmployeeFromFavList(this.state.employee.id, list);
+                  EmployerActions.removeEmployeeFromFavList(this.state.employee.id, list);
                 }
               }} />
             <div className="checkbox">
@@ -107,7 +108,7 @@ export class EmployeeDetails extends Component {
                 cancelButtonColor: '#3085d6',
               }).then(result => {
                 if (result.value) {
-                  EmployerStore.addNewList(result.value);
+                  EmployerActions.addNewList(result.value);
                   swal({
                     position: 'top',
                     type: "success",
