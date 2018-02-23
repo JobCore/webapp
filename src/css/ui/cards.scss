@@ -62,6 +62,11 @@
 
   &:hover {
     background-color: #fff6dc;
+
+    .search,
+    .delete {
+      display: table;
+    }
   }
 
   .content {
@@ -82,7 +87,7 @@
   .search,
   .delete {
       outline: none;
-      display: table;
+      display: none;
       width: 40px;
       height: 40px;
       color: #434343;

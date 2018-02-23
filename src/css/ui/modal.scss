@@ -87,6 +87,13 @@
     flex-direction: row;
     justify-content: space-between;
 
+    &:hover {
+      .edit,
+      .delete {
+        display: table;
+      }
+    }
+
     p {
       margin: 0;
       padding-top: 5px;
@@ -147,7 +154,7 @@
   .delete {
       padding: 0 6px;
       outline: none;
-      display: table;
+      display: none;
       width: 30px;
       height: 30px;
       color: #434343;
