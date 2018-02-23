@@ -1,0 +1,11 @@
+.shiftGroup {
+  &__header {
+    background-color: #E0E0E0;
+    font-weight: bold;
+    padding: 5px 20px;
+  }
+
+  & .shifts {
+    padding: 15px 20px 0 20px;
+  }
+}

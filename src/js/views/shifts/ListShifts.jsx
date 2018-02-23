@@ -5,14 +5,15 @@ import Modal from "../../components/utils/Modal.jsx";
 import Form from "../../components/utils/Form";
 import { List } from "../../components/utils/List.jsx";
 import { Selector } from "../../components/utils/Selector";
-import shiftsStore from "../../store/ShiftsStore.js";
+import ShiftsStore from "../../store/ShiftsStore.js";
 import FilterConfigStore from "../../store/FilterConfigStore";
 import * as FilterActions from '../../actions/filterActions';
+import ShiftGroup from "../../components/ShiftGroup";
 
 export class ListShifts extends Component {
 
   state = {
-    data: shiftsStore.getAll("shift"),
+    shift: ShiftsStore.getShiftsGroupedByDate(),
     filteredData: [],
     modalOpened: false,
     currentShift: { id: null, },
@@ -28,11 +29,18 @@ export class ListShifts extends Component {
 
   componentWillMount() {
     FilterConfigStore.on("change", this.setConfig);
+    ShiftsStore.on("change", this.setShifts);
     this.updateListOnFilter();
   }
 
   componentWillUnmount() {
     FilterConfigStore.removeListener("change", this.setConfig);
+  }
+
+  setShifts = () => {
+    this.setState({
+      data: ShiftsStore.getShiftsGroupedByDate(),
+    })
   }
 
   setConfig = () => {
@@ -45,7 +53,6 @@ export class ListShifts extends Component {
 
 
   toggleModal = (item) => {
-    console.log("Render the modal!!!", item);
     this.setState({
       modalOpened: !this.state.modalOpened,
       currentShift: item,
@@ -62,7 +69,7 @@ export class ListShifts extends Component {
   }
 
   createOptionsObject = (category) => {
-    let data = this.state.data;
+    let data = ShiftsStore.getAll('shift');
     let object = [];
 
     let uniqueCategoryItem = [];
@@ -94,14 +101,14 @@ export class ListShifts extends Component {
 
   updateListOnFilter = () => {
     if (this.state.shouldListUpdate) {
-      let updatedListItems = [...this.state.data,];
+      let updatedListItems = [...this.state.shift,];
       let filterableOptions = this.getFiterableOptions();
       if (filterableOptions.length > 0) {
         filterableOptions.forEach(option => {
           updatedListItems = this.filterList(updatedListItems, option);
         });
       } else {
-        updatedListItems = this.state.data;
+        updatedListItems = this.state.shift;
       }
       this.setState({
         filteredData: updatedListItems,
@@ -125,6 +132,7 @@ export class ListShifts extends Component {
   }
 
   render() {
+    // console.log(this.state.shift);
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         <div className="form-area">
@@ -172,12 +180,12 @@ export class ListShifts extends Component {
             <span>Create a new shift</span>
           </button>
         </div>
-        {this.state.filteredData.length > 0 ? (
+        {Object.keys(this.state.filteredData).length > 0 ? (
           <List
             items={this.state.filteredData}
-            type={"table"}
-            onItemClick={this.toggleModal.bind(this)}
-            hiddenColumns={["id", "favoritesonly",]} />
+            type="componentList"
+            heading="Company Shifts"
+            component={ShiftGroup} />
         ) : (
             <h3 className="no-match">No shifts matching this criteria</h3>
           )}

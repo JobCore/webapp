@@ -15,23 +15,49 @@ class Seeder {
     this.create = {
       shift: function () {
         const positionsAvailable = [
-          "Baker", "Sever", "Kitchen Asistant", "Coordinator", "Chef", "Bartender",
+          "Baker", "Server", "Kitchen Asistant", "Coordinator", "Chef", "Bartender", "Kitchen Utility"
         ];
 
         let favoritesOnly = Faker.random.boolean();
-        let allowAnyone = favoritesOnly ? false : true;
 
-        let date = `2018-0${Faker.random.number({ min: 1, max: 9, })}-${Faker.random.number({ min: 10, max: 31, })}`;
+        let date = Date.parse(`2018-0${Faker.random.number({ min: 1, max: 9, })}-${Faker.random.number({ min: 10, max: 31, })}`)
+
+        const maxAllowedEmployees = Faker.random.number({min: 10, max: 15});
+        const confirmedEmployees = Faker.random.number({min: 0, max: maxAllowedEmployees});
+
+        let randomStatus = [
+          "Paused", "Cancelled", "Draft", "Receiving candidates"
+       ]
+
+       let status;
+       if (confirmedEmployees === maxAllowedEmployees) {
+         status = "Filled";
+       } else {
+         status = randomStatus[Faker.random.number({min: 0, max: randomStatus.length - 1})];
+       }
+
+        // Status Colors
+        // receiving candidates (blue),
+        // paused, (gray)
+        // filled (green)
+        // cancelled (dirty green)
+        // draft (orange)
 
         return {
           id: Faker.random.uuid(),
           location: Faker.name.title() + " Building",
           position: positionsAvailable[Faker.random.number({ min: 0, max: positionsAvailable.length - 1, })],
-          date: date,
+          date,
           start: moment(new Date(date)).subtract(Faker.random.number({ min: 1, max: 6, }), "hours").format("H:mm"),
           end: moment(new Date(date)).add(Faker.random.number({ min: 0, max: 3, }), "hours").format("H:mm"),
-          favoritesOnly: favoritesOnly,
-          status: allowAnyone,
+          duration: "3hrs",
+          status,
+          maxAllowedEmployees,
+          confirmedEmployees,
+          restrictions: {
+            favoritesOnly: favoritesOnly,
+            minAllowedRating: Faker.random.number({min: 1, max: 5}),
+          }
         };
       },
       employer: function () {
@@ -89,13 +115,13 @@ class Seeder {
           birthdate: Faker.date.past(),
           responseTime: Faker.random.number({min: 10, max: 4200}),
           minHourlyRate: "$ " + Faker.random.number({ min: 10, max: 15, }) + "/hr",
-          positions: positions,
+          positions,
           profilePicUrl: Faker.image.imageUrl(300, 300, "people"),
           about: Faker.lorem.paragraph(),
           currentJobs: Faker.random.number({ min: 10, max: 35, }),
           rating: Faker.random.number({ min: 1, max: 5, precision: 0.5, }),
-          badges: badges,
-          unavailableTimes: unavailableTimes,
+          badges,
+          unavailableTimes,
         };
       },
       venue: function () {

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { ListItem } from "./ListItem.jsx";
 import ReactStars from "react-stars";
 import EmployerStore from "../../store/EmployerStore";
+import uuidv4 from 'uuid';
 
 export class List extends Component {
 
@@ -29,12 +30,39 @@ export class List extends Component {
 
   render() {
     let results;
+    const Component = this.props.component;
     if (this.props.type.toLowerCase() === "table") {
       results = this.renderLikeTable(this.props.items);
     } else if (this.props.type.toLowerCase() === "card") {
       results = this.renderLikeCard(this.props.items);
+    } else if (this.props.type.toLowerCase() === "componentlist") {
+      const items = this.props.items
+      results = [];
+      for (const key in items) {
+        results.push(
+          <Component
+            key={uuidv4()}
+            heading={key}
+            items={items[key]} />
+        )
+      };
     } else {
-      results = this.props.items;
+      results = this.props.items.map(item => {
+        if (typeof item === 'object') {
+          let content = [];
+          let innerArray = item[Object.keys(item)[0]];
+          innerArray.forEach(
+            data => {
+              for (const key in data) {
+                content.push(<p key={uuidv4()}>{`${key}: ${data[key]}`}</p>)
+              }
+            }
+          );
+          return <li key={uuidv4()}>{content}</li>
+        } else {
+          return <li key={uuidv4()}>{item}</li>
+        }
+      });
     }
 
     return (
@@ -44,9 +72,9 @@ export class List extends Component {
           <button type="button" className="btn btn-secondary">Middle</button>
         </div>
         <div className="list-header">
-          <h3>Results</h3>
+          <h3>{this.props.heading || "Results"}</h3>
           {
-            this.props.items[0].rating ?
+            Array.isArray(this.props.items) ?
               <div className="sort-area">
                 <input className="sort-input" type="checkbox" name="sort" id="sort" />
                 <label className="sort-label" htmlFor="sort">Sort by</label>
@@ -59,7 +87,7 @@ export class List extends Component {
               null}
         </div>
         {results}
-      </div>
+      </div >
     )
   }
 

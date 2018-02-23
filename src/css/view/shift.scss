@@ -1,0 +1,169 @@
+.shift-card {
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  padding: 10px 10px 10px 40px;
+  margin-bottom: 15px;
+  position: relative;
+
+  &.almos-filled {
+    background-color: #FFF9C4;
+    border: 1px solid #FDD835;
+  }
+
+  &.receiving {
+    background-color: #B3E5FC;
+    border: 1px solid #039BE5;
+  }
+
+  &.filled {
+    background-color: #C8E6C9;
+    border: 1px solid #43A047;
+  }
+
+  &.cancelled {
+    background-color: #ffcdd2;
+    border: 1px solid #e53935;
+  }
+
+  &.paused {
+    background-color: #E0E0E0;
+    border: 1px solid #757575;
+  }
+
+  &.draft {
+    background-color: #FFF9C4;
+    border: 1px solid #FDD835;
+  }
+
+  .employee-summary {
+    top: -10px;
+    left: -15px;
+    position: absolute;
+    color: #eee;
+    border-radius: 50%;
+    padding: 5px;
+
+    &.receiving {
+      background-color: #039BE5;
+    }
+
+    &.filled {
+      background-color: #43A047;
+    }
+
+    &.cancelled {
+      background-color: #e53935;
+    }
+
+    &.paused {
+      background-color: #757575;
+    }
+
+    &.draft {
+      color: #434343;
+      background-color: #FDD835;
+    }
+  }
+
+  &__content {
+    flex: 1;
+
+    span {
+      margin-right: 10px;
+    }
+
+    &__bottom-side {
+      margin-top: 5px;
+    }
+
+    .status {
+      color: #eee;
+      border-radius: 5px;
+      padding: 5px;
+      letter-spacing: 1px;
+
+      &.receiving {
+        background-color: #039BE5;
+      }
+
+      &.filled {
+        background-color: #43A047;
+      }
+
+      &.cancelled {
+        background-color: #e53935;
+      }
+
+      &.paused {
+        background-color: #757575;
+      }
+
+      &.draft {
+        background-color: #FB8C00;
+      }
+    }
+
+    .favorite {
+      &:before {
+        background-color: #FFD700;
+        border-radius: 50%;
+        color: #eee;
+        font-family: "FontAwesome";
+        padding: 3px;
+        margin-right: 5px;
+        content: "\f005";
+      }
+    }
+
+    .anyone {
+      &:before {
+        font-family: "FontAwesome";
+        margin-right: 5px;
+        content: "\f0c0";
+      }
+    }
+  }
+
+  .show-employees-btn {
+    margin-right: 8px;
+  }
+
+  .show-employees-btn,
+  .edit-btn {
+    display: none;
+    color: white;
+    font-weight: bold;
+    background: #ffd65e; /* Old browsers */
+    background: linear-gradient(to bottom, #fadc83 0%,#febf01 100%);
+
+    &:before {
+      height: fit-content;
+      display: table-cell;
+      vertical-align: middle;
+      font-family: FontAwesome;
+      padding: 0;
+    }
+  }
+
+  .show-employees-btn {
+    &:before {
+      content:"\f0c0";
+    }
+  }
+
+  .edit-btn {
+    &:before {
+      content:"\f040";
+    }
+  }
+
+  &:hover {
+    .show-employees-btn,
+    .edit-btn {
+      display: table;
+
+    }
+  }
+
+}

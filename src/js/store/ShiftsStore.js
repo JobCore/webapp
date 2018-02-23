@@ -20,9 +20,30 @@ class ShiftStore extends EventEmmiter {
   }
 
   getAll(type) {
-
     if (typeof this.model[type] === "undefined") throw new Error("Invalid model type: " + type);
     return this.model[type];
+  }
+
+  getShiftsSortedByDate() {
+    let sortedShifts = this.model.shift.sort((a, b) => {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      return 0;
+    });
+    return sortedShifts;
+  }
+
+  getShiftsGroupedByDate() {
+    let sortedShift = [...this.getShiftsSortedByDate()];
+    const datesArr = sortedShift.map(shift => shift.date)
+    let uniqueDates = [...new Set(datesArr)];
+    let datesObj = {};
+    uniqueDates.forEach( date => datesObj[date] = []);
+
+    sortedShift.forEach((shift) => {
+      datesObj[shift.date].push(shift);
+    })
+    return datesObj;
   }
 
   getById(type, id) {

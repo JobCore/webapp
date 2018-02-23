@@ -218,8 +218,8 @@ export class ListEmployee extends Component {
   }
 
   render() {
-    console.log(this.state.filteredData.length, this.state.filteredData);
-    console.log("FILTER", this.state.filterConfig);
+    // console.log(this.state.filteredData.length, this.state.filteredData);
+    // console.log("FILTER", this.state.filterConfig);
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         <div className="form-area" >
