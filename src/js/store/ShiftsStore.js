@@ -24,8 +24,9 @@ class ShiftStore extends EventEmmiter {
     return this.model[type];
   }
 
-  getShiftsSortedByDate() {
-    let sortedShifts = this.model.shift.sort((a, b) => {
+  getShiftsSortedByDate(shifts) {
+    const shiftsArr = shifts || this.model.shift;
+    let sortedShifts = shiftsArr.sort((a, b) => {
       if (a.date < b.date) return -1;
       if (a.date > b.date) return 1;
       return 0;
@@ -33,8 +34,8 @@ class ShiftStore extends EventEmmiter {
     return sortedShifts;
   }
 
-  getShiftsGroupedByDate() {
-    let sortedShift = [...this.getShiftsSortedByDate()];
+  getShiftsGroupedByDate(shifts) {
+    let sortedShift = [...this.getShiftsSortedByDate(shifts || null)];
     const datesArr = sortedShift.map(shift => shift.date)
     let uniqueDates = [...new Set(datesArr)];
     let datesObj = {};

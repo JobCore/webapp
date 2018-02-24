@@ -25,9 +25,9 @@ export class Layout extends Component {
     super();
 
     this.state = {
-      authenticated: true,
-      // user: null,
-      user: EmployerStore.getEmployer(),
+      authenticated: false,
+      user: null,
+      // user: EmployerStore.getEmployer(),
     };
   }
 

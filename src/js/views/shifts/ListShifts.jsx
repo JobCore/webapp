@@ -1,10 +1,10 @@
 import React, { Component } from "react";
+import Select from "react-select";
 
 import Moment from "moment";
 import Modal from "../../components/utils/Modal.jsx";
 import Form from "../../components/utils/Form";
 import { List } from "../../components/utils/List.jsx";
-import { Selector } from "../../components/utils/Selector";
 import ShiftsStore from "../../store/ShiftsStore.js";
 import FilterConfigStore from "../../store/FilterConfigStore";
 import * as FilterActions from '../../actions/filterActions';
@@ -13,7 +13,7 @@ import ShiftGroup from "../../components/ShiftGroup";
 export class ListShifts extends Component {
 
   state = {
-    shift: ShiftsStore.getShiftsGroupedByDate(),
+    shift: ShiftsStore.getAll("shift"),
     filteredData: [],
     modalOpened: false,
     currentShift: { id: null, },
@@ -76,10 +76,10 @@ export class ListShifts extends Component {
 
     data.map(item => {
       if (!uniqueCategoryItem.includes(item[category])) {
-        object.push({ name: item[category], value: item[category], });
+        object.push({ label: item[category], value: item[category], });
         uniqueCategoryItem.push(item[category]);
       }
-      return object;
+      return 0;
     });
     return object;
   }
@@ -93,9 +93,25 @@ export class ListShifts extends Component {
 
   filterList = (listItems, filterOption) => {
     let currentOption = this.state.filterConfig[filterOption];
-    let filteredList = listItems.filter(
-      item => item[filterOption] === currentOption
-    );
+    let filteredList;
+    if (filterOption === "date") {
+      filteredList = listItems.filter(
+        item => {
+          const dateArr = currentOption.split('-');
+          const shiftYear = new Date(item[filterOption]).getFullYear();
+          const shiftMonth = ('0' + (new Date(item[filterOption]).getMonth() + 1)).slice(-2);
+          const shiftDay = ('0' + new Date(item[filterOption]).getDate()).slice(-2);;
+          const shiftDate = `${shiftYear}-${shiftMonth}-${shiftDay}`
+          const dateOption = `${dateArr[0]}-${dateArr[1]}-${dateArr[2]}`
+          return shiftDate === dateOption;
+        }
+      );
+    } else {
+      filteredList = listItems.filter(
+        item => item[filterOption] === currentOption
+      );
+
+    }
     return filteredList;
   }
 
@@ -106,9 +122,10 @@ export class ListShifts extends Component {
       if (filterableOptions.length > 0) {
         filterableOptions.forEach(option => {
           updatedListItems = this.filterList(updatedListItems, option);
+          updatedListItems = ShiftsStore.getShiftsGroupedByDate(updatedListItems);
         });
       } else {
-        updatedListItems = this.state.shift;
+        updatedListItems = ShiftsStore.getShiftsGroupedByDate(this.state.shift);
       }
       this.setState({
         filteredData: updatedListItems,
@@ -132,26 +149,26 @@ export class ListShifts extends Component {
   }
 
   render() {
-    // console.log(this.state.shift);
+    // console.log(this.state.filterConfig);
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         <div className="form-area">
           <Form title="Filter Shifts" orderedAs="row">
             <div className="form-group">
               <label htmlFor="position">Position</label>
-              <Selector
-                defaultValue={this.state.filterConfig.position}
-                hide={false}
-                stuff={this.createOptionsObject("position")}
-                onChange={value => this.updateFilterConfig(value, "position")} />
+              <Select
+                placeholder="Select a position"
+                options={this.createOptionsObject("position")}
+                value={this.state.filterConfig.position || ""}
+                onChange={option => this.updateFilterConfig(option ? option.value : null, "position")} />
             </div>
             <div className="form-group">
               <label htmlFor="Location">Location</label>
-              <Selector
-                defaultValue={this.state.filterConfig.location}
-                hide={false}
-                stuff={this.createOptionsObject("location")}
-                onChange={value => this.updateFilterConfig(value, "location")} />
+              <Select
+                placeholder="Select a location"
+                options={this.createOptionsObject("location")}
+                value={this.state.filterConfig.location || ""}
+                onChange={option => this.updateFilterConfig(option ? option.value : null, "location")} />
             </div>
             <div className="form-group">
               <label htmlFor="date">Date</label>
@@ -162,9 +179,11 @@ export class ListShifts extends Component {
             </div>
             <div className="form-group switch-group">
               <label htmlFor="status">Status</label>
-              <input type="checkbox" className="switch"
-                checked={this.state.filterConfig.status || ""}
-                onChange={event => this.updateFilterConfig(event.target.checked, "status")} />
+              <Select
+                placeholder="Select a status"
+                options={this.createOptionsObject("status")}
+                value={this.state.filterConfig.status || ""}
+                onChange={option => this.updateFilterConfig(option ? option.value : null, "status")} />
             </div>
           </Form>
         </div>
