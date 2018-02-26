@@ -82,24 +82,57 @@
       padding: 5px;
       letter-spacing: 1px;
 
+      &:hover {
+        cursor: pointer;
+      }
+
       &.receiving {
         background-color: #039BE5;
+
+        &:before {
+          content: "Receiving candidates";
+        }
       }
 
       &.filled {
         background-color: #43A047;
+
+        &:before {
+          content: "Filled";
+        }
       }
 
       &.cancelled {
         background-color: #e53935;
+
+        &:before {
+          content: "Cancelled";
+        }
       }
 
       &.paused {
         background-color: #757575;
+
+        &:before {
+          content: "Paused";
+        }
       }
 
       &.draft {
         background-color: #FB8C00;
+
+        &:before {
+          content: "Draft";
+        }
+      }
+    }
+
+    .favorite,
+    .anyone {
+      position: relative;
+
+      &:hover {
+        cursor: pointer;
       }
     }
 
@@ -113,6 +146,10 @@
         margin-right: 5px;
         content: "\f005";
       }
+
+      &:after {
+        content: "Favorite employees only ";
+      }
     }
 
     .anyone {
@@ -120,6 +157,10 @@
         font-family: "FontAwesome";
         margin-right: 5px;
         content: "\f0c0";
+      }
+
+      &:after {
+        content: "Anyone can apply ";
       }
     }
   }

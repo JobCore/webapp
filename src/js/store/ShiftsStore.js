@@ -1,4 +1,5 @@
 import EventEmmiter from "events";
+import AppDispatcher from '../../dispatcher';
 
 import Seeder from "./Seeder.js";
 
@@ -48,11 +49,38 @@ class ShiftStore extends EventEmmiter {
   }
 
   getById(type, id) {
-
     if (typeof this.model[type] === "undefined") throw new Error("Invalid model type: " + type);
     return this.model[type].find((item) => {
       return (item.id.toString() === id.toString());
     });
   }
+
+  updateShift(id, param, value) {
+    let index = this.model.shift.findIndex(s => s.id === id);
+    switch (param) {
+      case "favoritesOnly":
+      case "minAllowedRating":
+        this.model.shift[index].restrictions[param] = value;
+        break;
+      default:
+        this.model.shift[index][param] = value;
+        break;
+    }
+    this.emit("change");
+  }
+
+  handleActions(action) {
+    switch (action.type) {
+      case 'UPDATE_SHIFT':
+        this.updateShift(action.id, action.param, action.value);
+        break;
+      default:
+        break;
+    }
+  }
 }
-export default new ShiftStore();
+
+const shiftStore = new ShiftStore();
+AppDispatcher.register(action => shiftStore.handleActions(action));
+
+export default shiftStore;

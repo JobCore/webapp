@@ -1,4 +1,6 @@
 import React from 'react';
+import Editor from './Editor';
+import * as ShiftActions from '../actions/shiftActions';
 
 const Shift = ({ item }) => {
   let shiftCardClass = "shift-card",
@@ -35,6 +37,10 @@ const Shift = ({ item }) => {
       break;
   }
 
+  const updateShift = (id, param, value) => {
+    ShiftActions.updateShift(id, param, value);
+  }
+
   return (
     <div className={shiftCardClass}>
       <div className={employeeSummaryClass}>
@@ -45,14 +51,37 @@ const Shift = ({ item }) => {
           {item.position} @ {item.location}, {item.start} - {item.end} ({item.duration})
         </div>
         <div className="shift-card__content__bottom-side">
-          {
-            item.restrictions.favoritesOnly ?
-              <span className="favorite">Favorites employees only</span>
-              :
-              <span className="anyone">Anyone can apply</span>
-          }
-          <span className={statusClass}>
-            {item.status}
+          <span className="editor-area">
+            <Editor
+              id={item.id}
+              message="Change restriction for this Shift"
+              onEdit={updateShift}
+              param="favoritesOnly"
+              currentValue={item.restrictions.favoritesOnly}
+              options={[
+                { label: "Favorites employees only", value: true },
+                { label: "Anyone can apply", value: false }
+              ]}>
+              <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>
+              </span>
+            </Editor>
+          </span>
+          <span className="editor-area">
+            <Editor
+              id={item.id}
+              message="Change status for this Shift"
+              onEdit={updateShift}
+              param="status"
+              currentValue={item.status}
+              options={[
+                { label: "Receiving candidates", value: "Receiving candidates" },
+                { label: "Filled", value: "Filled" },
+                { label: "Cancelled", value: "Cancelled" },
+                { label: "Paused", value: "Paused" },
+                { label: "Draft", value: "Draft" }
+              ]}>
+              <span className={statusClass}></span>
+            </Editor>
           </span>
         </div>
       </div>
