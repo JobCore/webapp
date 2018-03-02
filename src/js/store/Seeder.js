@@ -36,12 +36,10 @@ class Seeder {
          status = randomStatus[Faker.random.number({min: 0, max: randomStatus.length - 1})];
        }
 
-        // Status Colors
-        // receiving candidates (blue),
-        // paused, (gray)
-        // filled (green)
-        // cancelled (dirty green)
-        // draft (orange)
+       let candidates = [];
+       for (let i = 0; i < Faker.random.number({min: confirmedEmployees,max: maxAllowedEmployees}); i++) {
+        candidates.push(this.employee())
+       }
 
         return {
           id: Faker.random.uuid(),
@@ -55,9 +53,13 @@ class Seeder {
           maxAllowedEmployees,
           confirmedEmployees,
           restrictions: {
-            favoritesOnly: favoritesOnly,
+            favoritesOnly,
+            minHourlyRate: Faker.random.number({ min: 10, max: 15, }),
             minAllowedRating: Faker.random.number({min: 1, max: 5}),
-          }
+            allowedFromList: ["List #1"]
+          },
+          candidates,
+          acceptedCandidates: []
         };
       },
       employer: function () {
@@ -114,7 +116,7 @@ class Seeder {
           lastname: Faker.name.lastName(),
           birthdate: Faker.date.past(),
           responseTime: Faker.random.number({min: 10, max: 4200}),
-          minHourlyRate: "$ " + Faker.random.number({ min: 10, max: 15, }) + "/hr",
+          minHourlyRate: Faker.random.number({ min: 10, max: 15, }),
           positions,
           profilePicUrl: Faker.image.imageUrl(300, 300, "people"),
           about: Faker.lorem.paragraph(),
@@ -122,6 +124,9 @@ class Seeder {
           rating: Faker.random.number({ min: 1, max: 5, precision: 0.5, }),
           badges,
           unavailableTimes,
+          acceptedInShifts: [
+            // Array of Ids for each shift where employee was accepted
+          ]
         };
       },
       venue: function () {

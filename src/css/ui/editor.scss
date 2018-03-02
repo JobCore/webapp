@@ -1,8 +1,11 @@
 .editor-area {
   position: relative;
+  margin-right: 0 !important;
 }
 
 .editor {
+  z-index: 9999;
+  text-align: left;
   min-width: 250px;
 
   .message {

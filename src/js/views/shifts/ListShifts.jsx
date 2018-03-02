@@ -35,6 +35,7 @@ export class ListShifts extends Component {
 
   componentWillUnmount() {
     FilterConfigStore.removeListener("change", this.setConfig);
+    ShiftsStore.removeListener("change", this.setShifts);
   }
 
   setShifts = () => {

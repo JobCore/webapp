@@ -10,6 +10,7 @@ import EmployerStore from '../../store/EmployerStore';
 import FilterConfigStore from '../../store/FilterConfigStore';
 import * as FilterActions from '../../actions/filterActions';
 import * as EmployerActions from '../../actions/employerActions';
+import EmployeeCard from '../../components/EmployeeCard';
 
 export class FavoriteEmployeesList extends Component {
   state = {
@@ -272,14 +273,21 @@ export class FavoriteEmployeesList extends Component {
         </div>
 
         {this.state.employee.length > 0 ?
-          (<List
-            classes="favorites-list"
-            type={"card"}
-            makeURL={(data) => "/talent/" + data.id}
-            removeItem={this.toggleAlert}
+          // <List
+          //   classes="favorites-list"
+          //   type={"card"}
+          //   makeURL={(data) => "/talent/" + data.id}
+          //   removeItem={this.toggleAlert}
+          //   items={this.state.employee}
+          //   sort={this.sortBy}
+          //   showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />
+          <List
             items={this.state.employee}
+            type="componentList"
+            heading="Favorite employees"
             sort={this.sortBy}
-            showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />)
+            removeItem={this.toggleAlert}
+            component={EmployeeCard} />
           : (<h3 className="no-match">No employees matching this criteria</h3>)
         }
 

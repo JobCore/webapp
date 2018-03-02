@@ -90,7 +90,7 @@
     &:hover {
       .edit,
       .delete {
-        display: table;
+        visibility: visible;
       }
     }
 
@@ -154,7 +154,7 @@
   .delete {
       padding: 0 6px;
       outline: none;
-      display: none;
+      visibility: hidden;
       width: 30px;
       height: 30px;
       color: #434343;

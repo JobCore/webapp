@@ -11,7 +11,6 @@ class ShiftStore extends EventEmmiter {
 
     this.model = {};
     this.model.shift = Seeder.make(20, "shift");
-    this.model.venue = Seeder.make(20, "venue");
     this.model.menu = Seeder.make(1, "menu");
   }
 
@@ -55,11 +54,26 @@ class ShiftStore extends EventEmmiter {
     });
   }
 
+  acceptCandidate(shiftId, employeeId) {
+    const shiftIndex = this.model.shift.findIndex(s => s.id === shiftId);
+    this.model.shift[shiftIndex].acceptedCandidates.push(employeeId);
+    this.emit("change");
+  }
+
+  rejectCandidate(shiftId, employeeId) {
+    const shiftIndex = this.model.shift.findIndex(s => s.id === shiftId);
+    const employeeIndex = this.model.shift[shiftIndex].candidates.findIndex(e => e.id === employeeId);
+    this.model.shift[shiftIndex].candidates.splice(employeeIndex, 1);
+    this.emit("change");
+  }
+
   updateShift(id, param, value) {
     let index = this.model.shift.findIndex(s => s.id === id);
     switch (param) {
       case "favoritesOnly":
       case "minAllowedRating":
+      case "allowedFromList":
+      case "minHourlyRate":
         this.model.shift[index].restrictions[param] = value;
         break;
       default:
@@ -69,10 +83,23 @@ class ShiftStore extends EventEmmiter {
     this.emit("change");
   }
 
+  getAllAvailablePositions() {
+    const shifts = [...this.model.shift];
+    let positions = [];
+    shifts.forEach(shift => positions.push(shift.position));
+    return [...new Set(positions)];
+  }
+
   handleActions(action) {
     switch (action.type) {
       case 'UPDATE_SHIFT':
         this.updateShift(action.id, action.param, action.value);
+        break;
+      case 'ACCEPT_CANDIDATE':
+        this.acceptCandidate(action.shiftId, action.employeeId);
+        break;
+      case 'REJECT_CANDIDATE':
+        this.rejectCandidate(action.shiftId, action.employeeId);
         break;
       default:
         break;

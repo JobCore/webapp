@@ -170,6 +170,16 @@ module.exports = {
                     minimize: true,
                   },
                 },
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    plugins: () => [
+                      autoprefixer({
+                        grid: true
+                      })
+                    ]
+                  }
+                },
                 "sass-loader",
               ],
             }),
@@ -177,14 +187,6 @@ module.exports = {
           {
             test: /\.css$/,
             loader: "style-loader!css-loader",
-          },
-          {
-            test: /\.scss/,
-            loaders: [
-              require.resolve("style-loader"),
-              require.resolve("css-loader"),
-              require.resolve("sass-loader"),
-            ],
           },
           // "file" loader makes sure those assets get served by WebpackDevServer.
           // When you `import` an asset, you get its (virtual) filename.

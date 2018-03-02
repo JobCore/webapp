@@ -4,7 +4,7 @@ import uuid from 'uuid/v4';
 import Select from 'react-select';
 import Globe from './utils/Globe';
 
-class Editor extends Component {
+class InlineTooltipEditor extends Component {
 
   /*
     Dependencies
@@ -81,12 +81,13 @@ class Editor extends Component {
             : null} />
     }
 
-
-    return this.state.editing ? editor : childrenWithProps;
+    return this.state.editing ?
+      <span className="editor-area">{editor}</span>
+      : childrenWithProps;
   }
 }
 
-Editor.propTypes = {
+InlineTooltipEditor.propTypes = {
   message: PropTypes.string,
   options: PropTypes.array,
   children: PropTypes.node,
@@ -95,4 +96,4 @@ Editor.propTypes = {
   onEdit: PropTypes.func
 }
 
-export default Editor;
+export default InlineTooltipEditor;

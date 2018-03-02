@@ -8,3 +8,20 @@ export function updateShift(id, param, value) {
     value
   })
 }
+
+export function acceptCandidate(shiftId, employeeId) {
+  return AppDispatcher.dispatch({
+    type: 'ACCEPT_CANDIDATE',
+    shiftId,
+    employeeId
+  })
+}
+
+export function rejectCandidate(shiftId, employeeId) {
+  return AppDispatcher.dispatch({
+    type: 'REJECT_CANDIDATE',
+    shiftId,
+    employeeId
+  })
+}
+

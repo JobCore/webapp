@@ -5,11 +5,7 @@
   padding: 10px 10px 10px 40px;
   margin-bottom: 15px;
   position: relative;
-
-  &.almos-filled {
-    background-color: #FFF9C4;
-    border: 1px solid #FDD835;
-  }
+  align-items: center;
 
   &.receiving {
     background-color: #B3E5FC;
@@ -171,7 +167,7 @@
 
   .show-employees-btn,
   .edit-btn {
-    display: none;
+    visibility: hidden;
     color: white;
     font-weight: bold;
     background: #ffd65e; /* Old browsers */
@@ -201,7 +197,7 @@
   &:hover {
     .show-employees-btn,
     .edit-btn {
-      display: table;
+      visibility: visible;
 
     }
   }

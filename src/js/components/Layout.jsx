@@ -13,10 +13,10 @@ import { Login } from "../views/Login";
 import { Example } from "../views/Example";
 import { Private } from "../views/Private";
 import { ListShifts } from "../views/shifts/ListShifts";
-import { SingleShift } from "../views/shifts/SingleShift";
 import { EmployeeDetails } from "../views/employees/EmployeeDetails";
 import { ListEmployee } from "../views/employees/ListEmployee";
 import { FavoriteEmployeesList } from "../views/employees/FavoriteEmployeesList";
+import ShiftDetails from "../views/shifts/ShiftDetails";
 
 
 export class Layout extends Component {
@@ -67,7 +67,8 @@ export class Layout extends Component {
               <Route exact path='/examples' component={Example} />
               <Route exact path='/private' component={Private} />
               <Route exact path='/shift/list' component={ListShifts} />
-              <Route exact path='/shift/:id' component={SingleShift} />
+              <Route exact path='/shift/:id' component={ShiftDetails} />
+              <Route exact path='/shift/:id/:isEditing?' component={ShiftDetails} />
               <Route exact path='/talent/favorites' component={FavoriteEmployeesList} />
               <Route exact path='/talent/list' component={ListEmployee} />
               <Route exact path='/talent/:id' component={EmployeeDetails} />

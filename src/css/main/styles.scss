@@ -10,6 +10,7 @@
 @import '../view/home';
 @import '../view/login';
 @import '../view/list';
+@import '../view/shift-details';
 @import '../view/employee-details';
 @import '../view/favorites-list';
 @import '../view/shift-group.scss';
@@ -59,4 +60,8 @@ button {
     i {
         padding-right: 10px;
     }
+}
+
+.alert-message {
+    font-size: 1.7rem;
 }

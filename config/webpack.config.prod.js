@@ -178,13 +178,23 @@ module.exports = {
                     minimize: true,
                   },
                 },
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    plugins: () => [
+                      autoprefixer({
+                        grid: true
+                      })
+                    ]
+                  }
+                },
                 "sass-loader",
               ],
             }),
           },
           {
             test: /\.css$/,
-            loader: "style-loader!css-loader",
+            loader: "style-loader!css-loader!",
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.

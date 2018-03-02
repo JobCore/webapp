@@ -208,7 +208,7 @@ export class EmployeeDetails extends Component {
         <div className="col col-md-5 second-col">
           <div className="header">
             <h3>{`${this.state.employee.name} ${this.state.employee.lastname}`}</h3>
-            <span className="rate">{this.state.employee.minHourlyRate} Minimum Rate</span>
+            <span className="rate">$ {this.state.employee.minHourlyRate}/hr Minimum Rate</span>
           </div>
           <div className="about">
             <p>{this.state.employee.about}</p>

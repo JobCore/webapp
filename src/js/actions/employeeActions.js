@@ -8,3 +8,11 @@ import AppDispatcher from "../../dispatcher.js";
 //     listName
 //   })
 // }
+
+export function acceptedInShift(shiftId, employeeId) {
+  return AppDispatcher.dispatch({
+    type: "ACCEPTED_IN_SHIFT",
+    employeeId,
+    shiftId
+  })
+}

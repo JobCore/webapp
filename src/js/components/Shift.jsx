@@ -1,5 +1,6 @@
 import React from 'react';
-import Editor from './Editor';
+import InlineTooltipEditor from './InlineTooltipEditor';
+import { Link } from 'react-router-dom';
 import * as ShiftActions from '../actions/shiftActions';
 
 const Shift = ({ item }) => {
@@ -51,46 +52,43 @@ const Shift = ({ item }) => {
           {item.position} @ {item.location}, {item.start} - {item.end} ({item.duration})
         </div>
         <div className="shift-card__content__bottom-side">
-          <span className="editor-area">
-            <Editor
-              id={item.id}
-              message="Change restriction for this Shift"
-              onEdit={updateShift}
-              param="favoritesOnly"
-              currentValue={item.restrictions.favoritesOnly}
-              options={[
-                { label: "Favorites employees only", value: true },
-                { label: "Anyone can apply", value: false }
-              ]}>
-              <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>
-              </span>
-            </Editor>
-          </span>
-          <span className="editor-area">
-            <Editor
-              id={item.id}
-              message="Change status for this Shift"
-              onEdit={updateShift}
-              param="status"
-              currentValue={item.status}
-              options={[
-                { label: "Receiving candidates", value: "Receiving candidates" },
-                { label: "Filled", value: "Filled" },
-                { label: "Cancelled", value: "Cancelled" },
-                { label: "Paused", value: "Paused" },
-                { label: "Draft", value: "Draft" }
-              ]}>
-              <span className={statusClass}></span>
-            </Editor>
-          </span>
+          <InlineTooltipEditor
+            id={item.id}
+            message="Change restriction for this Shift"
+            onEdit={updateShift}
+            param="favoritesOnly"
+            currentValue={item.restrictions.favoritesOnly}
+            options={[
+              { label: "Favorites employees only", value: true },
+              { label: "Anyone can apply", value: false }
+            ]}>
+            <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>
+            </span>
+          </InlineTooltipEditor>
+
+          <InlineTooltipEditor
+            id={item.id}
+            message="Change status for this Shift"
+            onEdit={updateShift}
+            param="status"
+            currentValue={item.status}
+            options={[
+              { label: "Receiving candidates", value: "Receiving candidates" },
+              { label: "Filled", value: "Filled" },
+              { label: "Cancelled", value: "Cancelled" },
+              { label: "Paused", value: "Paused" },
+              { label: "Draft", value: "Draft" }
+            ]}>
+            <span className={statusClass}></span>
+          </InlineTooltipEditor>
         </div>
       </div>
-      <button className="btn btn-warning show-employees-btn">
+      <Link className="btn btn-warning show-employees-btn" to={`/shift/${item.id}`}>
         {/* Users Icon in Styles*/}
-      </button>
-      <button className="btn btn-warning edit-btn">
+      </Link>
+      <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}/edit`}>
         {/* Edit Icon in Styles*/}
-      </button>
+      </Link>
     </div>
   )
 }

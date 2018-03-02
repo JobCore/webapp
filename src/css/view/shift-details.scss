@@ -1,0 +1,296 @@
+.shift-details {
+  margin: 0;
+  padding: 20px 30px 0 30px;
+  height: 100%;
+
+  .btn-warning {
+    color: #eee;
+    font-weight: bold;
+  }
+
+  .input-group.mb-2 {
+    margin-bottom: 0 !important;
+  }
+
+  .details {
+    width: 500px;
+    .item {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      align-items: center;
+      margin-bottom: 5px;
+
+      &.dates {
+        grid-template-rows: min-content min-content;
+        grid-template-columns: 1fr;
+
+        .date {
+          display: grid;
+          grid-template-columns: 110px 1fr;
+          align-items: center;
+          margin-bottom: 5px;
+        }
+
+        .times {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+
+          .start-time,
+          .end-time {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+
+  i {
+    color: #434343;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    h3 {
+      font-weight: bold;
+      font-size: 20px;
+    }
+  }
+
+  .first-col {
+    position: relative;
+
+    .edit-shift-details {
+      position: absolute;
+      top: 15px;
+      right: 50px;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      &:before {
+        font-family: "FontAwesome";
+        content: "\f040";
+        margin-right: 5px;
+      }
+    }
+
+    .details {
+      margin-bottom: 10px;
+
+      p {
+        margin: 0;
+      }
+
+      .start-time {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .second-col {
+    background-color: #e9ecef;
+    padding-top: 10px;
+    margin-top: 10px;
+
+    .header {
+      text-align: center;
+      border-bottom: 1px solid black;
+      padding-bottom: 20px;
+    }
+
+    .restriction {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      text-align: center;
+    }
+
+    .min-candidates {
+      padding-top: 20px;
+      border-top: 1px solid black;
+      padding-bottom: 20px;
+
+      .min-rating {
+        margin-left: 10px;
+
+        &:after {
+          background-color: #FFD700;
+          border-radius: 50%;
+          color: #eee;
+          font-family: "FontAwesome";
+          padding: 2px;
+          margin-left: 8px;
+          content: "\f005";
+        }
+      }
+
+      input {
+        padding: 5px;
+      }
+    }
+  }
+  .status {
+    color: #eee;
+    border-radius: 5px;
+    padding: 5px;
+    letter-spacing: 1px;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.receiving {
+      background-color: #039BE5;
+
+      &:before {
+        content: "Receiving candidates";
+      }
+    }
+
+    &.filled {
+      background-color: #43A047;
+
+      &:before {
+        content: "Filled";
+      }
+    }
+
+    &.cancelled {
+      background-color: #e53935;
+
+      &:before {
+        content: "Cancelled";
+      }
+    }
+
+    &.paused {
+      background-color: #757575;
+
+      &:before {
+        content: "Paused";
+      }
+    }
+
+    &.draft {
+      background-color: #FB8C00;
+
+      &:hover {
+        cursor: initial;
+      }
+
+      &:before {
+        content: "Draft";
+      }
+    }
+  }
+
+  .publish-area {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid black;
+  }
+
+  .favorite,
+  .anyone {
+    position: relative;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .favorite {
+    &:before {
+      background-color: #FFD700;
+      border-radius: 50%;
+      color: #eee;
+      font-family: "FontAwesome";
+      padding: 3px;
+      margin-right: 5px;
+      content: "\f005";
+    }
+
+    &:after {
+      content: "Favorite employees only ";
+    }
+  }
+
+  .anyone {
+    &:before {
+      font-family: "FontAwesome";
+      margin-right: 5px;
+      content: "\f0c0";
+    }
+
+    &:after {
+      content: "Anyone can apply ";
+    }
+  }
+
+  .list-item {
+    &:hover {
+      .side {
+        .btn {
+          visibility: visible;
+        }
+      }
+    }
+  }
+
+  .like-card.approved {
+    background-color: #C8E6C9;
+    border: 1px solid #43A047;
+    margin-right: 0;
+
+    .side {
+      width: 127px;
+      padding: 5px 10px;
+      background-color: rgb(212, 241, 213);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      p {
+        margin: 0;
+        color: #43A047;
+      }
+
+      .approved {
+        font-weight: bold;
+      }
+
+      .reject {
+        font-size: 0.9rem;
+        &:hover {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .accept-btn,
+  .cancel-btn {
+    visibility: hidden;
+  }
+
+  .accept-btn {
+    &:after {
+      font-family: "FontAwesome";
+      content:"\f00c";
+    }
+  }
+
+  .cancel-btn {
+    &:after {
+      font-family: "FontAwesome";
+      content:"\f00d";
+    }
+  }
+
+}

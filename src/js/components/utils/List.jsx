@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
 import { ListItem } from "./ListItem.jsx";
-import ReactStars from "react-stars";
-import EmployerStore from "../../store/EmployerStore";
 import uuidv4 from 'uuid';
 
 export class List extends Component {
@@ -25,29 +23,52 @@ export class List extends Component {
   *       * showInSubheading: array of items to show in subheading within <span></span>
   *       * makeURL: a function with the logic to generate details link
   *    ---
+  *   #### type = "componentlist"
+  *   props
+  *
+  *       * data: the list of items to render as the component passed in props
+  *       * component: this is how the data will be rendered
+  *       * removeItem: a function that handles the item removal [should receive an id of the item]
+  *       * Additional props are passed to child compoment
+  *    ---
   *    **renderLikeCard**'s _formatedSubheading_ **needs** to be adjusted to show values with different formatting
   */
 
+
   render() {
+    const { component, type, items, heading, subheading, ...props } = this.props;
     let results;
-    const Component = this.props.component;
-    if (this.props.type.toLowerCase() === "table") {
-      results = this.renderLikeTable(this.props.items);
-    } else if (this.props.type.toLowerCase() === "card") {
-      results = this.renderLikeCard(this.props.items);
-    } else if (this.props.type.toLowerCase() === "componentlist") {
-      const items = this.props.items
-      results = [];
-      for (const key in items) {
-        results.push(
-          <Component
-            key={uuidv4()}
-            heading={key}
-            items={items[key]} />
-        )
-      };
+    const Component = component;
+    if (type.toLowerCase() === "table") {
+      results = this.renderLikeTable(items);
+    } else if (type.toLowerCase() === "card") {
+      results = this.renderLikeCard(items);
+    } else if (type.toLowerCase() === "componentlist") {
+      if (Array.isArray(items)) {
+        results = [];
+        items.forEach(item => {
+          results.push(
+            <Component
+              key={uuidv4()}
+              heading={item.id}
+              item={item}
+              removeCard={props.removeItem ? () => props.removeItem(item.id) : null}
+              {...props} />
+          );
+        })
+      } else {
+        results = [];
+        for (const key in items) {
+          results.push(
+            <Component
+              key={uuidv4()}
+              heading={key}
+              items={items[key]} />
+          )
+        };
+      }
     } else {
-      results = this.props.items.map(item => {
+      results = items.map(item => {
         if (typeof item === 'object') {
           let content = [];
           let innerArray = item[Object.keys(item)[0]];
@@ -66,25 +87,26 @@ export class List extends Component {
     }
 
     return (
-      <div className={`results-list ${this.props.classes || ""}`}>
+      <div className={`results-list ${props.classes || ""}`}>
         <div style={{ display: "none", }} className="btn-group" role="group" aria-label="Basic example">
           <button type="button" className="btn btn-secondary">Left</button>
           <button type="button" className="btn btn-secondary">Middle</button>
         </div>
         <div className="list-header">
-          <h3>{this.props.heading || "Results"}</h3>
+          <h3>{heading || "Results"}</h3>
           {
-            Array.isArray(this.props.items) ?
+            Array.isArray(items) && props.sort ?
               <div className="sort-area">
                 <input className="sort-input" type="checkbox" name="sort" id="sort" />
                 <label className="sort-label" htmlFor="sort">Sort by</label>
                 <div>
-                  <button onClick={() => this.props.sort("name")}>Name</button>
-                  <button onClick={() => this.props.sort("rating")}>Rating</button>
-                  <button onClick={() => this.props.sort("responseTime")}>Response Time</button>
+                  <button onClick={() => props.sort("name")}>Name</button>
+                  <button onClick={() => props.sort("rating")}>Rating</button>
+                  <button onClick={() => props.sort("responseTime")}>Response Time</button>
                 </div>
               </div> :
-              null}
+              null
+          }
         </div>
         {results}
       </div >
@@ -110,7 +132,7 @@ export class List extends Component {
   renderLikeTable = () => {
     const tableColumns = this.getTableColumns();
 
-    var rowsRender = this.props.items.map((item) => {
+    var rowsRender = this.items.map((item) => {
       return <ListItem
         key={item.id}
         data={item}
@@ -157,36 +179,8 @@ export class List extends Component {
 
         formatedSubheading = options.map(
           option => {
-            switch (option) {
-              case "favorite":
-                if (!EmployerStore.isEmployeeInFavoriteList(item.id)) { return "" }
-                return <span className={option} key={option}>{item[option]}</span>;
-              case "rating":
-                if (!item[option]) { return "" }
-                return (
-                  <span className={option} key={option}>
-                    <ReactStars size={16} value={item[option]} edit={false} />
-                  </span>
-                );
-              case "badges":
-                if (!item[option]) { return "" }
-                let badges = item[option].map(badge => <span key={badge} className="badge">{badge}</span>)
-                return (
-                  <span className={option} key={option}>
-                    {badges}
-                  </span>
-                )
-              case "responseTime":
-                if (!item[option]) { return "" }
-                let classes = [option];
-                classes.push(item[option] > 719 ? "warning" : "fast");
-                classes = classes.join(" ");
-                let time = item[option] > 59 ? Math.ceil(item[option] / 60) + " hour(s)" : item[option] + " minute(s)";
-                return <span className={classes} key={option}>Anwers in: {time}</span>;
-              default:
-                if (!item[option]) { return "" }
-                return <span className={option} key={option}>{item[option]}</span>;
-            }
+            if (!item[option]) { return "" }
+            return <span className={option} key={option}>{item[option]}</span>;
           }
         );
 
@@ -196,7 +190,8 @@ export class List extends Component {
         key={item.id}
         data={item}
         type={"card"}
-        heading={`${item.name} ${item.lastname}`}
+        AcceptRejectButtons={this.props.AcceptRejectButtons}
+        heading={`${item.id}`}
         subheading={formatedSubheading}
         removeCard={this.props.removeItem ? () => this.props.removeItem(item.id) : null}
         makeURL={this.props.makeURL}

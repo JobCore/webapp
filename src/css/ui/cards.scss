@@ -65,12 +65,13 @@
 
     .search,
     .delete {
-      display: table;
+      visibility: visible;
     }
   }
 
   .content {
     flex: 1;
+    margin-left: 5px;
   }
 
   .btn {
@@ -87,7 +88,8 @@
   .search,
   .delete {
       outline: none;
-      display: none;
+      display: table;
+      visibility: hidden;
       width: 40px;
       height: 40px;
       color: #434343;

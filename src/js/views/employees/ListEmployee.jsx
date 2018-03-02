@@ -10,6 +10,7 @@ import EmployeeStore from "../../store/EmployeeStore";
 import ShiftsStore from "../../store/ShiftsStore.js";
 import FilterConfigStore from "../../store/FilterConfigStore";
 import * as FilterActions from '../../actions/filterActions';
+import EmployeeCard from "../../components/EmployeeCard";
 
 export class ListEmployee extends Component {
   state = {
@@ -325,12 +326,11 @@ export class ListEmployee extends Component {
 
         {this.state.filteredData.length > 0 ? (
           <List
-            classes="employee-list"
-            type={"card"}
-            makeURL={(data) => "/talent/" + data.id}
             items={this.state.filteredData}
+            type="componentList"
+            heading="Employees"
             sort={this.sortBy}
-            showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />
+            component={EmployeeCard} />
         ) : (
             <h3 className="no-match">No employees matching this criteria</h3>
           )}
