@@ -20,6 +20,7 @@ class ShiftDetails extends Component {
     prevShiftStatus: null,
     venues: VenueStore.getAll(),
     isInlineEditorOpen: false,
+    editionMode: false,
   }
 
   setShift = () => {
@@ -37,7 +38,7 @@ class ShiftDetails extends Component {
   }
 
   componentDidMount() {
-    if (this.props.match.params.isEditing && this.state.shift ? this.toggleEdition(this.state.shift.id) : null);
+    if (this.props.match.params.isEditing && this.state.shift ? this.toggleEdition() : null);
   }
 
   toggleInlineEditor = () => {
@@ -89,15 +90,11 @@ class ShiftDetails extends Component {
     ShiftActions.updateShift(id, "status", "Receiving candidates");
   }
 
-  toggleEdition = (id) => {
-    if (this.state.shift.status === "Draft") {
-      ShiftActions.updateShift(id, "status", this.state.prevShiftStatus);
-    } else {
-      this.setState({
-        prevShiftStatus: this.state.shift.status
-      })
-      ShiftActions.updateShift(id, "status", "Draft");
-    }
+  toggleEdition = () => {
+    this.setState(prevState => ({
+      prevShiftStatus: this.state.shift.status,
+      editionMode: !prevState.editionMode
+    }))
   }
 
   renderDetails = () => {
@@ -133,18 +130,21 @@ class ShiftDetails extends Component {
     return (
       <div className="row shift-details">
         {
-          shift.status === "Draft" ?
+          shift.status === "Draft" || this.state.editionMode ?
             // If Draft
             <div className="col col-md-9 first-col">
               {
-                shift.status !== "Draft" &&
+                (shift.status !== "Draft" || this.state.editionMode) &&
                 <span
                   className="edit-shift-details"
-                  onClick={() => this.toggleEdition(shift.id)}>
+                  onClick={() => this.toggleEdition()}>
                   Exit editing mode
                 </span>
               }
-              <h1>Draft</h1>
+              {
+                shift.status === "Draft" &&
+                <h1>Draft</h1>
+              }
               <div className="details">
                 <div className="item">
                   <strong>Looking for: </strong>
@@ -214,7 +214,7 @@ class ShiftDetails extends Component {
             :
             // If not a Draft
             <div className="col col-md-9 first-col">
-              <span className="edit-shift-details" onClick={() => this.toggleEdition(shift.id)}>
+              <span className="edit-shift-details" onClick={() => this.toggleEdition()}>
                 Edit shift details
               </span>
               <div className="details">
@@ -347,7 +347,7 @@ class ShiftDetails extends Component {
               </div>
           }
           {
-            shift.status === "Draft" ?
+            shift.status === "Draft" || this.state.editionMode ?
               <div className="min-candidates">
                 <p>Minimum applicant star rating:</p>
                 <div className="input-group mb-2">
