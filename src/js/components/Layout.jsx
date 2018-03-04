@@ -67,7 +67,6 @@ export class Layout extends Component {
               <Route exact path='/examples' component={Example} />
               <Route exact path='/private' component={Private} />
               <Route exact path='/shift/list' component={ListShifts} />
-              <Route exact path='/shift/:id' component={ShiftDetails} />
               <Route exact path='/shift/:id/:isEditing?' component={ShiftDetails} />
               <Route exact path='/talent/favorites' component={FavoriteEmployeesList} />
               <Route exact path='/talent/list' component={ListEmployee} />

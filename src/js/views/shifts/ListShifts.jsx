@@ -20,7 +20,7 @@ export class ListShifts extends Component {
     filterConfig: {
       ...FilterConfigStore.getConfigFor("shiftList"),
     },
-    shouldListUpdate: true,
+    shouldListUpdate: true
   };
 
   componentDidUpdate() {
@@ -51,7 +51,6 @@ export class ListShifts extends Component {
       },
     });
   }
-
 
   toggleModal = (item) => {
     this.setState({

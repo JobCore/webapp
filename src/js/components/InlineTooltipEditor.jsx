@@ -33,40 +33,68 @@ class InlineTooltipEditor extends Component {
   */
 
   state = {
-    editing: false
+    editing: false,
+    value: this.props.currentValue,
   }
 
   toggleEditor = () => {
-    this.setState(prevState => ({
-      ...prevState,
-      editing: !prevState.editing
-    }))
+
+    if (!this.props.isEditorOpen) {
+      console.log('inside');
+      this.setState({
+        value: this.props.currentValue,
+        editing: true
+      }, this.props.toggleInlineEditor())
+    } else {
+      this.setState(prevState => {
+        console.log('here');
+        if (prevState.editing) this.props.toggleInlineEditor();
+        return ({
+          ...prevState,
+          value: this.props.currentValue,
+          editing: false
+        });
+      })
+    }
+  }
+
+  handleChange(value) {
+    this.setState({ value });
   }
 
   render() {
     const { children, message, options, currentValue, id, param, onEdit } = this.props;
-    // console.log(children);
 
     // Clone children and add onClick prop
     const childrenWithProps = React.Children.map(
       children, child => React.cloneElement(child, { onClick: this.toggleEditor }));
-
     // Config editor for data types
     let editor;
     if (options) {
       editor = [
-        <Globe key={uuid()} onClose={this.toggleEditor}>
+        <Globe
+          key={uuid()}
+          onClose={() => { this.toggleEditor(); }}
+          classes={this.props.classes}>
           <div className="editor">
             <p className="message">{message || "Edit:"}</p>
             <Select
               searchable={false}
               clearable={false}
               options={options}
-              value={currentValue}
-              onChange={option => {
-                onEdit(id, param, option.value);
-                this.toggleEditor();
-              }} />
+              value={this.state.value}
+              onChange={option => this.handleChange(option.value)} />
+            <div className="buttons">
+              <button
+                className="btn btn-primary save"
+                onClick={() => {
+                  onEdit(id, param, this.state.value);
+                  this.toggleEditor()
+                }}>Save</button>
+              <button
+                className="cancel btn btn-danger"
+                onClick={() => { this.toggleEditor(); }}>Cancel</button>
+            </div>
           </div>
         </Globe>,
         childrenWithProps

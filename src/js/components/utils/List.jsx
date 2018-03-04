@@ -63,7 +63,8 @@ export class List extends Component {
             <Component
               key={uuidv4()}
               heading={key}
-              items={items[key]} />
+              items={items[key]}
+              {...props} />
           )
         };
       }

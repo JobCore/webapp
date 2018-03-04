@@ -27,7 +27,7 @@ class EmployeeStore extends EventEmmiter {
   }
 
   acceptedInShift(shiftId, employeeId) {
-    let index = this.model.employee.findIndex(e => e.id === employeeId);
+    // let index = this.model.employee.findIndex(e => e.id === employeeId);
     // this.model.employee[index].acceptedInShifts.push(shiftId);
     this.emit('change');
   }

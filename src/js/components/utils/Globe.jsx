@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Globe = ({ children, onClose }) => (
-  <div className="globe">
+const Globe = ({ children, onClose, classes }) => (
+  <div className={`globe ${classes ? classes : ""}`}>
     <div className="close-btn" onClick={onClose}>X</div>
     <div className="content">
       {children}

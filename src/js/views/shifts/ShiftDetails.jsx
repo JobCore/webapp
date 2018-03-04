@@ -17,7 +17,9 @@ import VenueStore from '../../store/VenueStore';
 class ShiftDetails extends Component {
   state = {
     shift: ShiftStore.getById("shift", this.props.match.params.id),
-    venues: VenueStore.getAll()
+    prevShiftStatus: null,
+    venues: VenueStore.getAll(),
+    isInlineEditorOpen: false,
   }
 
   setShift = () => {
@@ -27,12 +29,22 @@ class ShiftDetails extends Component {
   }
 
   componentWillMount() {
-    if (this.props.match.params.isEditing ? this.toggleEdition(this.state.shift.id) : null);
     ShiftStore.on("change", this.setShift);
   }
 
   componentWillUnmount() {
     ShiftStore.removeListener("change", this.setShift);
+  }
+
+  componentDidMount() {
+    if (this.props.match.params.isEditing && this.state.shift ? this.toggleEdition(this.state.shift.id) : null);
+  }
+
+  toggleInlineEditor = () => {
+    this.setState(prevState => ({
+      ...prevState,
+      isInlineEditorOpen: !prevState.isInlineEditorOpen
+    }))
   }
 
   updateShift = (id, param, value) => {
@@ -79,8 +91,11 @@ class ShiftDetails extends Component {
 
   toggleEdition = (id) => {
     if (this.state.shift.status === "Draft") {
-      ShiftActions.updateShift(id, "status", "Receiving candidates");
+      ShiftActions.updateShift(id, "status", this.state.prevShiftStatus);
     } else {
+      this.setState({
+        prevShiftStatus: this.state.shift.status
+      })
       ShiftActions.updateShift(id, "status", "Draft");
     }
   }
@@ -106,6 +121,7 @@ class ShiftDetails extends Component {
         statusClass += " draft";
         break;
       default:
+        statusClass += " draft";
         break;
     }
 
@@ -120,9 +136,14 @@ class ShiftDetails extends Component {
           shift.status === "Draft" ?
             // If Draft
             <div className="col col-md-9 first-col">
-              <span className="edit-shift-details" onClick={() => this.toggleEdition(shift.id)}>
-                Cancel edition
-              </span>
+              {
+                shift.status !== "Draft" &&
+                <span
+                  className="edit-shift-details"
+                  onClick={() => this.toggleEdition(shift.id)}>
+                  Exit editing mode
+                </span>
+              }
               <h1>Draft</h1>
               <div className="details">
                 <div className="item">
@@ -135,9 +156,9 @@ class ShiftDetails extends Component {
                 </div>
                 <div className="item">
                   <strong>Paying: </strong>
-                  <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">$</div>
+                  <div className="input-group mb-2">
+                    <div className="input-group-prepend">
+                      <div className="input-group-text">$</div>
                     </div>
                     <input
                       type="number"
@@ -145,8 +166,8 @@ class ShiftDetails extends Component {
                       min="0"
                       value={shift.restrictions.minHourlyRate}
                       onChange={e => this.updateShift(shift.id, "minHourlyRate", e.target.value)} />
-                    <div class="input-group-append">
-                      <div class="input-group-text">/hr</div>
+                    <div className="input-group-append">
+                      <div className="input-group-text">/hr</div>
                     </div>
                   </div>
                 </div>
@@ -266,6 +287,9 @@ class ShiftDetails extends Component {
                 </div>
                 :
                 <InlineTooltipEditor
+                  isEditorOpen={this.state.isInlineEditorOpen}
+                  toggleInlineEditor={this.toggleInlineEditor}
+                  classes="left"
                   id={shift.id}
                   active={this.state.isEditing}
                   message="Change status for this Shift"
@@ -279,15 +303,18 @@ class ShiftDetails extends Component {
                     { label: "Paused", value: "Paused" },
                     { label: "Draft", value: "Draft" }
                   ]}>
-                  <span className={statusClass}></span>
+                  <span
+                    className={statusClass}></span>
                 </InlineTooltipEditor>
             }
           </div>
 
           <div className="restriction">
             <InlineTooltipEditor
+              isEditorOpen={this.state.isInlineEditorOpen}
+              toggleInlineEditor={this.toggleInlineEditor}
+              classes="left"
               id={shift.id}
-              active={this.state.isEditing}
               message="Change restriction for this Shift"
               onEdit={this.updateShift}
               param="favoritesOnly"
@@ -296,7 +323,8 @@ class ShiftDetails extends Component {
                 { label: "Favorites employees only", value: true },
                 { label: "Anyone can apply", value: false }
               ]}>
-              <span className={shift.restrictions.favoritesOnly ? "favorite" : "anyone"}>
+              <span
+                className={shift.restrictions.favoritesOnly ? "favorite" : "anyone"}>
               </span>
             </InlineTooltipEditor>
           </div>
@@ -322,9 +350,9 @@ class ShiftDetails extends Component {
             shift.status === "Draft" ?
               <div className="min-candidates">
                 <p>Minimum applicant star rating:</p>
-                <div class="input-group mb-2">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">
+                <div className="input-group mb-2">
+                  <div className="input-group-prepend">
+                    <div className="input-group-text">
                       <i className="fa fa-star"></i>
                     </div>
                   </div>

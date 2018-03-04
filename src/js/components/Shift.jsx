@@ -1,9 +1,7 @@
 import React from 'react';
-import InlineTooltipEditor from './InlineTooltipEditor';
 import { Link } from 'react-router-dom';
-import * as ShiftActions from '../actions/shiftActions';
 
-const Shift = ({ item }) => {
+const Shift = ({ item, ...props }) => {
   let shiftCardClass = "shift-card",
     employeeSummaryClass = "employee-summary",
     statusClass = "status";
@@ -35,11 +33,10 @@ const Shift = ({ item }) => {
       statusClass += " draft";
       break;
     default:
+      employeeSummaryClass += " draft";
+      shiftCardClass += " draft";
+      statusClass += " draft";
       break;
-  }
-
-  const updateShift = (id, param, value) => {
-    ShiftActions.updateShift(id, param, value);
   }
 
   return (
@@ -52,43 +49,30 @@ const Shift = ({ item }) => {
           {item.position} @ {item.location}, {item.start} - {item.end} ({item.duration})
         </div>
         <div className="shift-card__content__bottom-side">
-          <InlineTooltipEditor
-            id={item.id}
-            message="Change restriction for this Shift"
-            onEdit={updateShift}
-            param="favoritesOnly"
-            currentValue={item.restrictions.favoritesOnly}
-            options={[
-              { label: "Favorites employees only", value: true },
-              { label: "Anyone can apply", value: false }
-            ]}>
-            <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>
-            </span>
-          </InlineTooltipEditor>
+          <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>
+          </span>
 
-          <InlineTooltipEditor
-            id={item.id}
-            message="Change status for this Shift"
-            onEdit={updateShift}
-            param="status"
-            currentValue={item.status}
-            options={[
-              { label: "Receiving candidates", value: "Receiving candidates" },
-              { label: "Filled", value: "Filled" },
-              { label: "Cancelled", value: "Cancelled" },
-              { label: "Paused", value: "Paused" },
-              { label: "Draft", value: "Draft" }
-            ]}>
-            <span className={statusClass}></span>
-          </InlineTooltipEditor>
+          <span className={statusClass}></span>
         </div>
       </div>
-      <Link className="btn btn-warning show-employees-btn" to={`/shift/${item.id}`}>
-        {/* Users Icon in Styles*/}
-      </Link>
-      <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}/edit`}>
-        {/* Edit Icon in Styles*/}
-      </Link>
+      {
+        item.status !== "Draft" &&
+        <Link className="btn btn-warning show-employees-btn" to={`/shift/${item.id}`}>
+          {/* Users Icon in Styles*/}
+        </Link>
+      }
+
+      {
+        item.status !== "Draft" ?
+          <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}/edit`}>
+            {/* Edit Icon in Styles*/}
+          </Link>
+          :
+          <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}`}>
+            {/* Edit Icon in Styles*/}
+          </Link>
+      }
+
     </div>
   )
 }

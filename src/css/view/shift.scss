@@ -78,10 +78,6 @@
       padding: 5px;
       letter-spacing: 1px;
 
-      &:hover {
-        cursor: pointer;
-      }
-
       &.receiving {
         background-color: #039BE5;
 
@@ -126,10 +122,6 @@
     .favorite,
     .anyone {
       position: relative;
-
-      &:hover {
-        cursor: pointer;
-      }
     }
 
     .favorite {
