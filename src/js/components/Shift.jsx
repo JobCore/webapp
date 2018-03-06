@@ -56,23 +56,24 @@ const Shift = ({ item, ...props }) => {
         </div>
       </div>
       {
-        item.status !== "Draft" &&
+        (item.status !== "Draft" && props.match.path !== "/talent/:id/offer") &&
         <Link className="btn btn-warning show-employees-btn" to={`/shift/${item.id}`}>
           {/* Users Icon in Styles*/}
         </Link>
       }
-
       {
-        item.status !== "Draft" ?
-          <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}/edit`}>
-            {/* Edit Icon in Styles*/}
-          </Link>
+        props.match.path === "/talent/:id/offer" ?
+          <button className="btn btn-warning offer-btn">Offer this shift</button>
           :
-          <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}`}>
-            {/* Edit Icon in Styles*/}
-          </Link>
+          item.status !== "Draft" ?
+            <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}/edit`}>
+              {/* Edit Icon in Styles*/}
+            </Link>
+            :
+            <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}`}>
+              {/* Edit Icon in Styles*/}
+            </Link>
       }
-
     </div>
   )
 }

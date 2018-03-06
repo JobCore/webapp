@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import Select from "react-select";
 
 import Moment from "moment";
-import Modal from "../../components/utils/Modal.jsx";
+import Modal from "../../components/utils/Modal";
 import Form from "../../components/utils/Form";
-import { List } from "../../components/utils/List.jsx";
-import ShiftsStore from "../../store/ShiftsStore.js";
+import { List } from "../../components/utils/List";
+import ShiftsStore from "../../store/ShiftsStore";
+import EmployeeStore from "../../store/EmployeeStore";
 import FilterConfigStore from "../../store/FilterConfigStore";
 import * as FilterActions from '../../actions/filterActions';
 import ShiftGroup from "../../components/ShiftGroup";
@@ -13,7 +14,7 @@ import ShiftGroup from "../../components/ShiftGroup";
 export class ListShifts extends Component {
 
   state = {
-    shift: ShiftsStore.getAll("shift"),
+    shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
     filteredData: [],
     modalOpened: false,
     currentShift: { id: null, },
@@ -25,6 +26,15 @@ export class ListShifts extends Component {
 
   componentDidUpdate() {
     this.updateListOnFilter();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.match.path !== nextProps.match.path) {
+      this.setState(prevState => ({
+        shift: nextProps.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+        shouldListUpdate: true
+      }))
+    }
   }
 
   componentWillMount() {
@@ -39,9 +49,9 @@ export class ListShifts extends Component {
   }
 
   setShifts = () => {
-    this.setState({
-      data: ShiftsStore.getShiftsGroupedByDate(),
-    })
+    this.setState(prevState => ({
+      shift: ShiftsStore.getShiftsGroupedByDate(prevState.shift),
+    }))
   }
 
   setConfig = () => {
@@ -150,8 +160,17 @@ export class ListShifts extends Component {
 
   render() {
     // console.log(this.state.filterConfig);
+    const employee = this.props.match.path === "/talent/:id/offer" ?
+      EmployeeStore.getById(this.props.match.params.id) : "";
+
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
+        {
+          this.props.match.path === "/talent/:id/offer" &&
+          <h3>
+            Select the shift you want to offer to <span className="employee-to-offer">{employee.name} {employee.lastname}</span>
+          </h3>
+        }
         <div className="form-area">
           <Form title="Filter Shifts" orderedAs="row">
             <div className="form-group">
@@ -180,7 +199,8 @@ export class ListShifts extends Component {
             <div className="form-group switch-group">
               <label htmlFor="status">Status</label>
               <Select
-                placeholder="Select a status"
+                disabled={this.props.match.path === "/talent/:id/offer"}
+                placeholder={this.props.match.path === "/talent/:id/offer" ? "Disabled" : "Select a status"}
                 options={this.createOptionsObject("status")}
                 value={this.state.filterConfig.status || ""}
                 onChange={option => this.updateFilterConfig(option ? option.value : null, "status")} />
@@ -194,17 +214,21 @@ export class ListShifts extends Component {
               Clear filters
             </button>
           }
-          <button className="btn btn-success">
-            <i className="fa fa-plus" aria-hidden="true"></i>
-            <span>Create a new shift</span>
-          </button>
+          {
+            this.props.match.path !== "/talent/:id/offer" &&
+            <button className="btn btn-success">
+              <i className="fa fa-plus" aria-hidden="true"></i>
+              <span>Create a new shift</span>
+            </button>
+          }
         </div>
         {Object.keys(this.state.filteredData).length > 0 ? (
           <List
             items={this.state.filteredData}
             type="componentList"
             heading="Company Shifts"
-            component={ShiftGroup} />
+            component={ShiftGroup}
+            match={this.props.match} />
         ) : (
             <h3 className="no-match">No shifts matching this criteria</h3>
           )}

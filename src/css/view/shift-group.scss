@@ -3,6 +3,12 @@
     background-color: #E0E0E0;
     font-weight: bold;
     padding: 5px 20px;
+
+    &:before {
+      font-family: "FontAwesome";
+      content:"\f073";
+      margin-right: 10px;
+    }
   }
 
   & .shifts {

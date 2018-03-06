@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import swal from 'sweetalert2';
 
 import ReactStars from "react-stars";
@@ -227,9 +227,11 @@ export class EmployeeDetails extends Component {
               <i className="fa fa-hourglass-end" aria-hidden="true"></i>
               Answers in: {responseTime}
             </p>
-            <button type="button" className="btn btn-warning btn-offer">
-              Offer a Shift
-            </button>
+            <Link to={this.props.match.url + "/offer"} >
+              <button type="button" className="btn btn-warning btn-offer">
+                Offer a Shift
+              </button>
+            </Link>
           </div>
 
           {this.renderFavorites()}

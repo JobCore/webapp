@@ -192,7 +192,7 @@ export class List extends Component {
         data={item}
         type={"card"}
         AcceptRejectButtons={this.props.AcceptRejectButtons}
-        heading={`${item.id}`}
+        heading={item.id}
         subheading={formatedSubheading}
         removeCard={this.props.removeItem ? () => this.props.removeItem(item.id) : null}
         makeURL={this.props.makeURL}

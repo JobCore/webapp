@@ -118,7 +118,7 @@ class Seeder {
           responseTime: Faker.random.number({min: 10, max: 4200}),
           minHourlyRate: Faker.random.number({ min: 10, max: 15, }),
           positions,
-          profilePicUrl: Faker.image.imageUrl(300, 300, "people"),
+          profilePicUrl: Faker.image.imageUrl(100, 100, "people"),
           about: Faker.lorem.paragraph(),
           currentJobs: Faker.random.number({ min: 10, max: 35, }),
           rating: Faker.random.number({ min: 1, max: 5, precision: 0.5, }),

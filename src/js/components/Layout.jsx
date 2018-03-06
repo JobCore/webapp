@@ -70,6 +70,7 @@ export class Layout extends Component {
               <Route exact path='/shift/:id/:isEditing?' component={ShiftDetails} />
               <Route exact path='/talent/favorites' component={FavoriteEmployeesList} />
               <Route exact path='/talent/list' component={ListEmployee} />
+              <Route exact path='/talent/:id/offer' component={ListShifts} />
               <Route exact path='/talent/:id' component={EmployeeDetails} />
               <Route render={() => <p className="text-center mt-5">Not found</p>} />
             </Switch>

@@ -158,7 +158,8 @@
   }
 
   .show-employees-btn,
-  .edit-btn {
+  .edit-btn,
+  .offer-btn {
     visibility: hidden;
     color: white;
     font-weight: bold;
@@ -188,7 +189,8 @@
 
   &:hover {
     .show-employees-btn,
-    .edit-btn {
+    .edit-btn,
+    .offer-btn {
       visibility: visible;
 
     }

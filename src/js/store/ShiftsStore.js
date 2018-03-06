@@ -24,6 +24,12 @@ class ShiftStore extends EventEmmiter {
     return this.model[type];
   }
 
+  getActiveShifts() {
+    const shiftsArr = this.model.shift;
+    let activeShifts = shiftsArr.filter(shift => shift.status === "Receiving candidates");
+    return activeShifts;
+  }
+
   getShiftsSortedByDate(shifts) {
     const shiftsArr = shifts || this.model.shift;
     let sortedShifts = shiftsArr.sort((a, b) => {
