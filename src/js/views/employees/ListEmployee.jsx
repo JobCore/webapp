@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 
@@ -318,10 +319,12 @@ export class ListEmployee extends Component {
               Clear filters
             </button>
           }
-          <button className="btn btn-success">
-            <i className="fa fa-plus" aria-hidden="true"></i>
-            <span>Create a new shift</span>
-          </button>
+          <Link to="/shift/create">
+            <button className="btn btn-success">
+              <i className="fa fa-plus" aria-hidden="true"></i>
+              <span>Create a new shift</span>
+            </button>
+          </Link>
         </div>
 
         {this.state.filteredData.length > 0 ? (

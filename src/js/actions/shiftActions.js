@@ -25,3 +25,10 @@ export function rejectCandidate(shiftId, employeeId) {
   })
 }
 
+export function createShift(shiftData) {
+  return AppDispatcher.dispatch({
+    type: 'CREATE_SHIFT',
+    shiftData
+  })
+}
+

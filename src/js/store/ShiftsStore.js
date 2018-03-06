@@ -1,5 +1,6 @@
 import EventEmmiter from "events";
 import AppDispatcher from '../../dispatcher';
+import uuid from 'uuid/v4';
 
 import Seeder from "./Seeder.js";
 
@@ -16,6 +17,16 @@ class ShiftStore extends EventEmmiter {
 
   addShift() {
     this.model.shifts.push(Seeder.make(1, "shift"));
+    this.emit("change");
+  }
+
+  createShift(shiftData) {
+    this.model.shift.push({...shiftData});
+    this.model.shift[this.model.shift.length - 1].id = uuid();
+    this.model.shift[this.model.shift.length - 1].confirmedEmployees = 0;
+    this.model.shift[this.model.shift.length - 1].candidates = [];
+    this.model.shift[this.model.shift.length - 1].acceptedCandidates = [];
+    console.log('created', this.model.shift);
     this.emit("change");
   }
 
@@ -79,7 +90,6 @@ class ShiftStore extends EventEmmiter {
       case "favoritesOnly":
       case "minAllowedRating":
       case "allowedFromList":
-      case "minHourlyRate":
         this.model.shift[index].restrictions[param] = value;
       break;
       case "badges":
@@ -102,6 +112,9 @@ class ShiftStore extends EventEmmiter {
 
   handleActions(action) {
     switch (action.type) {
+      case 'CREATE_SHIFT':
+        this.createShift(action.shiftData)
+        break;
       case 'UPDATE_SHIFT':
         this.updateShift(action.id, action.param, action.value);
         break;

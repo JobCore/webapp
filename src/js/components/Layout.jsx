@@ -16,6 +16,7 @@ import { ListShifts } from "../views/shifts/ListShifts";
 import { EmployeeDetails } from "../views/employees/EmployeeDetails";
 import { ListEmployee } from "../views/employees/ListEmployee";
 import { FavoriteEmployeesList } from "../views/employees/FavoriteEmployeesList";
+import CreateShift from '../views/shifts/CreateShift';
 import ShiftDetails from "../views/shifts/ShiftDetails";
 
 
@@ -66,6 +67,7 @@ export class Layout extends Component {
               <Route exact path='/' component={Home} />
               <Route exact path='/examples' component={Example} />
               <Route exact path='/private' component={Private} />
+              <Route exact path='/shift/create' component={CreateShift} />
               <Route exact path='/shift/list' component={ListShifts} />
               <Route exact path='/shift/:id/:isEditing?' component={ShiftDetails} />
               <Route exact path='/talent/favorites' component={FavoriteEmployeesList} />

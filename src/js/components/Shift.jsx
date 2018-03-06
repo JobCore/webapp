@@ -46,7 +46,7 @@ const Shift = ({ item, ...props }) => {
       </div>
       <div className="shift-card__content">
         <div className="shift-card__content__upper-side">
-          {item.position} @ {item.location}, {item.start} - {item.end} ({item.duration})
+          {item.position} @ {item.location}, {item.start} - {item.end} ({item.duration}hrs)
         </div>
         <div className="shift-card__content__bottom-side">
           <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>

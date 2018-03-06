@@ -57,7 +57,7 @@ class Seeder {
           date,
           start: moment(new Date(date)).subtract(Faker.random.number({ min: 1, max: 6, }), "hours").format("H:mm"),
           end: moment(new Date(date)).add(Faker.random.number({ min: 0, max: 3, }), "hours").format("H:mm"),
-          duration: "3hrs",
+          duration: 3,
           status,
           maxAllowedEmployees,
           confirmedEmployees,

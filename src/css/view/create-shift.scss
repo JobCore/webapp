@@ -1,0 +1,22 @@
+.create-shift {
+  .details {
+    .item,
+    .item.dates .date {
+      display: grid;
+      grid-template-columns: 155px auto;
+    }
+
+    .item.dates .times {
+      grid-template-rows: 1fr;
+      grid-template-columns: auto 1fr;
+
+      .start-time {
+        grid-template-columns: 155px auto;
+      }
+
+      .end-time {
+        grid-template-columns: 77px 1fr;
+      }
+    }
+  }
+}

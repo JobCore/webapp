@@ -3,9 +3,7 @@ import { Redirect } from "react-router-dom";
 import uuid from 'uuid/v4';
 import Select from 'react-select';
 import swal from 'sweetalert2';
-// import PropTypes from 'prop-types';
 
-// import ProfilePic from "../../components/utils/ProfilePic";
 import { List } from '../../components/utils/List';
 
 import ShiftStore from "../../store/ShiftsStore";
@@ -66,6 +64,12 @@ class ShiftDetails extends Component {
   }
 
   updateShift = (id, param, value) => {
+    if (param === "date") {
+      const oneDayOffsetInMilliseconds = 86400000;
+      value = Date.parse(value) + oneDayOffsetInMilliseconds;
+    } else if (param === "maxAllowedEmployees" || param === "minHourlyRate" || param === "minAllowedRating") {
+      value = parseInt(value);
+    }
     if (this.state.shift.status !== "Draft") {
       switch (param) {
         case "favoritesOnly":
@@ -74,10 +78,6 @@ class ShiftDetails extends Component {
           ShiftActions.updateShift(id, param, value);
           break;
         default:
-          if (param === "date") {
-            const oneDayOffsetInMilliseconds = 86400000;
-            value = Date.parse(value) + oneDayOffsetInMilliseconds;
-          }
           swal({
             position: 'top',
             title: 'Updating shift details',
@@ -233,7 +233,7 @@ class ShiftDetails extends Component {
                       data-placement="top"
                       title="Press Enter to save changes"
                       min="0"
-                      defaultValue={shift.restrictions.minHourlyRate}
+                      defaultValue={shift.minHourlyRate}
                       onKeyDown={e => {
                         if (e.keyCode === 13) this.updateShift(shift.id, "minHourlyRate", e.target.value)
                       }} />
@@ -306,7 +306,7 @@ class ShiftDetails extends Component {
                   <strong>Looking for: </strong> {shift.position}
                 </p>
                 <p>
-                  <strong>Paying: </strong> $ {shift.restrictions.minHourlyRate}/hr
+                  <strong>Paying: </strong> $ {shift.minHourlyRate}/hr
                 </p>
                 <p>
                   <span className="date"><strong>On: </strong> {formatedDate}</span>

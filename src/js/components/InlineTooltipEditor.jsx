@@ -60,7 +60,11 @@ class InlineTooltipEditor extends Component {
 
   editParam = value => {
     const { id, param, onEdit } = this.props;
-    onEdit(id, param, value);
+    if (id) {
+      onEdit(id, param, value);
+    } else {
+      onEdit(param, value);
+    }
     this.toggleEditor();
   }
 

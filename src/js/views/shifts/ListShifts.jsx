@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import Select from "react-select";
 
 import Moment from "moment";
@@ -216,10 +217,12 @@ export class ListShifts extends Component {
           }
           {
             this.props.match.path !== "/talent/:id/offer" &&
-            <button className="btn btn-success">
-              <i className="fa fa-plus" aria-hidden="true"></i>
-              <span>Create a new shift</span>
-            </button>
+            <Link to="/shift/create">
+              <button className="btn btn-success">
+                <i className="fa fa-plus" aria-hidden="true"></i>
+                <span>Create a new shift</span>
+              </button>
+            </Link>
           }
         </div>
         {Object.keys(this.state.filteredData).length > 0 ? (
