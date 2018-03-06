@@ -13,6 +13,7 @@ import InlineTooltipEditor from '../../components/InlineTooltipEditor';
 import * as ShiftActions from "../../actions/shiftActions";
 import EmployeeCard from '../../components/EmployeeCard';
 import VenueStore from '../../store/VenueStore';
+import EmployerStore from '../../store/EmployerStore';
 
 class ShiftDetails extends Component {
   state = {
@@ -48,12 +49,71 @@ class ShiftDetails extends Component {
     }))
   }
 
-  updateShift = (id, param, value) => {
-    if (param === "date") {
-      const oneDayOffsetInMilliseconds = 86400000;
-      value = Date.parse(value) + oneDayOffsetInMilliseconds;
+  hasNullProperties = (object, ...exceptions) => {
+    const exceptionArr = [...exceptions];
+    for (const key in object) {
+      if (typeof object[key] === "object") this.hasNullProperties(object[key], ...exceptions);
+      if (typeof object[key] !== "object" && !exceptionArr.includes(key) &&
+        (
+          object[key] == null || object[key].length === 0 ||
+          (typeof object[key] !== "string" && isNaN(object[key]))
+        )
+      ) {
+        return true;
+      }
     }
-    ShiftActions.updateShift(id, param, value);
+    return false;
+  }
+
+  updateShift = (id, param, value) => {
+    if (this.state.shift.status !== "Draft") {
+      switch (param) {
+        case "favoritesOnly":
+        case "minAllowedRating":
+        case "badges":
+          ShiftActions.updateShift(id, param, value);
+          break;
+        default:
+          if (param === "date") {
+            const oneDayOffsetInMilliseconds = 86400000;
+            value = Date.parse(value) + oneDayOffsetInMilliseconds;
+          }
+          swal({
+            position: 'top',
+            title: 'Updating shift details',
+            html: 'All applicants need to be notified of this change. <br/> Proceed anyway?',
+            type: 'info',
+            showCloseButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            confirmButtonColor: '#3085d6',
+            cancelButtonText: 'Cancel',
+            cancelButtonColor: '#d33',
+          }).then(result => {
+            if (result.value) {
+              if (value == null || value.length === 0 || (typeof value !== "string" && isNaN(value))) throw new Error();
+              ShiftActions.updateShift(id, param, value);
+              swal({
+                position: 'top',
+                type: "success",
+                html: 'Change saved'
+              })
+            }
+          })
+            .catch(err => swal({
+              position: 'top',
+              type: "error",
+              html: 'There is something wrong with the value provided.'
+            }))
+          break;
+      }
+    } else {
+      if (param === "date") {
+        const oneDayOffsetInMilliseconds = 86400000;
+        value = Date.parse(value) + oneDayOffsetInMilliseconds;
+      }
+      ShiftActions.updateShift(id, param, value);
+    }
   }
 
   getOrdinalNum = (n) => {
@@ -127,6 +187,11 @@ class ShiftDetails extends Component {
     ${this.getOrdinalNum(new Date(shift.date).getDate())},
     ${new Date(shift.date).getFullYear()}`;
 
+    let badges = EmployerStore.getEmployer().availableBadges.map(
+      badge => (
+        { label: badge, value: badge }
+      ))
+
     return (
       <div className="row shift-details">
         {
@@ -161,11 +226,17 @@ class ShiftDetails extends Component {
                       <div className="input-group-text">$</div>
                     </div>
                     <input
+                      required
                       type="number"
                       className="form-control"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Press Enter to save changes"
                       min="0"
-                      value={shift.restrictions.minHourlyRate}
-                      onChange={e => this.updateShift(shift.id, "minHourlyRate", e.target.value)} />
+                      defaultValue={shift.restrictions.minHourlyRate}
+                      onKeyDown={e => {
+                        if (e.keyCode === 13) this.updateShift(shift.id, "minHourlyRate", e.target.value)
+                      }} />
                     <div className="input-group-append">
                       <div className="input-group-text">/hr</div>
                     </div>
@@ -175,6 +246,7 @@ class ShiftDetails extends Component {
                   <span className="date">
                     <strong>On: </strong>
                     <input
+                      required
                       type="date"
                       pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                       className="form-control"
@@ -185,19 +257,31 @@ class ShiftDetails extends Component {
                     <span className="start-time">
                       <strong>From: </strong>
                       <input
+                        required
                         type="time"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Press Enter to save changes"
                         className="form-control"
-                        value={shift.start}
-                        onChange={e => this.updateShift(shift.id, "start", e.target.value)}
+                        defaultValue={shift.start}
+                        onKeyDown={e => {
+                          if (e.keyCode === 13) this.updateShift(shift.id, "start", e.target.value)
+                        }}
                       />
                     </span>
                     <span className="end-time">
                       <strong style={{ textAlign: 'center' }}>To: </strong>
                       <input
+                        required
                         type="time"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Press Enter to save changes"
                         className="form-control"
-                        value={shift.end}
-                        onChange={e => this.updateShift(shift.id, "end", e.target.value)} />
+                        defaultValue={shift.end}
+                        onKeyDown={e => {
+                          if (e.keyCode === 13) this.updateShift(shift.id, "end", e.target.value)
+                        }} />
                     </span>
                   </div>
                 </div>
@@ -273,13 +357,23 @@ class ShiftDetails extends Component {
                         cancelButtonColor: '#3085d6',
                       }).then(result => {
                         if (result.value) {
-                          this.publishShift(shift.id);
-                          swal({
-                            position: 'top',
-                            type: "success",
-                            html: '<p class="alert-message">Your shift has been published</p>'
-                          })
+                          if (this.hasNullProperties(shift, "id", "acceptedCandidates", "confirmedEmployees", "badges", "allowedFromList")) {
+                            throw new Error();
+                          } else {
+                            this.publishShift(shift.id)
+                            swal({
+                              position: 'top',
+                              type: "success",
+                              html: '<p class="alert-message">Your shift has been published</p>'
+                            })
+                          }
                         }
+                      }).catch(err => {
+                        swal({
+                          position: 'top',
+                          type: "error",
+                          html: '<p class="alert-message">The shift is missing some data</p>'
+                        })
                       })} >
                       Publish this shift
                   </button>
@@ -346,35 +440,64 @@ class ShiftDetails extends Component {
                 <p>Candidates don't have to be in your favorites list to be able to apply.</p>
               </div>
           }
-          {
-            shift.status === "Draft" || this.state.editionMode ?
-              <div className="min-candidates">
-                <p>Minimum applicant star rating:</p>
-                <div className="input-group mb-2">
-                  <div className="input-group-prepend">
-                    <div className="input-group-text">
-                      <i className="fa fa-star"></i>
-                    </div>
-                  </div>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={shift.restrictions.minAllowedRating}
-                    min="1" max="5"
-                    onChange={e => this.updateShift(shift.id, "minAllowedRating", e.target.value)} />
-                </div>
-              </div>
-              :
-              <div className="min-candidates">
-                <p>Minimum applicant star rating:
-                  <span className="min-rating">
-                    {shift.restrictions.minAllowedRating}
-                  </span>
-                </p>
-              </div>
-          }
+          <div className="min-candidates">
+            <div>
+              Minimum applicant star rating:
+              <InlineTooltipEditor
+                type="number"
+                min="1"
+                max="5"
+                isEditorOpen={this.state.isInlineEditorOpen}
+                toggleInlineEditor={this.toggleInlineEditor}
+                classes="left"
+                id={shift.id}
+                message="Change minimum rating for this Shift"
+                onEdit={this.updateShift}
+                param="minAllowedRating"
+                currentValue={shift.restrictions.minAllowedRating}>
+                <span className="min-rating">
+                  {shift.restrictions.minAllowedRating}
+                </span>
+              </InlineTooltipEditor>
+            </div>
+          </div>
+
+
+          <div className="badges">
+            <p style={{ marginBottom: '5px' }}>Required badges:</p>
+
+            <div className="tags-list">
+              <InlineTooltipEditor
+                isEditorOpen={this.state.isInlineEditorOpen}
+                toggleInlineEditor={this.toggleInlineEditor}
+                classes="left"
+                multi={true}
+                id={shift.id}
+                message="Change badges required to apply"
+                onEdit={this.updateShift}
+                param="badges"
+                currentValue={shift.restrictions.badges}
+                options={badges}>
+                {
+                  shift.restrictions.badges.length > 0 ?
+                    shift.restrictions.badges.map(
+                      badge => <span key={uuid()} className="tag badge badge-pill">{badge}</span>
+                    )
+                    :
+                    <p className="tag badge badge-pill">None</p>
+                }
+              </InlineTooltipEditor>
+            </div>
+
+            <div>
+
+            </div>
+
+
+          </div>
+
         </div>
-      </div >
+      </div>
     )
   }
 

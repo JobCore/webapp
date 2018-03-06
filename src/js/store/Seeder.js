@@ -41,6 +41,15 @@ class Seeder {
         candidates.push(this.employee())
        }
 
+        const availableBadges = [
+          "English-Proficient", "Spanish-Proficient", "Responsible", "Respecful", "Honest",
+        ];
+        const badgesGained = Faker.random.number({ min: 0, max: availableBadges.length, });
+        let badges = [];
+        for (let i = 0; i < badgesGained; i++) {
+          badges.push(availableBadges[i]);
+        }
+
         return {
           id: Faker.random.uuid(),
           location: Faker.name.title() + " Building",
@@ -56,6 +65,7 @@ class Seeder {
             favoritesOnly,
             minHourlyRate: Faker.random.number({ min: 10, max: 15, }),
             minAllowedRating: Faker.random.number({min: 1, max: 5}),
+            badges,
             allowedFromList: ["List #1"]
           },
           candidates,

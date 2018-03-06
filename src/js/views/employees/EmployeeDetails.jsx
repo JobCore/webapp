@@ -95,27 +95,28 @@ export class EmployeeDetails extends Component {
               {favoriteCheckboxes}
             </div>
             <div className="form-group">
-              <button className="btn btn-default btn-block" onClick={() => swal({
-                position: 'top',
-                title: 'Create a new list',
-                input: 'text',
-                type: 'info',
-                showCloseButton: true,
-                showCancelButton: true,
-                confirmButtonText: 'Confirm',
-                confirmButtonColor: '#d33',
-                cancelButtonText: 'Cancel',
-                cancelButtonColor: '#3085d6',
-              }).then(result => {
-                if (result.value) {
-                  EmployerActions.addNewList(result.value);
-                  swal({
-                    position: 'top',
-                    type: "success",
-                    html: 'List created'
-                  })
-                }
-              })}>
+              <button className="btn btn-default btn-block"
+                onClick={() => swal({
+                  position: 'top',
+                  title: 'Create a new list',
+                  input: 'text',
+                  type: 'info',
+                  showCloseButton: true,
+                  showCancelButton: true,
+                  confirmButtonText: 'Confirm',
+                  confirmButtonColor: '#d33',
+                  cancelButtonText: 'Cancel',
+                  cancelButtonColor: '#3085d6',
+                }).then(result => {
+                  if (result.value) {
+                    EmployerActions.addNewList(result.value);
+                    swal({
+                      position: 'top',
+                      type: "success",
+                      html: 'List created'
+                    })
+                  }
+                })}>
                 <i className="fa fa-plus" aria-hidden="true"></i>
                 <span>New List</span>
               </button>

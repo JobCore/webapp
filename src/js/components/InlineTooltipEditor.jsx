@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import uuid from 'uuid/v4';
 import Select from 'react-select';
 import Globe from './utils/Globe';
-
 class InlineTooltipEditor extends Component {
 
   /*
@@ -38,16 +37,13 @@ class InlineTooltipEditor extends Component {
   }
 
   toggleEditor = () => {
-
     if (!this.props.isEditorOpen) {
-      console.log('inside');
       this.setState({
         value: this.props.currentValue,
         editing: true
       }, this.props.toggleInlineEditor())
     } else {
       this.setState(prevState => {
-        console.log('here');
         if (prevState.editing) this.props.toggleInlineEditor();
         return ({
           ...prevState,
@@ -58,19 +54,25 @@ class InlineTooltipEditor extends Component {
     }
   }
 
-  handleChange(value) {
+  handleChange = value => {
     this.setState({ value });
   }
 
+  editParam = value => {
+    const { id, param, onEdit } = this.props;
+    onEdit(id, param, value);
+    this.toggleEditor();
+  }
+
   render() {
-    const { children, message, options, currentValue, id, param, onEdit } = this.props;
+    const { children, message, options, currentValue } = this.props;
 
     // Clone children and add onClick prop
     const childrenWithProps = React.Children.map(
       children, child => React.cloneElement(child, { onClick: this.toggleEditor }));
     // Config editor for data types
     let editor;
-    if (options) {
+    if (this.props.type || options) {
       editor = [
         <Globe
           key={uuid()}
@@ -78,19 +80,32 @@ class InlineTooltipEditor extends Component {
           classes={this.props.classes}>
           <div className="editor">
             <p className="message">{message || "Edit:"}</p>
-            <Select
-              searchable={false}
-              clearable={false}
-              options={options}
-              value={this.state.value}
-              onChange={option => this.handleChange(option.value)} />
+            {
+              options &&
+              <Select
+                required
+                multi={this.props.multi || false}
+                searchable={false}
+                clearable={false}
+                options={options}
+                value={this.state.value}
+                onChange={option => this.handleChange(option.hasOwnProperty("value") && option.value !== null ? option.value : option)} />
+            }
+            {
+              this.props.type &&
+              <input
+                required
+                className="form-control"
+                type={this.props.type.toLowerCase()}
+                min={this.props.min || 0}
+                max={this.props.max || 99}
+                defaultValue={this.state.value}
+                onChange={event => this.handleChange(event.target.value)} />
+            }
             <div className="buttons">
               <button
                 className="btn btn-primary save"
-                onClick={() => {
-                  onEdit(id, param, this.state.value);
-                  this.toggleEditor()
-                }}>Save</button>
+                onClick={() => this.editParam(this.state.value)}>Save</button>
               <button
                 className="cancel btn btn-danger"
                 onClick={() => { this.toggleEditor(); }}>Cancel</button>
@@ -102,10 +117,11 @@ class InlineTooltipEditor extends Component {
     } else {
       editor =
         <input
+          required
           type="text"
           value={currentValue}
           onKeyDown={e => e.keyCode === 13 ? // Enter
-            () => { onEdit(id, param, e.target.value); this.toggleEditor() }
+            () => this.editParam()
             : null} />
     }
 

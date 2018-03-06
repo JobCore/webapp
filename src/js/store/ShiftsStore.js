@@ -81,6 +81,10 @@ class ShiftStore extends EventEmmiter {
       case "allowedFromList":
       case "minHourlyRate":
         this.model.shift[index].restrictions[param] = value;
+      break;
+      case "badges":
+        value = value.length > 0 ? value.map(val => val.value) : [];
+        this.model.shift[index].restrictions[param] = value;
         break;
       default:
         this.model.shift[index][param] = value;

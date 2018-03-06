@@ -91,6 +91,16 @@
         margin-right: 5px;
       }
     }
+
+    .list-item {
+      &:hover {
+        .side {
+          .btn {
+            visibility: visible;
+          }
+        }
+      }
+    }
   }
 
   .second-col {
@@ -116,7 +126,11 @@
       padding-bottom: 20px;
 
       .min-rating {
-        margin-left: 10px;
+        margin-left: 5px;
+
+        &:hover {
+          cursor: pointer;
+        }
 
         &:after {
           background-color: #FFD700;
@@ -131,6 +145,31 @@
 
       input {
         padding: 5px;
+      }
+    }
+
+    .badges {
+      padding-top: 20px;
+      border-top: 1px solid black;
+      padding-bottom: 20px;
+
+      .tags-list {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+
+        .tag {
+          padding: 8px;
+          margin-bottom: 10px;
+          margin-right: 10px;
+          background-color: #34495e;
+          color: #eee;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
       }
     }
 
@@ -229,16 +268,6 @@
 
       &:after {
         content: "Anyone can apply ";
-      }
-    }
-
-    .list-item {
-      &:hover {
-        .side {
-          .btn {
-            visibility: visible;
-          }
-        }
       }
     }
   }
