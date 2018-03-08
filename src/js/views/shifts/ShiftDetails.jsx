@@ -328,6 +328,7 @@ class ShiftDetails extends Component {
                   AcceptRejectButtons
                   currentShiftId={shift.id}
                   sort={this.sortBy}
+                  sortOptions={["name", "rating", "response-Time"]}
                   component={EmployeeCard}
                   acceptedCandidates={shift.acceptedCandidates}
                 />

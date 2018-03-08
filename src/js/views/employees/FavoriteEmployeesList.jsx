@@ -285,6 +285,7 @@ export class FavoriteEmployeesList extends Component {
             items={this.state.employee}
             type="componentList"
             heading="Favorite employees"
+            sortOptions={["name", "rating", "response-Time"]}
             sort={this.sortBy}
             removeItem={this.toggleAlert}
             component={EmployeeCard} />

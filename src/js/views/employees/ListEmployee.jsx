@@ -333,6 +333,7 @@ export class ListEmployee extends Component {
             type="componentList"
             heading="Employees"
             sort={this.sortBy}
+            sortOptions={["name", "rating", "response-Time"]}
             component={EmployeeCard} />
         ) : (
             <h3 className="no-match">No employees matching this criteria</h3>

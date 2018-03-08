@@ -101,9 +101,18 @@ export class List extends Component {
                 <input className="sort-input" type="checkbox" name="sort" id="sort" />
                 <label className="sort-label" htmlFor="sort">Sort by</label>
                 <div>
-                  <button onClick={() => props.sort("name")}>Name</button>
-                  <button onClick={() => props.sort("rating")}>Rating</button>
-                  <button onClick={() => props.sort("responseTime")}>Response Time</button>
+                  {
+                    props.sortOptions.map(option => (
+                      <button
+                        key={uuidv4()}
+                        className="sort-options"
+                        onClick={() => props.sort(
+                          option.split("-").join("")
+                        )}>
+                        {option.split("-").join(" ").toLowerCase()}
+                      </button>
+                    ))
+                  }
                 </div>
               </div> :
               null
