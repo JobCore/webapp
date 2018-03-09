@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import Select from "react-select";
 
 import Moment from "moment";
@@ -104,8 +105,18 @@ export class ListShifts extends Component {
 
   filterList = (listItems, filterOption) => {
     let currentOption = this.state.filterConfig[filterOption];
-    let filteredList;
-    if (filterOption === "date") {
+    let filteredList = [];
+    if (this.state.filterConfig.date && this.state.filterConfig.untilDate) {
+      const startDateArr = this.state.filterConfig.date.split("-");
+      const endDateArr = this.state.filterConfig.untilDate.split("-");
+      const startDate = new Date(startDateArr[0], parseInt(startDateArr[1]) - 1, startDateArr[2]);
+      const endDate = new Date(endDateArr[0], parseInt(endDateArr[1]) - 1, endDateArr[2], 23, 59, 59);
+      filteredList = listItems.filter(
+        item => {
+          return (item.date >= startDate && item.date <= endDate)
+        }
+      )
+    } else if (filterOption === "date") {
       filteredList = listItems.filter(
         item => {
           const dateArr = currentOption.split('-');
@@ -133,8 +144,8 @@ export class ListShifts extends Component {
       if (filterableOptions.length > 0) {
         filterableOptions.forEach(option => {
           updatedListItems = this.filterList(updatedListItems, option);
-          updatedListItems = ShiftsStore.getShiftsGroupedByDate(updatedListItems);
         });
+        updatedListItems = ShiftsStore.getShiftsGroupedByDate(updatedListItems);
       } else {
         updatedListItems = ShiftsStore.getShiftsGroupedByDate(this.state.shift);
       }
@@ -164,11 +175,16 @@ export class ListShifts extends Component {
     const employee = this.props.match.path === "/talent/:id/offer" ?
       EmployeeStore.getById(this.props.match.params.id) : "";
 
+
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         {
-          this.props.match.path === "/talent/:id/offer" &&
-          <h3>
+          (this.props.match.path === "/talent/:id/offer" && !employee) &&
+          <Redirect to="/talent/list" />
+        }
+        {
+          (this.props.match.path === "/talent/:id/offer" && employee) &&
+          < h3 >
             Select the shift you want to offer to <span className="employee-to-offer">{employee.name} {employee.lastname}</span>
           </h3>
         }
@@ -197,15 +213,25 @@ export class ListShifts extends Component {
                 name="date" id="date"
                 onChange={event => this.updateFilterConfig(event.target.value, "date")} />
             </div>
-            <div className="form-group switch-group">
-              <label htmlFor="status">Status</label>
-              <Select
-                disabled={this.props.match.path === "/talent/:id/offer"}
-                placeholder={this.props.match.path === "/talent/:id/offer" ? "Disabled" : "Select a status"}
-                options={this.createOptionsObject("status")}
-                value={this.state.filterConfig.status || ""}
-                onChange={option => this.updateFilterConfig(option ? option.value : null, "status")} />
-            </div>
+            {
+              this.props.match.path === "/talent/:id/offer" ?
+                <div className="form-group">
+                  <label htmlFor="until-date">Until</label>
+                  <input className="form-control" type="date"
+                    value={this.state.filterConfig.untilDate || ""}
+                    name="until-date" id="until-date"
+                    onChange={event => this.updateFilterConfig(event.target.value, "untilDate")} />
+                </div>
+                :
+                <div className="form-group switch-group">
+                  <label htmlFor="status">Status</label>
+                  <Select
+                    placeholder={"Select a status"}
+                    options={this.createOptionsObject("status")}
+                    value={this.state.filterConfig.status || ""}
+                    onChange={option => this.updateFilterConfig(option ? option.value : null, "status")} />
+                </div>
+            }
           </Form>
         </div>
         <div className="top-btn">
@@ -225,16 +251,18 @@ export class ListShifts extends Component {
             </Link>
           }
         </div>
-        {Object.keys(this.state.filteredData).length > 0 ? (
-          <List
-            items={this.state.filteredData}
-            type="componentList"
-            heading="Company Shifts"
-            component={ShiftGroup}
-            match={this.props.match} />
-        ) : (
-            <h3 className="no-match">No shifts matching this criteria</h3>
-          )}
+        {
+          Object.keys(this.state.filteredData).length > 0 ? (
+            <List
+              items={this.state.filteredData}
+              type="componentList"
+              heading="Company Shifts"
+              component={ShiftGroup}
+              match={this.props.match} />
+          ) : (
+              <h3 className="no-match">No shifts matching this criteria</h3>
+            )
+        }
         <Modal
           header="Shift"
           show={(this.state.modalOpened && this.state.currentShift.id != null)}
@@ -244,7 +272,7 @@ export class ListShifts extends Component {
           <p>Date: {Moment(this.state.currentShift.date).format("MMM Do YYYY")}</p>
           <p>From {this.state.currentShift.start} to {this.state.currentShift.end}</p>
         </Modal>
-      </div>
+      </div >
     );
   }
 }

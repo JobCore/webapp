@@ -10,6 +10,7 @@ class FilterConfigStore extends EventEmmiter {
       position: null,
       location: null,
       date: null,
+      untilDate: null,
       status: null,
     };
     this.employeesListConfig = {
