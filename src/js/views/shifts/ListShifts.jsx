@@ -15,17 +15,22 @@ import FilterActions from '../../actions/filterActions';
 import ShiftGroup from "../../components/ShiftGroup";
 
 export class ListShifts extends Flux.View {
-
-  state = {
-    shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
-    filteredData: [],
-    modalOpened: false,
-    currentShift: { id: null, },
-    filterConfig: {
-      ...FilterConfigStore.getConfigFor("shiftList"),
-    },
-    shouldListUpdate: true
-  };
+  
+  constructor(){
+    super();
+    this.state = {
+      shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+      filteredData: [],
+      modalOpened: false,
+      currentShift: { id: null, },
+      filterConfig: {
+        ...FilterConfigStore.getConfigFor("shiftList"),
+      },
+      shouldListUpdate: true
+    };
+    this.bindStore(FilterConfigStore,this.setConfig.bind(this));
+    this.bindStore(ShiftsStore,this.setShifts.bind(this));
+  }
 
   componentDidUpdate() {
     this.updateListOnFilter();
@@ -41,14 +46,7 @@ export class ListShifts extends Flux.View {
   }
 
   componentWillMount() {
-    FilterConfigStore.on("change", this.setConfig);
-    ShiftsStore.on("change", this.setShifts);
     this.updateListOnFilter();
-  }
-
-  componentWillUnmount() {
-    FilterConfigStore.removeListener("change", this.setConfig);
-    ShiftsStore.removeListener("change", this.setShifts);
   }
 
   setShifts = () => {

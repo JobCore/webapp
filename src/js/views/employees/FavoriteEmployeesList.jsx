@@ -14,30 +14,27 @@ import EmployerActions from '../../actions/employerActions';
 import EmployeeCard from '../../components/EmployeeCard';
 
 export class FavoriteEmployeesList extends Flux.View {
-  state = {
-    employee: EmployerStore.getFavorites(
-      FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
-    filterConfig: {
-      ...FilterConfigStore.getConfigFor("favoritesList"),
-    },
-    favoritesLists: EmployerStore.getFavoritesLists(),
-    shouldListUpdate: true,
-    modalOpened: false,
-    editing: null,
-    editingLists: [],
-    showAlert: false,
-    selectedEmployee: null,
-    selectedList: []
-  }
 
-  componentWillMount() {
-    FilterConfigStore.on("change", this.setConfig);
-    EmployerStore.on("change", this.getFavorites);
-  }
-
-  componentWillUnmount() {
-    FilterConfigStore.removeListener("change", this.setConfig);
-    EmployerStore.removeListener("change", this.getFavorites);
+  constructor() {
+    super();
+    this.state = {
+      employee: EmployerStore.getFavorites(
+        FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
+      filterConfig: {
+        ...FilterConfigStore.getConfigFor("favoritesList"),
+      },
+      favoritesLists: EmployerStore.getFavoritesLists(),
+      shouldListUpdate: true,
+      modalOpened: false,
+      editing: null,
+      editingLists: [],
+      showAlert: false,
+      selectedEmployee: null,
+      selectedList: []
+    }
+    
+    this.bindStore(FilterConfigStore, this.setConfig.bind(this));
+    this.bindStore(EmployerStore, this.getFavorites.bind(this));
   }
 
   createOptionsObject = (category) => {

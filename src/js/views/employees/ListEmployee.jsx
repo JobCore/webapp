@@ -15,29 +15,29 @@ import FilterActions from '../../actions/filterActions';
 import EmployeeCard from "../../components/EmployeeCard";
 
 export class ListEmployee extends Flux.View {
-  state = {
-    employee: EmployeeStore.getAll(),
-    shift: ShiftsStore.getAll("shift"),
-    filteredData: [],
-    filterConfig: {
-      ...FilterConfigStore.getConfigFor("employeeList"),
-    },
-    availableBadges: EmployerStore.getEmployer().availableBadges,
-    shouldListUpdate: true,
+
+  constructor(){
+    super();
+    this.state = {
+      employee: EmployeeStore.getAll(),
+      shift: ShiftsStore.getAll("shift"),
+      filteredData: [],
+      filterConfig: {
+        ...FilterConfigStore.getConfigFor("employeeList"),
+      },
+      availableBadges: EmployerStore.getEmployer().availableBadges,
+      shouldListUpdate: true,
+    }
+    
+    this.bindStore(FilterConfigStore, this.setConfig.bind(this));
   }
 
-
-  componentDidUpdate() {
-    this.updateListOnFilter();
+  componentDidUpdate() { 
+    this.updateListOnFilter(); 
   }
 
   componentWillMount() {
-    FilterConfigStore.on("change", this.setConfig);
     this.updateListOnFilter();
-  }
-
-  componentWillUnmount() {
-    FilterConfigStore.removeListener("change", this.setConfig);
   }
 
   setConfig = () => {

@@ -16,9 +16,13 @@ export class EmployeeDetails extends Flux.View {
    * https://github.com/n49/react-stars
    **/
 
-  state = {
-    employee: EmployeeStore.getById(this.props.match.params.id),
-    employer: EmployerStore.getEmployer(),
+  constructor() {
+    super();
+    this.state = {
+      employee: EmployeeStore.getById(this.props.match.params.id),
+      employer: EmployerStore.getEmployer(),
+    }
+    this.bindStore(EmployerStore, this.setEmployer.bind(this));
   }
 
   setEmployer = () => {
@@ -26,15 +30,7 @@ export class EmployeeDetails extends Flux.View {
       employer: EmployerStore.getEmployer()
     });
   }
-
-  componentWillMount() {
-    EmployerStore.on("change", this.setEmployer);
-  }
-
-  componentWillUnmount() {
-    EmployerStore.removeListener("change", this.setEmployer);
-  }
-
+  
   employeeIsFavorite = () => {
     let favLists = this.state.employer.favoriteLists;
     let isFavorite = false;

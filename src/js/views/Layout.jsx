@@ -31,6 +31,7 @@ export class Layout extends Flux.View {
       user: null,
       // user: EmployerStore.getEmployer(),
     };
+    
     this.bindStore(LoginStore,this.handleAutentication.bind(this) );
   }
 

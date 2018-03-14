@@ -15,26 +15,23 @@ import VenueStore from '../../store/VenueStore';
 import EmployerStore from '../../store/EmployerStore';
 
 class ShiftDetails extends Flux.View {
-  state = {
-    shift: ShiftStore.getById("shift", this.props.match.params.id),
-    prevShiftStatus: null,
-    venues: VenueStore.getAll(),
-    isInlineEditorOpen: false,
-    editionMode: false,
+  
+  constructor(){
+    super();
+    this.state = {
+      shift: ShiftStore.getById("shift", this.props.match.params.id),
+      prevShiftStatus: null,
+      venues: VenueStore.getAll(),
+      isInlineEditorOpen: false,
+      editionMode: false,
+    }
+    this.bindStore(ShiftStore, this.setShift.bind(this));
   }
 
   setShift = () => {
     this.setState({
       shift: ShiftStore.getById("shift", this.props.match.params.id)
     });
-  }
-
-  componentWillMount() {
-    ShiftStore.on("change", this.setShift);
-  }
-
-  componentWillUnmount() {
-    ShiftStore.removeListener("change", this.setShift);
   }
 
   componentDidMount() {
