@@ -9,7 +9,7 @@ import Modal from '../../components/utils/Modal';
 import Form from '../../components/utils/Form';
 import EmployerStore from '../../store/EmployerStore';
 import FilterConfigStore from '../../store/FilterConfigStore';
-import * as FilterActions from '../../actions/filterActions';
+import FilterActions from '../../actions/filterActions';
 import EmployerActions from '../../actions/employerActions';
 import EmployeeCard from '../../components/EmployeeCard';
 

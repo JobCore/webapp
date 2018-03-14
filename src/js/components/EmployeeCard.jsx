@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import swal from 'sweetalert2';
 import ReactStars from 'react-stars';
-import * as ShiftActions from '../actions/shiftActions';
+import ShiftActions from '../actions/shiftActions';
 import ShiftsStore from '../store/ShiftsStore';
 import EmployeeActions from '../actions/employeeActions';
 import EmployerStore from '../store/EmployerStore';

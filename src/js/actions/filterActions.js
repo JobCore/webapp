@@ -1,17 +1,13 @@
-import AppDispatcher from "../../dispatcher.js";
+import Flux from "../flux";
 
-export function updateConfig(value, configOption, listName) {
-  return AppDispatcher.dispatch({
-    type: 'UPDATE_CONFIG',
-    value,
-    configOption,
-    listName
-  })
+class FilterActions extends Flux.Action{
+  
+  updateConfig(value, configOption, listName) {
+    this.dispatch('FilterConfigStore.updateConfig',{ value, configOption, listName });
+  }
+  
+  clearConfigFor(listName) {
+    this.dispatch('FilterConfigStore.clearConfigFor', { listName });
+  }
 }
-
-export function clearConfigFor(listName) {
-  return AppDispatcher.dispatch({
-    type: 'CLEAR_CONFIG',
-    listName
-  })
-}
+export default new FilterActions();

@@ -9,7 +9,7 @@ import { List } from '../../components/utils/List';
 
 import ShiftStore from "../../store/ShiftsStore";
 import InlineTooltipEditor from '../../components/InlineTooltipEditor';
-import * as ShiftActions from "../../actions/shiftActions";
+import ShiftActions from "../../actions/shiftActions";
 import EmployeeCard from '../../components/EmployeeCard';
 import VenueStore from '../../store/VenueStore';
 import EmployerStore from '../../store/EmployerStore';

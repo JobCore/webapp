@@ -1,27 +1,15 @@
-import EventEmmiter from "events";
-import AppDispatcher from '../../dispatcher';
-
+import Flux from '../flux.js';
 import Seeder from "./Seeder.js";
 
-class VenueStore extends EventEmmiter {
+class VenueStore extends Flux.Store {
   constructor() {
     super();
-    this.venue = Seeder.make(20, "venue");
+    this.state.venue = Seeder.make(20, "venue");
   }
 
   getAll() {
-    return this.venue;
+    return this.state.venue;
   }
 
-  handleActions(action) {
-    switch (action.type) {
-      default:
-        break;
-    }
-  }
 }
-
-const venueStore = new VenueStore();
-AppDispatcher.register(action => venueStore.handleActions(action));
-
-export default venueStore;
+export default new VenueStore();

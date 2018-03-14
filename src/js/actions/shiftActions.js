@@ -1,34 +1,22 @@
-import AppDispatcher from "../../dispatcher.js";
+import Flux from "../flux"
 
-export function updateShift(id, param, value) {
-  return AppDispatcher.dispatch({
-    type: 'UPDATE_SHIFT',
-    id,
-    param,
-    value
-  })
+class ShiftActions extends Flux.Action{
+  
+  updateShift(id, param, value) {
+    this.dispatch('ShiftStore.updateShift',{ id, param, value });
+  }
+  
+  acceptCandidate(shiftId, employeeId) {
+    this.dispatch('ShiftStore.acceptCandidate',{ shiftId, employeeId });
+  }
+  
+  rejectCandidate(shiftId, employeeId) {
+    this.dispatch('ShiftStore.rejectCandidate', { shiftId, employeeId });
+  }
+  
+  createShift(shiftData) {
+    this.dispatch('ShiftStore.createShift',{ shiftData });
+  }
+
 }
-
-export function acceptCandidate(shiftId, employeeId) {
-  return AppDispatcher.dispatch({
-    type: 'ACCEPT_CANDIDATE',
-    shiftId,
-    employeeId
-  })
-}
-
-export function rejectCandidate(shiftId, employeeId) {
-  return AppDispatcher.dispatch({
-    type: 'REJECT_CANDIDATE',
-    shiftId,
-    employeeId
-  })
-}
-
-export function createShift(shiftData) {
-  return AppDispatcher.dispatch({
-    type: 'CREATE_SHIFT',
-    shiftData
-  })
-}
-
+export default new ShiftActions();

@@ -11,7 +11,7 @@ import EmployerStore from "../../store/EmployerStore";
 import EmployeeStore from "../../store/EmployeeStore";
 import ShiftsStore from "../../store/ShiftsStore.js";
 import FilterConfigStore from "../../store/FilterConfigStore";
-import * as FilterActions from '../../actions/filterActions';
+import FilterActions from '../../actions/filterActions';
 import EmployeeCard from "../../components/EmployeeCard";
 
 export class ListEmployee extends Flux.View {

@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import swal from 'sweetalert2';
-import * as ShiftActions from '../../actions/shiftActions';
+import ShiftActions from '../../actions/shiftActions';
 
-export class ListItem extends Component {
+export class ListItem extends React.Component {
 
   /**
     *

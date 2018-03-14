@@ -11,7 +11,7 @@ import { List } from "../../components/utils/List";
 import ShiftsStore from "../../store/ShiftsStore";
 import EmployeeStore from "../../store/EmployeeStore";
 import FilterConfigStore from "../../store/FilterConfigStore";
-import * as FilterActions from '../../actions/filterActions';
+import FilterActions from '../../actions/filterActions';
 import ShiftGroup from "../../components/ShiftGroup";
 
 export class ListShifts extends Flux.View {

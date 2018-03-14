@@ -6,7 +6,7 @@ import swal from 'sweetalert2';
 
 import ShiftStore from "../../store/ShiftsStore";
 import InlineTooltipEditor from '../../components/InlineTooltipEditor';
-import * as ShiftActions from "../../actions/shiftActions";
+import ShiftActions from "../../actions/shiftActions";
 import VenueStore from '../../store/VenueStore';
 import EmployerStore from '../../store/EmployerStore';
 

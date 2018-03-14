@@ -1,8 +1,6 @@
-import EventEmmiter from "events";
+import Flux from "../flux";
 
-import AppDispatcher from '../../dispatcher';
-
-class FilterConfigStore extends EventEmmiter {
+class FilterConfigStore extends Flux.Store {
 
   constructor() {
     super();
@@ -34,35 +32,20 @@ class FilterConfigStore extends EventEmmiter {
     return this[listName + "Config"];
   }
 
-  updateConfig(value, configOption, listName) {
-    let updatedConfig = { ...this[listName + "Config"], };
-    updatedConfig[configOption] = value;
-    this[listName + "Config"] = updatedConfig;
+  _updateConfig(params) {
+    let updatedConfig = { ...this[params.listName + "Config"], };
+    updatedConfig[params.configOption] = params.value;
+    this[params.listName + "Config"] = updatedConfig;
     this.emit("change");
   }
 
-  clearConfigFor(listName) {
-    let updatedConfig = { ...this[listName + "Config"], };
+  _clearConfigFor(params) {
+    let updatedConfig = { ...this[params.listName + "Config"], };
     let options = Object.keys(updatedConfig);
     options.forEach(option => updatedConfig[option] = null);
-    this[listName + "Config"] = updatedConfig;
+    this[params.listName + "Config"] = updatedConfig;
     this.emit("change");
   }
 
-  handleActions(action) {
-    switch (action.type) {
-      case 'UPDATE_CONFIG':
-        this.updateConfig(action.value, action.configOption, action.listName);
-        break;
-      case 'CLEAR_CONFIG':
-        this.clearConfigFor(action.listName);
-        break;
-      default:
-        break;
-    }
-  }
 }
-const filterConfigStore = new FilterConfigStore();
-AppDispatcher.register(action => filterConfigStore.handleActions(action));
-
-export default filterConfigStore;
+export default new FilterConfigStore();
