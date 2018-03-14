@@ -19,8 +19,8 @@ export const PrivateRoute = function(args){
         <Route
           {...rest}
           render={(props) => args.loggedIn === true
-            ? <Component {...rest} />
+            ? <Component {...rest} {...props} />
             : <Redirect to={{pathname: '/login', state: {from: props.location}}} />}
         />
     );
-} 
+}

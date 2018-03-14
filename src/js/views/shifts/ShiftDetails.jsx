@@ -15,11 +15,11 @@ import VenueStore from '../../store/VenueStore';
 import EmployerStore from '../../store/EmployerStore';
 
 class ShiftDetails extends Flux.View {
-  
-  constructor(){
-    super();
+
+  constructor(props) {
+    super(props);
     this.state = {
-      shift: ShiftStore.getById("shift", this.props.match.params.id),
+      shift: ShiftStore.getById("shift", props.match.params.id),
       prevShiftStatus: null,
       venues: VenueStore.getAll(),
       isInlineEditorOpen: false,
