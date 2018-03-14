@@ -1,42 +1,24 @@
-import BaseStore from "./BaseStore.js";
-
-class LoginStore extends BaseStore {
+import Flux from "../flux"
+class LoginStore extends Flux.Store {
 
   constructor() {
     super();
-    // First we register to the Dispatcher to listen for actions.
-    this.subscribe(() => this._registerToActions.bind(this));
-    this._user = null;
+    this.state.user = null;
   }
 
-  _registerToActions(action) {
-    if (typeof (action) === "undefined") return;
-    switch (action.actionType) {
-    case "USER_LOGGED_IN":
+  _setUserLogin(){
+      this.setStoreState({
+        user: { id: "ale_01", name: "Alejandro Sanchez"}
+      }).emit();
+      
       console.log("The user has logged in");
-      this._user = {
-        "id": "ale_01",
-        "name": "Alejandro Sanchez",
-      };
-      this.emitChange();
-      break;
-    case "USER_LOGGED_OUT":
-      console.log("The user has logged out");
-      this._user = null;
-      this.emitChange();
-      break;
-    default:
-      break;
-    }
+  }
+  _loggoutUser(){
+      this.setStoreState({ user: null }).emit();
   }
 
   // Just getters for the properties it got from the action.
-  getUser() {
-    return this._user;
-  }
-
-  isLoggedIn() {
-    return !!this._user;
-  }
+  getUser() { return this.state.user; }
+  isLoggedIn() { return !!this.state.user; }
 }
 export default new LoginStore();

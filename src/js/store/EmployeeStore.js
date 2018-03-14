@@ -1,52 +1,33 @@
-import EventEmmiter from "events";
-import AppDispatcher from '../../dispatcher';
-
+import Flux from "../flux";
 import Seeder from "./Seeder.js";
 
-class EmployeeStore extends EventEmmiter {
+class EmployeeStore extends Flux.Store {
 
   constructor() {
     super();
-    this.model = {};
-    this.model.employee = Seeder.make(20, "employee");
+    this.state = {
+      employee: Seeder.make(20, "employee")
+    }
   }
 
   addEmployee() {
-    this.model.employee.push(Seeder.make(1, "employee"));
+    this.state.employee.push(Seeder.make(1, "employee"));
     this.emit("change");
   }
 
-  getAll() {
-    return this.model.employee;
-  }
+  getAll() { return this.state.employee; }
 
   getById(id) {
-    return this.model.employee.find((item) => {
+    return this.state.employee.find((item) => {
       return (item.id.toString() === id.toString());
     });
   }
 
-  acceptedInShift(shiftId, employeeId) {
-    // let index = this.model.employee.findIndex(e => e.id === employeeId);
-    // this.model.employee[index].acceptedInShifts.push(shiftId);
+  _acceptedInShift(data) {
+    // let index = this.state.employee.findIndex(e => e.id === data.employeeId);
+    // this.state.employee[index].acceptedInShifts.push(data.shiftId);
     this.emit('change');
   }
 
-  handleActions(action) {
-    switch (action.type) {
-      case 'ADD_EMPLOYEE':
-        this.addEmployee();
-        break;
-      case 'ACCEPTED_IN_SHIFT':
-        this.acceptedInShift(action.shiftId, action.employeeId);
-        break;
-      default:
-        break;
-    }
-  }
 }
-
-const employeeStore = new EmployeeStore();
-AppDispatcher.register(action => employeeStore.handleActions(action));
-
-export default employeeStore;
+export default new EmployeeStore();

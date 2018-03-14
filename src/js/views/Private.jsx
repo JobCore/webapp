@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../flux"
 
-export class Private extends Component {
+export class Private extends Flux.View {
 
   render() {
 

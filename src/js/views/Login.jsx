@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../flux"
 import LoginActions from "../actions/loginActions.js";
 
-export class Login extends Component {
+export class Login extends Flux.View {
 
   render() {
 

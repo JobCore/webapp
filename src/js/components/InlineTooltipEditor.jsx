@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import uuid from 'uuid/v4';
 import Select from 'react-select';
 import Globe from './utils/Globe';
-class InlineTooltipEditor extends Component {
+class InlineTooltipEditor extends React.Component {
 
   /*
     Dependencies

@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../../flux"
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import Select from "react-select";
@@ -13,7 +14,7 @@ import FilterConfigStore from "../../store/FilterConfigStore";
 import * as FilterActions from '../../actions/filterActions';
 import ShiftGroup from "../../components/ShiftGroup";
 
-export class ListShifts extends Component {
+export class ListShifts extends Flux.View {
 
   state = {
     shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),

@@ -1,24 +1,25 @@
-import EventEmmiter from "events";
-import AppDispatcher from '../../dispatcher';
+import Flux from "../flux"
 import EmployeeStore from "./EmployeeStore";
 
 import Seeder from "./Seeder.js";
-class EmployerStore extends EventEmmiter {
+class EmployerStore extends Flux.Store {
   /**
    * Creates an instance of EmployerStore.
    * @memberof EmployerStore
    */
   constructor() {
     super();
-    this.employer = Seeder.make(1, "employer");
+    this.state = {
+      employer: Seeder.make(1, "employer")
+    }
   }
 
   /**
    *  Creats a new Employer
    * @memberof EmployerStore
    */
-  addEmployer = () => {
-    this.employer.push(Seeder.make(1, "employer"));
+  _addEmployer = () => {
+    this.state.employer.push(Seeder.make(1, "employer"));
     this.emit("change");
   }
 
@@ -28,7 +29,7 @@ class EmployerStore extends EventEmmiter {
    * @memberof EmployerStore
    */
   getEmployer = () => {
-    return this.employer;
+    return this.state.employer;
   }
 
   /**
@@ -36,8 +37,8 @@ class EmployerStore extends EventEmmiter {
    * @param {string} listName Name of the list to be added
    * @memberof EmployerStore
    */
-  addNewList = (listName) => {
-    this.employer.favoriteLists[listName] = [];
+  _addNewList = (params) => {
+    this.state.employer.favoriteLists[params.listName] = [];
     this.emit("change");
   }
 
@@ -46,9 +47,9 @@ class EmployerStore extends EventEmmiter {
    * @param {string} listName List to be deleted
    * @memberof EmployerStore
    */
-  removeFavoritesLists = (listName) => {
-    const lists = this.employer.favoriteLists;
-    delete lists[listName];
+  _removeFavoritesLists = (params) => {
+    const lists = this.state.employer.favoriteLists;
+    delete lists[params.listName];
     this.emit("change");
   }
 
@@ -58,8 +59,8 @@ class EmployerStore extends EventEmmiter {
    * @param {string} list List where it should be added
    * @memberof EmployerStore
    */
-  addEmployeeToFavList = (id, list) => {
-    this.employer.favoriteLists[list].push(id);
+  _addEmployeeToFavList = (params) => {
+    this.state.employer.favoriteLists[params.list].push(params.id);
     this.emit("change");
   }
 
@@ -70,16 +71,16 @@ class EmployerStore extends EventEmmiter {
    * @param [{string}] list List where it should be removed
    * @memberof EmployerStore
    */
-  removeEmployeeFromFavList = (id, list) => {
-    if (!list) {
-      for (const key in this.employer.favoriteLists) {
-        let index = this.employer.favoriteLists[key].indexOf(id);
-        if (index !== -1) this.employer.favoriteLists[key].splice(index, 1);
+  _removeEmployeeFromFavList = (params) => {
+    if (!params.list) {
+      for (const key in this.state.employer.favoriteLists) {
+        let index = this.state.employer.favoriteLists[key].indexOf(params.id);
+        if (index !== -1) this.state.employer.favoriteLists[key].splice(index, 1);
       }
       this.emit("change");
     } else {
-      let index = this.employer.favoriteLists[list].indexOf(id);
-      this.employer.favoriteLists[list].splice(index, 1);
+      let index = this.state.employer.favoriteLists[params.list].indexOf(params.id);
+      this.state.employer.favoriteLists[params.list].splice(index, 1);
       this.emit("change");
     }
   }
@@ -92,8 +93,8 @@ class EmployerStore extends EventEmmiter {
    */
   isEmployeeInFavoriteList = (id) => {
     let isFavorite = false;
-    const lists = Object.keys(this.employer.favoriteLists);
-    lists.map(list => this.employer.favoriteLists[list].includes(id) ? isFavorite = true : null);
+    const lists = Object.keys(this.state.employer.favoriteLists);
+    lists.map(list => this.state.employer.favoriteLists[list].includes(id) ? isFavorite = true : null);
     return isFavorite;
   }
 
@@ -108,7 +109,7 @@ class EmployerStore extends EventEmmiter {
       const idArr = this.getFavoritesListsEmployeeIds(listName);
       idArr.forEach(id => favorites.push(EmployeeStore.getById(id)));
     } else {
-      const lists = this.employer.favoriteLists;
+      const lists = this.state.employer.favoriteLists;
       for (const key in lists) {
         lists[key].forEach(employeeId => {
           let employee = EmployeeStore.getById(employeeId);
@@ -125,11 +126,11 @@ class EmployerStore extends EventEmmiter {
    * @memberof EmployerStore
    */
   getFavoritesLists = () => {
-    return this.employer.favoriteLists;
+    return this.state.employer.favoriteLists;
   }
 
   getListWhereEmployeeIsFavorite = (id) => {
-    let favLists = this.employer.favoriteLists;
+    let favLists = this.state.employer.favoriteLists;
     let favoritedInLists = [];
     Object.keys(favLists).map(key => {
       if (favLists[key].includes(id)) {
@@ -147,7 +148,7 @@ class EmployerStore extends EventEmmiter {
    * @memberof EmployerStore
    */
   getFavoritesListsEmployeeIds = (listName) => {
-    return this.employer.favoriteLists[listName];
+    return this.state.employer.favoriteLists[listName];
   }
 
   /**
@@ -156,39 +157,11 @@ class EmployerStore extends EventEmmiter {
    * @param {string} newListName New list name
    * @memberof EmployerStore
    */
-  renameFavoritesLists = (prevListName, newListName) => {
-    this.employer.favoriteLists[newListName] = this.employer.favoriteLists[prevListName];
-    delete this.employer.favoriteLists[prevListName];
+  _renameFavoritesLists = (params) => {
+    this.state.employer.favoriteLists[params.newListName] = this.state.employer.favoriteLists[params.prevListName];
+    delete this.state.employer.favoriteLists[params.prevListName];
     this.emit("change");
   }
 
-  handleActions(action) {
-    switch (action.type) {
-      case 'ADD_EMPLOYER':
-        this.addEmployer();
-        break;
-      case 'ADD_NEW_FAVORITE_LIST':
-        this.addNewList(action.listName);
-        break;
-      case 'REMOVE_FAVORITE_LIST':
-        this.removeFavoritesLists(action.listName);
-        break;
-      case 'RENAME_FAVORITE_LIST':
-        this.renameFavoritesLists(action.prevListName, action.newListName);
-        break;
-      case 'ADD_EMPLOYEE_TO_FAVORITE_LIST':
-        this.addEmployeeToFavList(action.id, action.list);
-        break;
-      case 'REMOVE_EMPLOYEE_FROM_FAVORITE_LIST':
-        this.removeEmployeeFromFavList(action.id, action.list);
-        break;
-      default:
-        break;
-    }
-  }
 }
-
-const employerStore = new EmployerStore();
-AppDispatcher.register(action => employerStore.handleActions(action));
-
-export default employerStore;
+export default new EmployerStore();

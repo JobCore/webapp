@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Flux from "../../flux"
 import { Redirect } from "react-router-dom";
 import uuid from 'uuid/v4';
 import Select from 'react-select';
@@ -13,7 +14,7 @@ import EmployeeCard from '../../components/EmployeeCard';
 import VenueStore from '../../store/VenueStore';
 import EmployerStore from '../../store/EmployerStore';
 
-class ShiftDetails extends Component {
+class ShiftDetails extends Flux.View {
   state = {
     shift: ShiftStore.getById("shift", this.props.match.params.id),
     prevShiftStatus: null,

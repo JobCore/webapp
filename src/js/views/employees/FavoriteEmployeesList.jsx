@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Flux from "../../flux"
 import swal from 'sweetalert2';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Select from "react-select";
@@ -9,10 +10,10 @@ import Form from '../../components/utils/Form';
 import EmployerStore from '../../store/EmployerStore';
 import FilterConfigStore from '../../store/FilterConfigStore';
 import * as FilterActions from '../../actions/filterActions';
-import * as EmployerActions from '../../actions/employerActions';
+import EmployerActions from '../../actions/employerActions';
 import EmployeeCard from '../../components/EmployeeCard';
 
-export class FavoriteEmployeesList extends Component {
+export class FavoriteEmployeesList extends Flux.View {
   state = {
     employee: EmployerStore.getFavorites(
       FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),

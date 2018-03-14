@@ -1,18 +1,8 @@
-import AppDispatcher from "../../dispatcher.js";
+import Flux from "../flux"
 
-// export function updateConfig(value, configOption, listName) {
-//   return AppDispatcher.dispatch({
-//     type: 'UPDATE_CONFIG',
-//     value,
-//     configOption,
-//     listName
-//   })
-// }
-
-export function acceptedInShift(shiftId, employeeId) {
-  return AppDispatcher.dispatch({
-    type: "ACCEPTED_IN_SHIFT",
-    employeeId,
-    shiftId
-  })
+class EmployeeActions extends Flux.Action{
+  acceptedInShift(shiftId, employeeId) {
+    this.dispatch("EmployeeStore.acceptedInShift",{ employeeId, shiftId });
+  }
 }
+export default new EmployeeActions();

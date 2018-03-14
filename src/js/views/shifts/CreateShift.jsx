@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Flux from "../../flux"
 import uuid from 'uuid/v4';
 import Select from 'react-select';
 import swal from 'sweetalert2';
@@ -9,7 +10,7 @@ import * as ShiftActions from "../../actions/shiftActions";
 import VenueStore from '../../store/VenueStore';
 import EmployerStore from '../../store/EmployerStore';
 
-class CreateShift extends Component {
+class CreateShift extends Flux.View {
   state = {
     venues: VenueStore.getAll(),
     prevShiftStatus: null,

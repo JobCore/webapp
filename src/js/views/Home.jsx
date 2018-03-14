@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../flux"
 import { Selector } from "../components/utils/Selector";
 
 //import {starthub} from '../../../img/starthub.jpg';
 
-export class Home extends Component {
+export class Home extends Flux.View {
 
   constructor() {
 

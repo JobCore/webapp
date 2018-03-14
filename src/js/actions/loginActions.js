@@ -1,20 +1,16 @@
-// LoginAction.js
+import Flux from "../flux"
 
-import AppDispatcher from "../../dispatcher.js";
-
-export default {
-  loginUser: (history) => {
+class LoginActions extends Flux.Action{
+  loginUser(history){
     // Send the action to all stores through the Dispatcher
-    history.push("/private");
-    AppDispatcher.dispatch({
-      actionType: "USER_LOGGED_IN",
-    });
-  },
-  logoutUser: (history) => {
+    this.dispatch("LoginStore.setUserLogin");
+    history.push('/private');
+  }
+  
+  logoutUser(history){
     // Send the action to all stores through the Dispatcher
-    history.push("/home");
-    AppDispatcher.dispatch({
-      actionType: "USER_LOGGED_OUT",
-    });
-  },
-};
+    this.dispatch("LoginStore.loggoutUser");
+    history.push('/login');
+  }
+}
+export default new LoginActions();

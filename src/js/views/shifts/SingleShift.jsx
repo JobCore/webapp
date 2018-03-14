@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../../flux"
 
 import shiftsStore from "../../store/ShiftsStore.js";
 
-export class SingleShift extends Component {
+export class SingleShift extends Flux.View {
 
   /**
   *

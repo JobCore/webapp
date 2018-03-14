@@ -1,45 +1,28 @@
-import AppDispatcher from "../../dispatcher.js";
+import Flux from "../flux"
 
-export function addEmployer() {
-  return AppDispatcher.dispatch({
-    type: 'ADD_EMPLOYER'
-  })
+class EmployerActions extends Flux.Action{
+  addEmployer() {
+    this.dispatch('EmployerStore.addEmployer');
+  }
+  
+  addNewList(listName) {
+    this.dispatch('EmployerStore.addNewList', listName);
+  }
+  
+  removeFavoritesLists(listName) {
+    this.dispatch('EmployerStore.removeFavoritesLists',{listName})
+  }
+  
+  renameFavoritesLists(prevListName, newListName) {
+    this.dispatch('EmployerStore.renameFavoritesLists',{ prevListName, newListName });
+  }
+  
+  addEmployeeToFavList(id, list) {
+    this.dispatch('EmployerStore.addEmployeeToFavList',{ id, list });
+  }
+  
+  removeEmployeeFromFavList(id, list) {
+    this.dispatch('EmployerStore.removeEmployeeFromFavList',{ id, list });
+  }
 }
-
-export function addNewList(listName) {
-  return AppDispatcher.dispatch({
-    type: 'ADD_NEW_FAVORITE_LIST',
-    listName
-  })
-}
-
-export function removeFavoritesLists(listName) {
-  return AppDispatcher.dispatch({
-    type: 'REMOVE_FAVORITE_LIST',
-    listName
-  })
-}
-
-export function renameFavoritesLists(prevListName, newListName) {
-  return AppDispatcher.dispatch({
-    type: 'RENAME_FAVORITE_LIST',
-    prevListName,
-    newListName
-  })
-}
-
-export function addEmployeeToFavList(id, list) {
-  return AppDispatcher.dispatch({
-    type: 'ADD_EMPLOYEE_TO_FAVORITE_LIST',
-    id,
-    list
-  })
-}
-
-export function removeEmployeeFromFavList(id, list) {
-  return AppDispatcher.dispatch({
-    type: 'REMOVE_EMPLOYEE_FROM_FAVORITE_LIST',
-    id,
-    list
-  })
-}
+export default new EmployerActions();

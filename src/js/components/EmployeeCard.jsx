@@ -4,7 +4,7 @@ import swal from 'sweetalert2';
 import ReactStars from 'react-stars';
 import * as ShiftActions from '../actions/shiftActions';
 import ShiftsStore from '../store/ShiftsStore';
-import * as EmployeeActions from '../actions/employeeActions';
+import EmployeeActions from '../actions/employeeActions';
 import EmployerStore from '../store/EmployerStore';
 
 const EmployeeCard = ({ item, ...props }) => {

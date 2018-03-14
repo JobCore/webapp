@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../../flux"
 import { Redirect, Link } from "react-router-dom";
 import swal from 'sweetalert2';
 
@@ -6,9 +7,9 @@ import ReactStars from "react-stars";
 import ProfilePic from "../../components/utils/ProfilePic";
 import EmployeeStore from "../../store/EmployeeStore";
 import EmployerStore from "../../store/EmployerStore";
-import * as EmployerActions from '../../actions/employerActions';
+import EmployerActions from '../../actions/employerActions';
 
-export class EmployeeDetails extends Component {
+export class EmployeeDetails extends Flux.View {
 
   /**
    * React Stars API documentation

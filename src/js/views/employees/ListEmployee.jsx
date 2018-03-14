@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React from 'react';
+import Flux from "../../flux"
 import { Link } from 'react-router-dom';
 import Select from "react-select";
 import "react-select/dist/react-select.css";
@@ -13,7 +14,7 @@ import FilterConfigStore from "../../store/FilterConfigStore";
 import * as FilterActions from '../../actions/filterActions';
 import EmployeeCard from "../../components/EmployeeCard";
 
-export class ListEmployee extends Component {
+export class ListEmployee extends Flux.View {
   state = {
     employee: EmployeeStore.getAll(),
     shift: ShiftsStore.getAll("shift"),
