@@ -16,10 +16,10 @@ import ShiftGroup from "../../components/ShiftGroup";
 
 export class ListShifts extends Flux.View {
   
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
-      shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+      shift: this.props.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
       filteredData: [],
       modalOpened: false,
       currentShift: { id: null, },
@@ -37,9 +37,9 @@ export class ListShifts extends Flux.View {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.match.path !== nextProps.match.path) {
+    if (this.props.path !== nextProps.path) {
       this.setState(prevState => ({
-        shift: nextProps.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+        shift: nextProps.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
         shouldListUpdate: true
       }))
     }
@@ -171,18 +171,18 @@ export class ListShifts extends Flux.View {
 
   render() {
     // console.log(this.state.filterConfig);
-    const employee = this.props.match.path === "/talent/:id/offer" ?
-      EmployeeStore.getById(this.props.match.params.id) : "";
+    const employee = this.props.path === "/talent/:id/offer" ?
+      EmployeeStore.getById(this.props.params.id) : "";
 
 
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         {
-          (this.props.match.path === "/talent/:id/offer" && !employee) &&
+          (this.props.path === "/talent/:id/offer" && !employee) &&
           <Redirect to="/talent/list" />
         }
         {
-          (this.props.match.path === "/talent/:id/offer" && employee) &&
+          (this.props.path === "/talent/:id/offer" && employee) &&
           < h3 >
             Select the shift you want to offer to <span className="employee-to-offer">{employee.name} {employee.lastname}</span>
           </h3>
@@ -213,7 +213,7 @@ export class ListShifts extends Flux.View {
                 onChange={event => this.updateFilterConfig(event.target.value, "date")} />
             </div>
             {
-              this.props.match.path === "/talent/:id/offer" ?
+              this.props.path === "/talent/:id/offer" ?
                 <div className="form-group">
                   <label htmlFor="until-date">Until</label>
                   <input className="form-control" type="date"
@@ -241,7 +241,7 @@ export class ListShifts extends Flux.View {
             </button>
           }
           {
-            this.props.match.path !== "/talent/:id/offer" &&
+            this.props.path !== "/talent/:id/offer" &&
             <Link to="/shift/create">
               <button className="btn btn-success">
                 <i className="fa fa-plus" aria-hidden="true"></i>
@@ -257,7 +257,7 @@ export class ListShifts extends Flux.View {
               type="componentList"
               heading="Company Shifts"
               component={ShiftGroup}
-              match={this.props.match} />
+              match={this.props} />
           ) : (
               <h3 className="no-match">No shifts matching this criteria</h3>
             )
