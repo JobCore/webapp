@@ -20,7 +20,7 @@ export class FavoriteEmployeesList extends Flux.View {
     super();
     this.state = {
       employer: EmployerStore.getEmployer(),
-      employee: FavoriteListStore.getCandidates(),
+      employee: FavoriteListStore.getEmployees(),
       filterConfig: {
         ...FilterConfigStore.getConfigFor("favoritesList"),
       },
@@ -141,8 +141,8 @@ export class FavoriteEmployeesList extends Flux.View {
   renderFavLists = () => {
     let htmlElementsList = [];
     this.state.favoritesLists.map(({ id, title }) => {
-      let message = FavoriteListStore.candidateCountFor(id) > 0 ?
-        `It contains ${FavoriteListStore.candidateCountFor(id)} candidate(s) already favorited, <br/>
+      let message = FavoriteListStore.employeeCountFor(id) > 0 ?
+        `It contains ${FavoriteListStore.employeeCountFor(id)} candidate(s) already favorited, <br/>
         you won't be able to recover it after deletion.`
         :
         `The list is empty. <br/> You can delete it safely.`;

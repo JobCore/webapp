@@ -39,8 +39,8 @@ export class EmployeeDetails extends Flux.View {
     let isFavorite = false;
     let favoritedInLists = [];
     favLists.forEach(list => {
-      list.candidates.forEach(candidate => {
-        if (parseInt(candidate.id) === this.state.employee.id) {
+      list.employees.forEach(employee => {
+        if (parseInt(employee.id) === this.state.employee.id) {
           isFavorite = true;
           favoritedInLists.push(list.title);
         };

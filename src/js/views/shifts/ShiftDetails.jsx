@@ -181,10 +181,11 @@ class ShiftDetails extends Flux.View {
         break;
     }
 
+    const DATE = new Date(shift.date * 1000);
     let formatedDate = `
-    ${new Date(shift.date).toLocaleDateString("en-us", { month: "long" })}
-    ${this.getOrdinalNum(new Date(shift.date).getDate())},
-    ${new Date(shift.date).getFullYear()}`;
+    ${DATE.toLocaleDateString("en-us", { month: "long" })}
+    ${this.getOrdinalNum(DATE.getDate())},
+    ${DATE.getFullYear()}`;
 
     let badges = BadgesStore.getAll().map(
       ({ id, title }) => (
@@ -303,26 +304,30 @@ class ShiftDetails extends Flux.View {
               </span>
               <div className="details">
                 <p>
-                  <strong>Looking for: </strong> {shift.position}
+                  <strong>Looking for: </strong> {shift.position.title}
                 </p>
                 <p>
-                  <strong>Paying: </strong> $ {shift.minHourlyRate}/hr
+                  <strong>Paying: </strong> $ {shift.minimum_hourly_rate}/hr
                 </p>
                 <p>
                   <span className="date"><strong>On: </strong> {formatedDate}</span>
                 </p>
                 <p>
-                  <span className="start-time"><strong>From: </strong> {shift.start}</span>
-                  <span className="end-time"><strong>To: </strong> {shift.end}</span>
+                  <span className="start-time">
+                    <strong>From: </strong> {shift.start_time.match(/[0-9]{2}:[0-9]{2}/)}
+                  </span>
+                  <span className="end-time">
+                    <strong>To: </strong> {shift.finish_time.match(/[0-9]{2}:[0-9]{2}/)}
+                  </span>
                 </p>
                 <p>
-                  <strong>At: </strong> {shift.location}
+                  <strong>At: </strong> {shift.venue.title}
                 </p>
               </div>
 
               <div className="employees">
                 <List
-                  items={shift.candidates}
+                  items={shift.applicants}
                   type="componentList"
                   heading="Candidates"
                   AcceptRejectButtons
@@ -330,7 +335,7 @@ class ShiftDetails extends Flux.View {
                   sort={this.sortBy}
                   sortOptions={["name", "rating", "response-Time"]}
                   component={EmployeeCard}
-                  acceptedCandidates={shift.acceptedCandidates}
+                  acceptedCandidates={shift.employees}
                 />
               </div>
             </div>
