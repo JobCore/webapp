@@ -6,11 +6,11 @@ class LoginStore extends Flux.Store {
     this.state.user = null;
   }
 
-  _setUserLogin(){
+  _setUserLogin({data}){
       this.setStoreState({
-        user: { id: "ale_01", name: "Alejandro Sanchez"}
-      }).emit();
-      
+        user: data
+      }).emit("change");
+
       console.log("The user has logged in");
   }
   _loggoutUser(){

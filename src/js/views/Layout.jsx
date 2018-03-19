@@ -1,6 +1,6 @@
 import React from "react";
 import Flux from "../flux"
-import {PrivateRoute} from '../components/utils/index'
+import { PrivateRoute } from '../components/utils/index'
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import createBrowserHistory from "history/createBrowserHistory";
 
@@ -8,7 +8,13 @@ import { Navbar } from "../components/utils/Navbar";
 
 import LoginStore from "../store/LoginStore";
 import LoginActions from "../actions/loginActions";
-import EmployerStore from "../store/EmployerStore";
+import EmployeeActions from "../actions/employeeActions";
+import EmployerActions from "../actions/employerActions";
+import ShiftActions from "../actions/shiftActions";
+import FavoriteListActions from "../actions/favoriteListActions";
+import BadgesActions from "../actions/badgesActions";
+import VenueActions from "../actions/venueActions";
+import PositionsActions from "../actions/positionsActions";
 
 import { Home } from "../views/Home";
 import { Login } from "../views/Login";
@@ -31,20 +37,35 @@ export class Layout extends Flux.View {
       user: null,
       // user: EmployerStore.getEmployer(),
     };
-    
-    this.bindStore(LoginStore,this.handleAutentication.bind(this) );
+    this.bindStore(LoginStore, this.setUser.bind(this));
+    // this.bindStore(LoginStore, this.handleAutentication.bind(this));
   }
 
-  handleAutentication() {
-    let isLoggedIn = LoginStore.isLoggedIn();
-    console.log("User autentication status: ", );
+  // handleAutentication() {
+  //   let isLoggedIn = LoginStore.isLoggedIn();
+  //   console.log("User autentication status: ", );
+  //   this.setState({
+  //     authenticated: isLoggedIn,
+  //     user: EmployerStore.getEmployer(),
+  //   });
+  // }
+
+  setUser = () => {
     this.setState({
-      authenticated: isLoggedIn,
-      user: EmployerStore.getEmployer(),
+      authenticated: true,
+      user: LoginStore.getUser(),
     });
+    EmployerActions.get();
+    EmployeeActions.getAll();
+    ShiftActions.getAll();
+    FavoriteListActions.getAll();
+    BadgesActions.getAll();
+    VenueActions.getAll();
+    PositionsActions.getAll();
   }
 
   render() {
+    // console.log(this.state.user);
     return (
       <BrowserRouter>
         <div>

@@ -1,21 +1,32 @@
 import Flux from "../flux";
-import Seeder from "./Seeder.js";
 
 class EmployeeStore extends Flux.Store {
 
   constructor() {
     super();
     this.state = {
-      employee: Seeder.make(20, "employee")
+      employee: [],
+      next_page: null,
+      previous_page: null
     }
   }
 
   addEmployee() {
-    this.state.employee.push(Seeder.make(1, "employee"));
+    // this.state.employee.push(Seeder.make(1, "employee"));
     this.emit("change");
   }
 
-  getAll() { return this.state.employee; }
+  _setEmployees({data}) {
+    this.setStoreState({
+      employee: [...data.results],
+      next_page: data.next,
+      previous_page: data.previous
+    }).emit("change");
+  }
+
+  getAll() {
+    return this.state.employee;
+  }
 
   getById(id) {
     return this.state.employee.find((item) => {

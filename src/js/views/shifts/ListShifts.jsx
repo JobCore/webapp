@@ -10,16 +10,18 @@ import Form from "../../components/utils/Form";
 import { List } from "../../components/utils/List";
 import ShiftsStore from "../../store/ShiftsStore";
 import EmployeeStore from "../../store/EmployeeStore";
+import PositionsStore from "../../store/PositionsStore";
+import VenuesStore from "../../store/VenueStore";
 import FilterConfigStore from "../../store/FilterConfigStore";
 import FilterActions from '../../actions/filterActions';
 import ShiftGroup from "../../components/ShiftGroup";
 
 export class ListShifts extends Flux.View {
-  
-  constructor(props){
+
+  constructor(props) {
     super(props);
     this.state = {
-      shift: this.props.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+      shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
       filteredData: [],
       modalOpened: false,
       currentShift: { id: null, },
@@ -28,8 +30,8 @@ export class ListShifts extends Flux.View {
       },
       shouldListUpdate: true
     };
-    this.bindStore(FilterConfigStore,this.setConfig.bind(this));
-    this.bindStore(ShiftsStore,this.setShifts.bind(this));
+    this.bindStore(FilterConfigStore, this.setConfig.bind(this));
+    this.bindStore(ShiftsStore, this.setShifts.bind(this));
   }
 
   componentDidUpdate() {
@@ -37,9 +39,9 @@ export class ListShifts extends Flux.View {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.path !== nextProps.path) {
+    if (this.props.match.path !== nextProps.match.path) {
       this.setState(prevState => ({
-        shift: nextProps.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+        shift: nextProps.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
         shouldListUpdate: true
       }))
     }
@@ -80,19 +82,15 @@ export class ListShifts extends Flux.View {
   }
 
   createOptionsObject = (category) => {
-    let data = ShiftsStore.getAll('shift');
-    let object = [];
+    let data = {
+      positions: PositionsStore.getAll(),
+      venues: VenuesStore.getAll(),
+    };
+    let arr = [];
+    data[category].forEach(
+      ({ id, title }) => arr.push({ label: title, value: id, }))
 
-    let uniqueCategoryItem = [];
-
-    data.map(item => {
-      if (!uniqueCategoryItem.includes(item[category])) {
-        object.push({ label: item[category], value: item[category], });
-        uniqueCategoryItem.push(item[category]);
-      }
-      return 0;
-    });
-    return object;
+    return arr;
   }
 
   updateFilterConfig = (value, configOption) => {
@@ -171,20 +169,19 @@ export class ListShifts extends Flux.View {
 
   render() {
     // console.log(this.state.filterConfig);
-    const employee = this.props.path === "/talent/:id/offer" ?
-      EmployeeStore.getById(this.props.params.id) : "";
-
+    const employee = this.props.match.path === "/talent/:id/offer" ?
+      EmployeeStore.getById(this.props.match.params.id) : "";
 
     return (
       <div className="container-fluid" style={{ position: "relative", }}>
         {
-          (this.props.path === "/talent/:id/offer" && !employee) &&
+          (this.props.match.path === "/talent/:id/offer" && !employee) &&
           <Redirect to="/talent/list" />
         }
         {
-          (this.props.path === "/talent/:id/offer" && employee) &&
+          (this.props.match.path === "/talent/:id/offer" && employee) &&
           < h3 >
-            Select the shift you want to offer to <span className="employee-to-offer">{employee.name} {employee.lastname}</span>
+            Select the shift you want to offer to <span className="employee-to-offer">{employee.profile.user.first_name} {employee.profile.user.last_name}</span>
           </h3>
         }
         <div className="form-area">
@@ -193,7 +190,7 @@ export class ListShifts extends Flux.View {
               <label htmlFor="position">Position</label>
               <Select
                 placeholder="Select a position"
-                options={this.createOptionsObject("position")}
+                options={this.createOptionsObject("positions")}
                 value={this.state.filterConfig.position || ""}
                 onChange={option => this.updateFilterConfig(option ? option.value : null, "position")} />
             </div>
@@ -201,7 +198,7 @@ export class ListShifts extends Flux.View {
               <label htmlFor="Location">Location</label>
               <Select
                 placeholder="Select a location"
-                options={this.createOptionsObject("location")}
+                options={this.createOptionsObject("venues")}
                 value={this.state.filterConfig.location || ""}
                 onChange={option => this.updateFilterConfig(option ? option.value : null, "location")} />
             </div>
@@ -213,7 +210,7 @@ export class ListShifts extends Flux.View {
                 onChange={event => this.updateFilterConfig(event.target.value, "date")} />
             </div>
             {
-              this.props.path === "/talent/:id/offer" ?
+              this.props.match.path === "/talent/:id/offer" ?
                 <div className="form-group">
                   <label htmlFor="until-date">Until</label>
                   <input className="form-control" type="date"
@@ -226,7 +223,13 @@ export class ListShifts extends Flux.View {
                   <label htmlFor="status">Status</label>
                   <Select
                     placeholder={"Select a status"}
-                    options={this.createOptionsObject("status")}
+                    options={[
+                      { label: "Draft", value: "DRAFT" },
+                      { label: "Receiving candidates", value: "OPEN" },
+                      { label: "Filled", value: "FILLED" },
+                      { label: "Paused", value: "PAUSED" },
+                      { label: "Cancelled", value: "CANCELLED" },
+                    ]}
                     value={this.state.filterConfig.status || ""}
                     onChange={option => this.updateFilterConfig(option ? option.value : null, "status")} />
                 </div>
@@ -241,7 +244,7 @@ export class ListShifts extends Flux.View {
             </button>
           }
           {
-            this.props.path !== "/talent/:id/offer" &&
+            this.props.match.path !== "/talent/:id/offer" &&
             <Link to="/shift/create">
               <button className="btn btn-success">
                 <i className="fa fa-plus" aria-hidden="true"></i>

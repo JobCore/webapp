@@ -7,27 +7,27 @@ const Shift = ({ item, ...props }) => {
     statusClass = "status";
 
   switch (item.status) {
-    case "Receiving candidates":
+    case "OPEN":
       employeeSummaryClass += " receiving";
       shiftCardClass += " receiving";
       statusClass += " receiving";
       break;
-    case "Filled":
+    case "FILLED":
       employeeSummaryClass += " filled";
       shiftCardClass += " filled";
       statusClass += " filled";
       break;
-    case "Paused":
+    case "PAUSED":
       employeeSummaryClass += " paused";
       shiftCardClass += " paused";
       statusClass += " paused";
       break;
-    case "Cancelled":
+    case "CANCELLED":
       employeeSummaryClass += " cancelled";
       shiftCardClass += " cancelled";
       statusClass += " cancelled";
       break;
-    case "Draft":
+    case "DRAFT":
       employeeSummaryClass += " draft";
       shiftCardClass += " draft";
       statusClass += " draft";
@@ -42,21 +42,21 @@ const Shift = ({ item, ...props }) => {
   return (
     <div className={shiftCardClass}>
       <div className={employeeSummaryClass}>
-        {item.confirmedEmployees}/{item.maxAllowedEmployees}
+        {item.employees ? item.employees.length : 0}/{item.maximum_allowed_employees}
       </div>
       <div className="shift-card__content">
         <div className="shift-card__content__upper-side">
-          {item.position} @ {item.location}, {item.start} - {item.end} ({item.duration}hrs)
+          {item.position.title} @ {item.venue.title}, {item.start_time} - {item.finish_time} {/*({item.duration}hrs)*/}
         </div>
         <div className="shift-card__content__bottom-side">
-          <span className={item.restrictions.favoritesOnly ? "favorite" : "anyone"}>
+          <span className={item.application_restriction === "FAVORITES" ? "favorite" : "anyone"}>
           </span>
 
           <span className={statusClass}></span>
         </div>
       </div>
       {
-        (item.status !== "Draft" && props.match.path !== "/talent/:id/offer") &&
+        (item.status !== "DRAFT" && props.match.path !== "/talent/:id/offer") &&
         <Link className="btn btn-warning show-employees-btn" to={`/shift/${item.id}`}>
           {/* Users Icon in Styles*/}
         </Link>
@@ -65,7 +65,7 @@ const Shift = ({ item, ...props }) => {
         props.match.path === "/talent/:id/offer" ?
           <button className="btn btn-warning offer-btn">Offer this shift</button>
           :
-          item.status !== "Draft" ?
+          item.status !== "DRAFT" ?
             <Link className="btn btn-warning edit-btn" to={`/shift/${item.id}/edit`}>
               {/* Edit Icon in Styles*/}
             </Link>

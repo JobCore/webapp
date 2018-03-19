@@ -139,7 +139,7 @@ InlineTooltipEditor.propTypes = {
   message: PropTypes.string,
   options: PropTypes.array,
   children: PropTypes.node,
-  id: PropTypes.string,
+  id: PropTypes.number,
   param: PropTypes.string,
   onEdit: PropTypes.func
 }

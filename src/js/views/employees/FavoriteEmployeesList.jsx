@@ -8,6 +8,7 @@ import { List } from '../../components/utils/List';
 import Modal from '../../components/utils/Modal';
 import Form from '../../components/utils/Form';
 import EmployerStore from '../../store/EmployerStore';
+import FavoriteListStore from '../../store/FavoriteListStore';
 import FilterConfigStore from '../../store/FilterConfigStore';
 import FilterActions from '../../actions/filterActions';
 import EmployerActions from '../../actions/employerActions';
@@ -18,12 +19,12 @@ export class FavoriteEmployeesList extends Flux.View {
   constructor() {
     super();
     this.state = {
-      employee: EmployerStore.getFavorites(
-        FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
+      employer: EmployerStore.getEmployer(),
+      employee: FavoriteListStore.getCandidates(),
       filterConfig: {
         ...FilterConfigStore.getConfigFor("favoritesList"),
       },
-      favoritesLists: EmployerStore.getFavoritesLists(),
+      favoritesLists: FavoriteListStore.getAll(),
       shouldListUpdate: true,
       modalOpened: false,
       editing: null,
@@ -32,16 +33,14 @@ export class FavoriteEmployeesList extends Flux.View {
       selectedEmployee: null,
       selectedList: []
     }
-    
+
     this.bindStore(FilterConfigStore, this.setConfig.bind(this));
-    this.bindStore(EmployerStore, this.getFavorites.bind(this));
   }
 
   createOptionsObject = (category) => {
-    let data = { ...this.state.favoritesLists, };
-    data = Object.keys(data);
+    let data = [...this.state.favoritesLists,];
     let object = [];
-    data.forEach(item => object.push({ label: item, value: item, }));
+    data.forEach(({ title, id }) => object.push({ label: title, value: id, }));
     return object;
   }
 
@@ -140,27 +139,27 @@ export class FavoriteEmployeesList extends Flux.View {
   }
 
   renderFavLists = () => {
-    let lists = [];
-    Object.keys(EmployerStore.getFavoritesLists()).map(list => {
-      let message = EmployerStore.getFavoritesListsEmployeeIds(list).length > 0 ?
-        `It contains ${EmployerStore.getFavoritesListsEmployeeIds(list).length} candidate(s) already favorited, <br/>
+    let htmlElementsList = [];
+    this.state.favoritesLists.map(({ id, title }) => {
+      let message = FavoriteListStore.candidateCountFor(id) > 0 ?
+        `It contains ${FavoriteListStore.candidateCountFor(id)} candidate(s) already favorited, <br/>
         you won't be able to recover it after deletion.`
         :
         `The list is empty. <br/> You can delete it safely.`;
 
-      let htmlList = this.state.editing && this.state.editingLists.includes(list) ?
-        <li key={list}>
-          <input type="text" name="list" id="list" placeholder={list} required />
+      let htmlLi = this.state.editing && this.state.editingLists.includes(id) ?
+        <li key={id}>
+          <input type="text" name="list" id="list" placeholder={title} required />
           <div className="side-edit">
-            <button className="save" onClick={() => this.finishEditingList("save", list)}></button>
-            <button className="cancel" onClick={() => this.finishEditingList("cancel", list)}></button>
+            <button className="save" onClick={() => this.finishEditingList("save", id)}></button>
+            <button className="cancel" onClick={() => this.finishEditingList("cancel", id)}></button>
           </div>
         </li>
         :
-        <li key={list}>
-          <p>{list}</p>
+        <li key={id}>
+          <p>{title}</p>
           <div className="side">
-            <button className="edit" onClick={() => this.editList(list)}></button>
+            <button className="edit" onClick={() => this.editList(id)}></button>
             <button className="delete" onClick={() => swal({
               position: 'top',
               title: 'Are you sure you want <br/> to delete this list?',
@@ -174,16 +173,16 @@ export class FavoriteEmployeesList extends Flux.View {
               cancelButtonColor: '#3085d6',
             }).then(result => {
               if (result.value) {
-                EmployerActions.removeFavoritesLists(list);
+                EmployerActions.removeFavoritesLists(id);
                 this.setState({ shouldListUpdate: true });
               }
             })}></button>
           </div>
         </li>;
 
-      return lists.push(htmlList)
+      return htmlElementsList.push(htmlLi)
     })
-    return lists;
+    return htmlElementsList;
   }
 
   selectList = (isChecked, list) => (
@@ -198,7 +197,7 @@ export class FavoriteEmployeesList extends Flux.View {
   )
 
   renderListCheckboxes = id => {
-    let favoritedLists = EmployerStore.getListWhereEmployeeIsFavorite(id);
+    let favoritedLists = FavoriteListStore.getListWhereEmployeeIsFavorite(id);
 
     let favoriteCheckboxes = favoritedLists.map(list => {
       return (
@@ -232,6 +231,7 @@ export class FavoriteEmployeesList extends Flux.View {
   }
 
   render() {
+    // console.log(this.state);
     return (
       <div className="container-fluid favorites-area" style={{ position: "relative", }}>
         <div className="form-area" >
@@ -271,14 +271,6 @@ export class FavoriteEmployeesList extends Flux.View {
         </div>
 
         {this.state.employee.length > 0 ?
-          // <List
-          //   classes="favorites-list"
-          //   type={"card"}
-          //   makeURL={(data) => "/talent/" + data.id}
-          //   removeItem={this.toggleAlert}
-          //   items={this.state.employee}
-          //   sort={this.sortBy}
-          //   showInSubheading={['rating', 'currentJobs', 'favorite', 'responseTime', 'badges']} />
           <List
             items={this.state.employee}
             type="componentList"

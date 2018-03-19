@@ -1,28 +1,21 @@
-import Flux from "../flux"
+import Flux from "../flux";
+import {GET} from '../store/ApiRequests';
+import LoginStore from "../store/LoginStore";
 
 class EmployerActions extends Flux.Action{
   addEmployer() {
     this.dispatch('EmployerStore.addEmployer');
   }
-  
-  addNewList(listName) {
-    this.dispatch('EmployerStore.addNewList', listName);
-  }
-  
-  removeFavoritesLists(listName) {
-    this.dispatch('EmployerStore.removeFavoritesLists',{listName})
-  }
-  
-  renameFavoritesLists(prevListName, newListName) {
-    this.dispatch('EmployerStore.renameFavoritesLists',{ prevListName, newListName });
-  }
-  
-  addEmployeeToFavList(id, list) {
-    this.dispatch('EmployerStore.addEmployeeToFavList',{ id, list });
-  }
-  
-  removeEmployeeFromFavList(id, list) {
-    this.dispatch('EmployerStore.removeEmployeeFromFavList',{ id, list });
+
+  get() {
+    GET("employers").then(
+        employers => {
+          let employer = employers.filter(data => data.profile.user.id === LoginStore.getUser().id);
+          this.dispatch("EmployerStore.setEmployer", {
+            data: employer[0]
+          })
+        }
+    )
   }
 }
 export default new EmployerActions();

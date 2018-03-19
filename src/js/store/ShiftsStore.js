@@ -6,12 +6,21 @@ import Seeder from "./Seeder.js";
 class ShiftStore extends Flux.Store {
 
   constructor() {
-
     super();
+    this.state = {
+      shift: [],
+      next_page: null,
+      previous_page: null,
+      menu: Seeder.make(1, "menu"),
+    };
+  }
 
-    this.state = {};
-    this.state.shift = Seeder.make(20, "shift");
-    this.state.menu = Seeder.make(1, "menu");
+  _setShifts({data}) {
+    this.setStoreState({
+      shift: [...data.results],
+      next_page: data.next,
+      previous_page: data.previous
+    }).emit("change");
   }
 
   addShift() {

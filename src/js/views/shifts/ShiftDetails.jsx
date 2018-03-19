@@ -12,7 +12,7 @@ import InlineTooltipEditor from '../../components/InlineTooltipEditor';
 import ShiftActions from "../../actions/shiftActions";
 import EmployeeCard from '../../components/EmployeeCard';
 import VenueStore from '../../store/VenueStore';
-import EmployerStore from '../../store/EmployerStore';
+import BadgesStore from '../../store/BadgesStore';
 
 class ShiftDetails extends Flux.View {
 
@@ -68,7 +68,7 @@ class ShiftDetails extends Flux.View {
     } else if (param === "maxAllowedEmployees" || param === "minHourlyRate" || param === "minAllowedRating") {
       value = parseInt(value);
     }
-    if (this.state.shift.status !== "Draft") {
+    if (this.state.shift.status !== "DRAFT") {
       switch (param) {
         case "favoritesOnly":
         case "minAllowedRating":
@@ -118,22 +118,23 @@ class ShiftDetails extends Flux.View {
     return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
   }
 
-  convertPositionesIntoObjectForSelect = () => {
+  convertPositionsIntoObjectForSelect = () => {
     const positions = ShiftStore.getAllAvailablePositions();
     let object = [];
-    positions.forEach(position => object.push({ label: position, value: position }))
+    positions.forEach(({ id, title }) => object.push({ label: title, value: id }))
     return object;
   }
 
   convertVenuesIntoObjectForSelect = () => {
     const venues = this.state.venues;
     let object = [];
-    venues.forEach(venue => object.push({ label: venue.name, value: venue.name }))
+    venues.forEach(({ id, title }) => object.push({ label: title, value: id }))
     return object;
   }
 
   convertTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
+    // Convert Unix Timestramp into date object
+    const date = new Date(timestamp * 1000);
 
     let month = date.getMonth() + 1;
     let day = date.getDate();
@@ -160,19 +161,19 @@ class ShiftDetails extends Flux.View {
     const { shift } = this.state;
 
     switch (shift.status) {
-      case "Receiving candidates":
+      case "OPEN":
         statusClass += " receiving";
         break;
-      case "Filled":
+      case "FILLED":
         statusClass += " filled";
         break;
-      case "Paused":
+      case "PAUSED":
         statusClass += " paused";
         break;
-      case "Cancelled":
+      case "CANCELLED":
         statusClass += " cancelled";
         break;
-      case "Draft":
+      case "DRAFT":
         statusClass += " draft";
         break;
       default:
@@ -185,19 +186,20 @@ class ShiftDetails extends Flux.View {
     ${this.getOrdinalNum(new Date(shift.date).getDate())},
     ${new Date(shift.date).getFullYear()}`;
 
-    let badges = EmployerStore.getEmployer().availableBadges.map(
-      badge => (
-        { label: badge, value: badge }
-      ))
+    let badges = BadgesStore.getAll().map(
+      ({ id, title }) => (
+        { label: title, value: id }
+      )
+    )
 
     return (
       <div className="row shift-details">
         {
-          shift.status === "Draft" || this.state.editionMode ?
+          shift.status === "DRAFT" || this.state.editionMode ?
             // If Draft
             <div className="col col-md-9 first-col">
               {
-                (shift.status !== "Draft" || this.state.editionMode) &&
+                (shift.status !== "DRAFT" || this.state.editionMode) &&
                 <span
                   className="edit-shift-details"
                   onClick={() => this.toggleEdition()}>
@@ -205,7 +207,7 @@ class ShiftDetails extends Flux.View {
                 </span>
               }
               {
-                shift.status === "Draft" &&
+                shift.status === "DRAFT" &&
                 <h1>Draft</h1>
               }
               <div className="details">
@@ -213,8 +215,8 @@ class ShiftDetails extends Flux.View {
                   <strong>Looking for: </strong>
                   <Select
                     clearable={false}
-                    options={this.convertPositionesIntoObjectForSelect()}
-                    value={shift.position}
+                    options={this.convertPositionsIntoObjectForSelect()}
+                    value={shift.position.id}
                     onChange={option => this.updateShift(shift.id, "position", option.value)} />
                 </div>
                 <div className="item">
@@ -231,7 +233,7 @@ class ShiftDetails extends Flux.View {
                       data-placement="top"
                       title="Press Enter to save changes"
                       min="0"
-                      defaultValue={shift.minHourlyRate}
+                      defaultValue={shift.minimum_hourly_rate}
                       onKeyDown={e => {
                         if (e.keyCode === 13) this.updateShift(shift.id, "minHourlyRate", e.target.value)
                       }} />
@@ -261,9 +263,9 @@ class ShiftDetails extends Flux.View {
                         data-placement="top"
                         title="Press Enter to save changes"
                         className="form-control"
-                        defaultValue={shift.start}
+                        defaultValue={shift.start_time.match(/[0-9]{2}:[0-9]{2}/)}
                         onKeyDown={e => {
-                          if (e.keyCode === 13) this.updateShift(shift.id, "start", e.target.value)
+                          if (e.keyCode === 13) this.updateShift(shift.id, "start_time", e.target.value)
                         }}
                       />
                     </span>
@@ -276,9 +278,9 @@ class ShiftDetails extends Flux.View {
                         data-placement="top"
                         title="Press Enter to save changes"
                         className="form-control"
-                        defaultValue={shift.end}
+                        defaultValue={shift.finish_time.match(/[0-9]{2}:[0-9]{2}/)}
                         onKeyDown={e => {
-                          if (e.keyCode === 13) this.updateShift(shift.id, "end", e.target.value)
+                          if (e.keyCode === 13) this.updateShift(shift.id, "finish_time", e.target.value)
                         }} />
                     </span>
                   </div>
@@ -288,8 +290,8 @@ class ShiftDetails extends Flux.View {
                   <Select
                     clearable={false}
                     options={this.convertVenuesIntoObjectForSelect()}
-                    value={shift.location}
-                    onChange={option => this.updateShift(shift.id, "location", option.value)} />
+                    value={shift.venue.id}
+                    onChange={option => this.updateShift(shift.id, "venue", option.value)} />
                 </div>
               </div>
             </div>
@@ -338,7 +340,7 @@ class ShiftDetails extends Flux.View {
           <div className="header">
             <p>This shift's status is:</p>
             {
-              shift.status === "Draft" ?
+              shift.status === "DRAFT" ?
                 <div>
                   <span className={statusClass}></span>
                   <div className="publish-area">
@@ -390,11 +392,11 @@ class ShiftDetails extends Flux.View {
                   param="status"
                   currentValue={shift.status}
                   options={[
-                    { label: "Receiving candidates", value: "Receiving candidates" },
-                    { label: "Filled", value: "Filled" },
-                    { label: "Cancelled", value: "Cancelled" },
-                    { label: "Paused", value: "Paused" },
-                    { label: "Draft", value: "Draft" }
+                    { label: "Receiving candidates", value: "OPEN" },
+                    { label: "Filled", value: "FILLED" },
+                    { label: "Cancelled", value: "CANCELLED" },
+                    { label: "Paused", value: "PAUSED" },
+                    { label: "Draft", value: "DRAFT" }
                   ]}>
                   <span
                     className={statusClass}></span>
@@ -411,24 +413,24 @@ class ShiftDetails extends Flux.View {
               message="Change restriction for this Shift"
               onEdit={this.updateShift}
               param="favoritesOnly"
-              currentValue={shift.restrictions.favoritesOnly}
+              currentValue={shift.application_restriction}
               options={[
-                { label: "Favorites employees only", value: true },
-                { label: "Anyone can apply", value: false }
+                { label: "Favorites employees only", value: "FAVORITES" },
+                { label: "Anyone can apply", value: "ANYONE" }
               ]}>
               <span
-                className={shift.restrictions.favoritesOnly ? "favorite" : "anyone"}>
+                className={shift.application_restriction === "FAVORITES" ? "favorite" : "anyone"}>
               </span>
             </InlineTooltipEditor>
           </div>
 
           {
-            shift.restrictions.favoritesOnly ?
+            shift.application_restriction === "FAVORITES" ?
               <div className="allowed-lists">
                 <p>This shift will only accept candidates from the following favorite lists:</p>
                 <ul>
                   {
-                    shift.restrictions.allowedFromList.map(listName => (
+                    shift.allowed_from_list.map(listName => (
                       <li key={uuid()}>{listName}</li>
                     ))
                   }
@@ -453,9 +455,9 @@ class ShiftDetails extends Flux.View {
                 message="Change minimum rating for this Shift"
                 onEdit={this.updateShift}
                 param="minAllowedRating"
-                currentValue={shift.restrictions.minAllowedRating}>
+                currentValue={shift.minimum_allowed_rating}>
                 <span className="min-rating">
-                  {shift.restrictions.minAllowedRating}
+                  {shift.minimum_allowed_rating}
                 </span>
               </InlineTooltipEditor>
             </div>
@@ -475,32 +477,28 @@ class ShiftDetails extends Flux.View {
                 message="Change badges required to apply"
                 onEdit={this.updateShift}
                 param="badges"
-                currentValue={shift.restrictions.badges}
+                currentValue={shift.required_badges}
                 options={badges}>
                 {
-                  shift.restrictions.badges.length > 0 ?
-                    shift.restrictions.badges.map(
-                      badge => <span key={uuid()} className="tag badge badge-pill">{badge}</span>
+                  shift.required_badges.length > 0 ?
+                    shift.required_badges.map(
+                      ({ title }) => <span key={uuid()} className="tag badge badge-pill">{title}</span>
                     )
                     :
                     <p className="tag badge badge-pill">None</p>
                 }
               </InlineTooltipEditor>
             </div>
-
             <div>
-
             </div>
-
-
           </div>
-
         </div>
       </div>
     )
   }
 
   render() {
+    console.log(this.state.shift);
     if (this.state.shift === undefined) {
       return <Redirect from={this.props.match.url} to="/shift/list" />;
     } else {
@@ -512,8 +510,5 @@ class ShiftDetails extends Flux.View {
     }
   }
 }
-
-// ShiftDetails.propTypes = {
-// }
 
 export default ShiftDetails;

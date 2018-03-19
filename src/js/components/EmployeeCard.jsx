@@ -5,7 +5,7 @@ import ReactStars from 'react-stars';
 import ShiftActions from '../actions/shiftActions';
 import ShiftsStore from '../store/ShiftsStore';
 import EmployeeActions from '../actions/employeeActions';
-import EmployerStore from '../store/EmployerStore';
+import FavoriteListStore from "../store/FavoriteListStore";
 
 const EmployeeCard = ({ item, ...props }) => {
   let cardClasses = "list-item like-card";
@@ -14,30 +14,30 @@ const EmployeeCard = ({ item, ...props }) => {
   let formatedSubheading;
   item = typeof item === "string" ? ShiftsStore.getById(item) : item;
 
-  const options = ['rating', 'currentJobs', 'favorite', 'responseTime', 'badges'];
+  const options = ['rating', 'currentJobs', 'favorite', 'response_time', 'badges'];
 
   formatedSubheading = options.map(
     option => {
       switch (option) {
         case "favorite":
-          if (!EmployerStore.isEmployeeInFavoriteList(item.id)) { return "" }
+          if (!FavoriteListStore.isEmployeeInFavoriteList(item.id)) { return "" }
           return <span className={option} key={option}>{item[option]}</span>;
         case "rating":
           if (!item[option]) { return "" }
           return (
             <span className={option} key={option}>
-              <ReactStars size={16} value={item[option]} edit={false} />
+              <ReactStars size={16} value={parseFloat(item[option])} edit={false} />
             </span>
           );
         case "badges":
           if (!item[option]) { return "" }
-          let badges = item[option].map(badge => <span key={badge} className="badge">{badge}</span>)
+          let badges = item[option].map(badge => <span key={badge} className="badge">{badge.title}</span>)
           return (
             <span className={option} key={option}>
               {badges}
             </span>
           )
-        case "responseTime":
+        case "response_time":
           if (!item[option]) { return "" }
           let classes = [option];
           classes.push(item[option] > 719 ? "warning" : "fast");
@@ -54,7 +54,7 @@ const EmployeeCard = ({ item, ...props }) => {
   return (
     <div className={cardClasses}>
       <div className="content">
-        <h5 className="heading">{`${item.name} ${item.lastname}`}</h5>
+        <h5 className="heading">{`${item.profile.user.first_name} ${item.profile.user.last_name}`}</h5>
         <div className="sub-heading">
           {formatedSubheading}
         </div>

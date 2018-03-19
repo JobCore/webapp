@@ -4,19 +4,20 @@ import { Link } from 'react-router-dom';
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 
-import { Selector } from "../../components/utils/Selector";
-import { List } from "../../components/utils/List.jsx";
+import { List } from "../../components/utils/List";
 import Form from "../../components/utils/Form";
-import EmployerStore from "../../store/EmployerStore";
 import EmployeeStore from "../../store/EmployeeStore";
-import ShiftsStore from "../../store/ShiftsStore.js";
+import FavoriteListStore from "../../store/FavoriteListStore";
+import ShiftsStore from "../../store/ShiftsStore";
+import BadgesStore from "../../store/BadgesStore";
+import PositionsStore from "../../store/PositionsStore";
 import FilterConfigStore from "../../store/FilterConfigStore";
 import FilterActions from '../../actions/filterActions';
 import EmployeeCard from "../../components/EmployeeCard";
 
 export class ListEmployee extends Flux.View {
 
-  constructor(){
+  constructor() {
     super();
     this.state = {
       employee: EmployeeStore.getAll(),
@@ -25,19 +26,34 @@ export class ListEmployee extends Flux.View {
       filterConfig: {
         ...FilterConfigStore.getConfigFor("employeeList"),
       },
-      availableBadges: EmployerStore.getEmployer().availableBadges,
       shouldListUpdate: true,
+      favoriteLists: FavoriteListStore.getAll(),
     }
-    
+    this.bindStore(FavoriteListStore, this.setFavLists.bind(this));
+    this.bindStore(EmployeeStore, this.setEmployees.bind(this));
     this.bindStore(FilterConfigStore, this.setConfig.bind(this));
   }
 
-  componentDidUpdate() { 
-    this.updateListOnFilter(); 
+  componentDidUpdate() {
+    this.updateListOnFilter();
   }
 
   componentWillMount() {
     this.updateListOnFilter();
+  }
+
+  setEmployees = () => {
+    this.setState({
+      employee: EmployeeStore.getAll(),
+      shouldListUpdate: true,
+    });
+  }
+
+  setFavLists = () => {
+    this.setState({
+      favoriteLists: FavoriteListStore.getAll(),
+      shouldListUpdate: true,
+    });
   }
 
   setConfig = () => {
@@ -58,24 +74,15 @@ export class ListEmployee extends Flux.View {
   }
 
   createOptionsObject = (category) => {
-    let data = [...this.state.availableBadges,];
-    let object = [];
-    data.forEach(item => object.push({ label: item, value: item, }));
-    return object;
-  }
-
-  createSelectorOptionsObject = (category) => {
-    let data = this.state.shift;
-    let object = [];
-    let uniqueCategoryItem = [];
-    data.map(item => {
-      if (!uniqueCategoryItem.includes(item[category])) {
-        object.push({ name: item[category], value: item[category], });
-        uniqueCategoryItem.push(item[category]);
-      }
-      return 1;
-    });
-    return object;
+    const categories = {
+      badges: BadgesStore.getAll(),
+      positions: PositionsStore.getAll(),
+    }
+    console.log(category);
+    let arr = [];
+    categories[category].forEach(
+      ({ id, title }) => arr.push({ label: title, value: id, }));
+    return arr;
   }
 
   updateFilterConfig = (value, configOption) => {
@@ -167,6 +174,7 @@ export class ListEmployee extends Flux.View {
       } else {
         updatedListItems = this.state.employee;
       }
+
       this.setState({
         filteredData: updatedListItems,
         shouldListUpdate: false,
@@ -221,6 +229,7 @@ export class ListEmployee extends Flux.View {
   }
 
   render() {
+    console.log(this.state);
     // console.log(this.state.filteredData.length, this.state.filteredData);
     // console.log("FILTER", this.state.filterConfig);
     return (
@@ -243,18 +252,17 @@ export class ListEmployee extends Flux.View {
             </div>
             <div className="form-group">
               <label htmlFor="profileResponseTime">Response time</label>
-              <Selector
-                defaultValue={this.state.filterConfig.profileResponseTime}
-                hide={false}
-                stuff={
+              <Select
+                value={this.state.filterConfig.profileResponseTime}
+                options={
                   [
-                    { name: "All", value: Infinity, },
-                    { name: "5min or less", value: 5, },
-                    { name: "20min or less", value: 20, },
-                    { name: "1hr or less", value: 60, },
-                    { name: "6hr or less", value: 360, },
-                    { name: "24hr or less", value: 1440, },
-                    { name: "48 hr or less", value: 2880, },
+                    { label: "All", value: Infinity, },
+                    { label: "5min or less", value: 5, },
+                    { label: "20min or less", value: 20, },
+                    { label: "1hr or less", value: 60, },
+                    { label: "6hr or less", value: 360, },
+                    { label: "24hr or less", value: 1440, },
+                    { label: "48 hr or less", value: 2880, },
                   ]
                 }
                 onChange={value => this.updateFilterConfig(value, "profileResponseTime")} />
@@ -264,7 +272,7 @@ export class ListEmployee extends Flux.View {
               <Select
                 clearable={false}
                 multi={true}
-                options={this.createOptionsObject("availableBadges")}
+                options={this.createOptionsObject("badges")}
                 value={this.state.filterConfig.profileBadges || []}
                 onChange={option => this.updateFilterConfig(option, "profileBadges")}
               />
@@ -288,11 +296,16 @@ export class ListEmployee extends Flux.View {
             </div>
             <div className="form-group">
               <label htmlFor="position">Position</label>
-              <Selector
+              <Select
+                placeholder="Select a position"
+                options={this.createOptionsObject("positions")}
+                value={this.state.filterConfig.position || ""}
+                onChange={option => this.updateFilterConfig(option ? option.value : null, "position")} />
+              {/* <Select
                 defaultValue={this.state.filterConfig.shiftPosition}
                 hide={false}
                 stuff={this.createSelectorOptionsObject("position")}
-                onChange={value => this.updateFilterConfig(value, "shiftPosition")} />
+                onChange={value => this.updateFilterConfig(value, "shiftPosition")} /> */}
             </div>
             <div className="form-group">
               <label htmlFor="shiftMinHourlyRate">Minimum Hourly Rate</label>

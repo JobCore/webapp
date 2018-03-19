@@ -1,14 +1,21 @@
 import Flux from '../flux.js';
-import Seeder from "./Seeder.js";
 
 class VenueStore extends Flux.Store {
   constructor() {
     super();
-    this.state.venue = Seeder.make(20, "venue");
+    this.state = {
+      venues: []
+    }
+  }
+
+  _setVenues({data}) {
+    this.setStoreState({
+      venues: [...data]
+    }).emit("change");
   }
 
   getAll() {
-    return this.state.venue;
+    return this.state.venues;
   }
 
 }

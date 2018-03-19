@@ -1,7 +1,5 @@
-import Flux from "../flux"
-import EmployeeStore from "./EmployeeStore";
+import Flux from "../flux";
 
-import Seeder from "./Seeder.js";
 class EmployerStore extends Flux.Store {
   /**
    * Creates an instance of EmployerStore.
@@ -10,16 +8,22 @@ class EmployerStore extends Flux.Store {
   constructor() {
     super();
     this.state = {
-      employer: Seeder.make(1, "employer")
+      employer: null
     }
   }
 
+  _setEmployer({data}) {
+    this.setStoreState({
+      employer: data
+    }).emit("change");
+  }
+
   /**
-   *  Creats a new Employer
+   *  Creates a new Employer
    * @memberof EmployerStore
    */
   _addEmployer = () => {
-    this.state.employer.push(Seeder.make(1, "employer"));
+    // this.state.employer.push(Seeder.make(1, "employer"));
     this.emit("change");
   }
 
@@ -83,72 +87,6 @@ class EmployerStore extends Flux.Store {
       this.state.employer.favoriteLists[params.list].splice(index, 1);
       this.emit("change");
     }
-  }
-
-  /**
-   * Check if Employee is in any of the favorites lis
-   * @param {string} id Id of the employee
-   * @returns {bool}
-   * @memberof EmployerStore
-   */
-  isEmployeeInFavoriteList = (id) => {
-    let isFavorite = false;
-    const lists = Object.keys(this.state.employer.favoriteLists);
-    lists.map(list => this.state.employer.favoriteLists[list].includes(id) ? isFavorite = true : null);
-    return isFavorite;
-  }
-
-  /**
-   * Returns an array with all the employees marked as favorite on any list
-   * @returns {array}
-   * @memberof EmployerStore
-   */
-  getFavorites = (listName) => {
-    let favorites = [];
-    if (listName && listName != null) {
-      const idArr = this.getFavoritesListsEmployeeIds(listName);
-      idArr.forEach(id => favorites.push(EmployeeStore.getById(id)));
-    } else {
-      const lists = this.state.employer.favoriteLists;
-      for (const key in lists) {
-        lists[key].forEach(employeeId => {
-          let employee = EmployeeStore.getById(employeeId);
-          if (!favorites.includes(employee)) { favorites.push(employee)};
-        })
-      }
-    }
-    return favorites;
-  }
-
-  /**
-   * Returns and object with the Employer's favorites lists
-   * @returns {Object}
-   * @memberof EmployerStore
-   */
-  getFavoritesLists = () => {
-    return this.state.employer.favoriteLists;
-  }
-
-  getListWhereEmployeeIsFavorite = (id) => {
-    let favLists = this.state.employer.favoriteLists;
-    let favoritedInLists = [];
-    Object.keys(favLists).map(key => {
-      if (favLists[key].includes(id)) {
-        favoritedInLists.push(key);
-      };
-      return 1;
-    });
-    return favoritedInLists;
-  }
-
-  /**
-   * Get Employee Ids from a certain list
-   * @param {string} listName List to get employees from
-   * @returns {array} Array of employee Ids
-   * @memberof EmployerStore
-   */
-  getFavoritesListsEmployeeIds = (listName) => {
-    return this.state.employer.favoriteLists[listName];
   }
 
   /**

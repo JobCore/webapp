@@ -2,12 +2,14 @@ import React from 'react';
 import Flux from "../../flux"
 import { Redirect, Link } from "react-router-dom";
 import swal from 'sweetalert2';
+import uuid from 'uuid/v4';
 
 import ReactStars from "react-stars";
 import ProfilePic from "../../components/utils/ProfilePic";
 import EmployeeStore from "../../store/EmployeeStore";
 import EmployerStore from "../../store/EmployerStore";
 import EmployerActions from '../../actions/employerActions';
+import FavoriteListStore from "../../store/FavoriteListStore";
 
 export class EmployeeDetails extends Flux.View {
 
@@ -16,10 +18,10 @@ export class EmployeeDetails extends Flux.View {
    * https://github.com/n49/react-stars
    **/
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      employee: EmployeeStore.getById(this.props.match.params.id),
+      employee: EmployeeStore.getById(props.match.params.id),
       employer: EmployerStore.getEmployer(),
     }
     this.bindStore(EmployerStore, this.setEmployer.bind(this));
@@ -30,40 +32,43 @@ export class EmployeeDetails extends Flux.View {
       employer: EmployerStore.getEmployer()
     });
   }
-  
+
   employeeIsFavorite = () => {
-    let favLists = this.state.employer.favoriteLists;
+    let favLists = FavoriteListStore.getAll();
+    // console.log(favLists);
     let isFavorite = false;
     let favoritedInLists = [];
-    Object.keys(favLists).map(key => {
-      if (favLists[key].includes(this.state.employee.id)) {
-        isFavorite = true;
-        favoritedInLists.push(key);
-      };
-      return 1;
+    favLists.forEach(list => {
+      list.candidates.forEach(candidate => {
+        if (parseInt(candidate.id) === this.state.employee.id) {
+          isFavorite = true;
+          favoritedInLists.push(list.title);
+        };
+      })
     });
     return { isFavorite, favoritedInLists };
   }
 
   renderFavorites = () => {
     const favInfo = this.employeeIsFavorite();
-    const employerFavLists = Object.keys(this.state.employer.favoriteLists);
+    const employerFavLists = FavoriteListStore.getAll();
     let message = favInfo.isFavorite ? "This person is already one of your favorites in the following lists:" : null;
 
-    let favoritedLists = favInfo.favoritedInLists.length > 0 ? favInfo.favoritedInLists.map(list => <li key={list}>{list}</li>) : null;
+    let favoritedLists = favInfo.favoritedInLists.length > 0 ? favInfo.favoritedInLists.map(
+      list => <li key={uuid()}>{list}</li>) : null;
 
     let favoriteCheckboxes = employerFavLists.map(list => {
-      let isChecked = favInfo.favoritedInLists.includes(list);
+      let isChecked = favInfo.favoritedInLists.includes(list.title);
       return (
-        <div className="cntr" key={list}>
-          <label htmlFor={list} className="label-cbx">
-            <input id={list} type="checkbox" name={list}
-              className="invisible" checked={isChecked} value={list}
+        <div className="cntr" key={uuid()}>
+          <label htmlFor={list.id} className="label-cbx">
+            <input id={list.id} type="checkbox" name={list.title}
+              className="invisible" checked={isChecked} value={list.id}
               onChange={event => {
                 if (event.target.checked) {
-                  EmployerActions.addEmployeeToFavList(this.state.employee.id, list);
+                  EmployerActions.addEmployeeToFavList(this.state.employee.id, list.id);
                 } else {
-                  EmployerActions.removeEmployeeFromFavList(this.state.employee.id, list);
+                  EmployerActions.removeEmployeeFromFavList(this.state.employee.id, list.id);
                 }
               }} />
             <div className="checkbox">
@@ -72,7 +77,7 @@ export class EmployeeDetails extends Flux.View {
                 <polyline points="4 11 8 15 16 6"></polyline>
               </svg>
             </div>
-            <span>{list}</span>
+            <span>{list.title}</span>
           </label>
         </div>
       );
@@ -149,51 +154,51 @@ export class EmployeeDetails extends Flux.View {
 
 
   renderPositionsListItems = () => {
-    let positionsElement = Object.entries(this.state.employee.positions).map(key => {
-      return (
-        <li key={key[0]}>
-          <span>{key[0]}: </span><span>{key[1]} jobs</span>
-        </li>
-      );
-    });
+    let positionsElement = this.state.employee.positions.map(
+      position => <li key={uuid()}><span>{position.title}</span></li>
+    );
     return positionsElement;
   }
 
   renderPositionsSummary = () => {
-    let positionsSummary = Object.entries(this.state.employee.positions).map(key => {
-      return (
-        <li key={key[0]}>
+    let positionsSummary = this.state.employee.positions.map(
+      position => (
+        <li key={uuid()}>
           <p>
             <i className="fa fa-check" aria-hidden="true"></i>
-            Worked for {key[1]} hours as a {key[0]}
+            Worked as a {position.title}
           </p>
           <p className="date">14th of May 2017</p>
         </li>
-      );
-    });
+      )
+    );
     return positionsSummary;
   }
 
   renderBadges = () => {
     let badges = [];
+    console.log(this.state.employee);
     this.state.employee.badges.forEach(badge => {
-      badges.push(<span key={badge} className="tag badge badge-pill">{badge}</span>);
+      badges.push(<span key={uuid()} className="tag badge badge-pill">{badge.title}</span>);
     });
     return badges;
   }
 
   renderDetails = () => {
-    let responseTime = this.state.employee.responseTime;
+    let responseTime = this.state.employee.response_time;
     responseTime = responseTime > 59 ? Math.ceil(responseTime / 60) + " hour(s)" : responseTime + " minute(s)";
     return (
       <div className={"row employee-details"}>
         <div className="col col-md-3 first-col">
           <ProfilePic
             rounded
-            imageUrl={this.state.employee.profilePicUrl}
+            imageUrl={this.state.employee.profile.picture}
           />
           <div className="stars">
-            <ReactStars size={40} value={this.state.employee.rating} edit={false} />
+            <ReactStars
+              size={40}
+              value={parseFloat(this.state.employee.rating)}
+              edit={false} />
           </div>
           <div className="jobs-summary">
             <h3>Doing {this.state.employee.currentJobs} jobs</h3>
@@ -205,11 +210,11 @@ export class EmployeeDetails extends Flux.View {
 
         <div className="col col-md-5 second-col">
           <div className="header">
-            <h3>{`${this.state.employee.name} ${this.state.employee.lastname}`}</h3>
-            <span className="rate">$ {this.state.employee.minHourlyRate}/hr Minimum Rate</span>
+            <h3>{`${this.state.employee.profile.user.first_name} ${this.state.employee.profile.user.last_name}`}</h3>
+            <span className="rate">$ {this.state.employee.minimum_hourly_rate}/hr Minimum Rate</span>
           </div>
           <div className="about">
-            <p>{this.state.employee.about}</p>
+            <p>{this.state.employee.profile.bio}</p>
           </div>
           <div className="activity">
             <h3>Recent Activity Reported</h3>
