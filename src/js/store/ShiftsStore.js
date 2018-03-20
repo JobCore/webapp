@@ -1,5 +1,5 @@
 import Flux from '../flux.js';
-import uuid from 'uuid/v4';
+import ShiftActions from '../actions/shiftActions';
 
 import Seeder from "./Seeder.js";
 
@@ -28,14 +28,8 @@ class ShiftStore extends Flux.Store {
     this.emit("change");
   }
 
-  _createShift(params) {
-    this.state.shift.push({...params.shiftData});
-    this.state.shift[this.state.shift.length - 1].id = uuid();
-    this.state.shift[this.state.shift.length - 1].confirmedEmployees = 0;
-    this.state.shift[this.state.shift.length - 1].candidates = [];
-    this.state.shift[this.state.shift.length - 1].acceptedCandidates = [];
-    console.log('created', this.state.shift);
-    this.emit("change");
+  _createShift(shiftData) {
+    ShiftActions.getAll()
   }
 
   getAll(type) {
@@ -45,28 +39,18 @@ class ShiftStore extends Flux.Store {
 
   getActiveShifts() {
     const shiftsArr = this.state.shift;
-    let activeShifts = shiftsArr.filter(shift => shift.status === "Receiving candidates");
+    let activeShifts = shiftsArr.filter(shift => shift.status === "OPEN");
     return activeShifts;
   }
 
-  getShiftsSortedByDate(shifts) {
-    const shiftsArr = shifts || this.state.shift;
-    let sortedShifts = shiftsArr.sort((a, b) => {
-      if (a.date < b.date) return -1;
-      if (a.date > b.date) return 1;
-      return 0;
-    });
-    return sortedShifts;
-  }
-
   getShiftsGroupedByDate(shifts) {
-    let sortedShift = [...this.getShiftsSortedByDate(shifts || null)];
-    const datesArr = sortedShift.map(shift => shift.date)
+    const SHIFTS = shifts || this.state.shift;
+    const datesArr = SHIFTS.map(shift => shift.date)
     let uniqueDates = [...new Set(datesArr)];
     let datesObj = {};
     uniqueDates.forEach( date => datesObj[date] = []);
 
-    sortedShift.forEach((shift) => {
+    SHIFTS.forEach((shift) => {
       datesObj[shift.date].push(shift);
     })
     return datesObj;
@@ -94,28 +78,8 @@ class ShiftStore extends Flux.Store {
 
   _updateShift(params) {
     let index = this.state.shift.findIndex(s => s.id === params.id);
-    switch (params.param) {
-      case "favoritesOnly":
-      case "minAllowedRating":
-      case "allowedFromList":
-        this.state.shift[index].restrictions[params.param] = params.value;
-      break;
-      case "badges":
-        params.value = params.value.length > 0 ? params.value.map(val => val.value) : [];
-        this.state.shift[index].restrictions[params.param] = params.value;
-        break;
-      default:
-        this.state.shift[index][params.param] = params.value;
-        break;
-    }
+    this.state.shift[index][params.param] = params.value;
     this.emit("change");
-  }
-
-  getAllAvailablePositions() {
-    const shifts = [...this.state.shift];
-    let positions = [];
-    shifts.forEach(shift => positions.push(shift.position));
-    return [...new Set(positions)];
   }
 }
 export default new ShiftStore();

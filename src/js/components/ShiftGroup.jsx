@@ -7,6 +7,10 @@ const ShiftGroup = ({ heading, items, ...props }) => {
     return n + (n > 0 ? ['th', 'st', 'nd', 'rd'][(n > 3 && n < 21) || n % 10 > 3 ? 0 : n % 10] : '');
   }
 
+  // Increase date by 1 day due to javascript offset
+  heading = new Date(parseInt(heading));
+  heading = heading.setDate(heading.getDate() + 1);
+
   return (
     <div className="shiftGroup">
       <div className="shiftGroup__header">

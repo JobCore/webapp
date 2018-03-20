@@ -8,8 +8,8 @@ import ReactStars from "react-stars";
 import ProfilePic from "../../components/utils/ProfilePic";
 import EmployeeStore from "../../store/EmployeeStore";
 import EmployerStore from "../../store/EmployerStore";
-import EmployerActions from '../../actions/employerActions';
 import FavoriteListStore from "../../store/FavoriteListStore";
+import FavoriteListActions from "../../actions/favoriteListActions";
 
 export class EmployeeDetails extends Flux.View {
 
@@ -23,7 +23,10 @@ export class EmployeeDetails extends Flux.View {
     this.state = {
       employee: EmployeeStore.getById(props.match.params.id),
       employer: EmployerStore.getEmployer(),
+      favoriteLists: FavoriteListStore.getAll(),
     }
+
+    this.bindStore(FavoriteListStore, this.setFavoriteLists.bind(this));
     this.bindStore(EmployerStore, this.setEmployer.bind(this));
   }
 
@@ -33,9 +36,14 @@ export class EmployeeDetails extends Flux.View {
     });
   }
 
+  setFavoriteLists = () => {
+    this.setState({
+      favoriteLists: FavoriteListStore.getAll(),
+    });
+  }
+
   employeeIsFavorite = () => {
-    let favLists = FavoriteListStore.getAll();
-    // console.log(favLists);
+    let favLists = this.state.favoriteLists;
     let isFavorite = false;
     let favoritedInLists = [];
     favLists.forEach(list => {
@@ -51,7 +59,7 @@ export class EmployeeDetails extends Flux.View {
 
   renderFavorites = () => {
     const favInfo = this.employeeIsFavorite();
-    const employerFavLists = FavoriteListStore.getAll();
+    const employerFavLists = this.state.favoriteLists;
     let message = favInfo.isFavorite ? "This person is already one of your favorites in the following lists:" : null;
 
     let favoritedLists = favInfo.favoritedInLists.length > 0 ? favInfo.favoritedInLists.map(
@@ -66,9 +74,9 @@ export class EmployeeDetails extends Flux.View {
               className="invisible" checked={isChecked} value={list.id}
               onChange={event => {
                 if (event.target.checked) {
-                  EmployerActions.addEmployeeToFavList(this.state.employee.id, list.id);
+                  FavoriteListActions.updateEmployees("add", this.state.employee.id, list.id);
                 } else {
-                  EmployerActions.removeEmployeeFromFavList(this.state.employee.id, list.id);
+                  FavoriteListActions.updateEmployees("remove", this.state.employee.id, list.id);
                 }
               }} />
             <div className="checkbox">
@@ -111,7 +119,7 @@ export class EmployeeDetails extends Flux.View {
                   cancelButtonColor: '#3085d6',
                 }).then(result => {
                   if (result.value) {
-                    EmployerActions.addNewList(result.value);
+                    FavoriteListActions.addNewList(result.value)
                     swal({
                       position: 'top',
                       type: "success",
@@ -177,7 +185,6 @@ export class EmployeeDetails extends Flux.View {
 
   renderBadges = () => {
     let badges = [];
-    console.log(this.state.employee);
     this.state.employee.badges.forEach(badge => {
       badges.push(<span key={uuid()} className="tag badge badge-pill">{badge.title}</span>);
     });
@@ -185,7 +192,7 @@ export class EmployeeDetails extends Flux.View {
   }
 
   renderDetails = () => {
-    let responseTime = this.state.employee.response_time;
+    let responseTime = this.state.employee.response_time || 0;
     responseTime = responseTime > 59 ? Math.ceil(responseTime / 60) + " hour(s)" : responseTime + " minute(s)";
     return (
       <div className={"row employee-details"}>

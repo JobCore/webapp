@@ -9,9 +9,9 @@ import Modal from '../../components/utils/Modal';
 import Form from '../../components/utils/Form';
 import EmployerStore from '../../store/EmployerStore';
 import FavoriteListStore from '../../store/FavoriteListStore';
+import FavoriteListActions from '../../actions/favoriteListActions';
 import FilterConfigStore from '../../store/FilterConfigStore';
 import FilterActions from '../../actions/filterActions';
-import EmployerActions from '../../actions/employerActions';
 import EmployeeCard from '../../components/EmployeeCard';
 
 export class FavoriteEmployeesList extends Flux.View {
@@ -34,6 +34,7 @@ export class FavoriteEmployeesList extends Flux.View {
       selectedList: []
     }
 
+    this.bindStore(FavoriteListStore, this.getFavorites.bind(this));
     this.bindStore(FilterConfigStore, this.setConfig.bind(this));
   }
 
@@ -46,9 +47,8 @@ export class FavoriteEmployeesList extends Flux.View {
 
   getFavorites = () => {
     this.setState({
-      employee: EmployerStore.getFavorites(
-        FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
-      favoritesLists: EmployerStore.getFavoritesLists(),
+      employee: FavoriteListStore.getEmployees(),
+      favoritesLists: FavoriteListStore.getAll(),
     });
   }
 
@@ -101,8 +101,8 @@ export class FavoriteEmployeesList extends Flux.View {
   }
 
   removeEmployee = () => {
-    this.state.selectedList.map(list =>
-      EmployerActions.removeEmployeeFromFavList(this.state.selectedEmployee, list)
+    this.state.selectedList.map(listId =>
+      FavoriteListActions.updateEmployees("remove", this.state.selectedEmployee, listId)
     );
     this.setState({
       selectedEmployee: null,
@@ -122,14 +122,14 @@ export class FavoriteEmployeesList extends Flux.View {
     }
   }
 
-  finishEditingList = (type, prevListName) => {
+  finishEditingList = (type, listId) => {
     let updatedEditingLists = [...this.state.editingLists];
-    const index = updatedEditingLists.indexOf(prevListName);
+    const index = updatedEditingLists.indexOf(listId);
     updatedEditingLists.splice(index, 1);
 
     if (type === "save") {
       const newListName = document.querySelector('#list').value;
-      if (newListName.length > 0) EmployerActions.renameFavoritesLists(prevListName, newListName);
+      if (newListName.length > 0) FavoriteListActions.renameList(listId, "title", newListName);
     }
     this.setState({
       editingLists: updatedEditingLists,
@@ -149,7 +149,7 @@ export class FavoriteEmployeesList extends Flux.View {
 
       let htmlLi = this.state.editing && this.state.editingLists.includes(id) ?
         <li key={id}>
-          <input type="text" name="list" id="list" placeholder={title} required />
+          <input type="text" name="list" id="list" defaultValue={title} required />
           <div className="side-edit">
             <button className="save" onClick={() => this.finishEditingList("save", id)}></button>
             <button className="cancel" onClick={() => this.finishEditingList("cancel", id)}></button>
@@ -173,7 +173,7 @@ export class FavoriteEmployeesList extends Flux.View {
               cancelButtonColor: '#3085d6',
             }).then(result => {
               if (result.value) {
-                EmployerActions.removeFavoritesLists(id);
+                FavoriteListActions.removeList(id);
                 this.setState({ shouldListUpdate: true });
               }
             })}></button>
@@ -185,34 +185,33 @@ export class FavoriteEmployeesList extends Flux.View {
     return htmlElementsList;
   }
 
-  selectList = (isChecked, list) => (
+  selectList = (isChecked, id) => (
     this.setState((prevState, props) => {
       if (!isChecked) {
-        return { selectedList: prevState.selectedList.filter(item => item !== list) }
+        return { selectedList: prevState.selectedList.filter(item => item !== id) }
       }
       return {
-        selectedList: prevState.selectedList.concat(list)
+        selectedList: prevState.selectedList.concat(id)
       }
     })
   )
 
   renderListCheckboxes = id => {
     let favoritedLists = FavoriteListStore.getListWhereEmployeeIsFavorite(id);
-
     let favoriteCheckboxes = favoritedLists.map(list => {
       return (
-        <div className="cntr" key={list} style={{ marginBottom: '8px' }}>
-          <label htmlFor={list} className="label-cbx">
-            <input id={list} type="checkbox" name={list}
-              className="invisible" value={list} checked={this.state.selectedList.includes(list)}
-              onChange={event => this.selectList(event.target.checked, list)} />
+        <div className="cntr" key={list.id} style={{ marginBottom: '8px' }}>
+          <label htmlFor={list.title} className="label-cbx">
+            <input id={list.title} type="checkbox" name={list}
+              className="invisible" value={list.id} checked={this.state.selectedList.includes(list.id)}
+              onChange={event => this.selectList(event.target.checked, list.id)} />
             <div className="checkbox">
               <svg width="20px" height="20px" viewBox="0 0 20 20">
                 <path d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"></path>
                 <polyline points="4 11 8 15 16 6"></polyline>
               </svg>
             </div>
-            <span>{list}</span>
+            <span>{list.title}</span>
           </label>
         </div>
       );
@@ -223,8 +222,7 @@ export class FavoriteEmployeesList extends Flux.View {
   clearFilters = () => {
     FilterActions.clearConfigFor("favoritesList");
     this.setState({
-      employee: EmployerStore.getFavorites(
-        FilterConfigStore.getConfigFor("favoritesList").favoritesList || "")
+      employee: FavoriteListStore.getAll()
     });
     let forms = document.getElementsByClassName("form-component");
     for (const form of forms) form.reset();
@@ -249,8 +247,7 @@ export class FavoriteEmployeesList extends Flux.View {
                 onChange={option => {
                   FilterActions.updateConfig(option.value, "favoritesList", "favoritesList")
                   this.setState({
-                    employee: EmployerStore.getFavorites(
-                      FilterConfigStore.getConfigFor("favoritesList").favoritesList || ""),
+                    employee: FavoriteListStore.getAll(),
                     shouldListUpdate: true,
                   })
                 }} />
@@ -303,7 +300,7 @@ export class FavoriteEmployeesList extends Flux.View {
             cancelButtonColor: '#3085d6',
           }).then(result => {
             if (result.value) {
-              EmployerActions.addNewList(result.value);
+              FavoriteListActions.addNewList(result.value)
               swal({
                 position: 'top',
                 type: "success",

@@ -10,13 +10,36 @@ class FavoriteListStore extends Flux.Store {
     }
   }
 
-  _addList() {
-    // this.state.employee.push(Seeder.make(1, "employee"));
-    this.emit("change");
+  _addList({data}) {
+    let updatedList = [...this.state.lists];
+    updatedList.push(data);
+    this.setStoreState({lists: updatedList}).emit("change");
+  }
+
+  _updateEmployees(params) {
+    const INDEX = this.state.lists.findIndex(s => s.id === params.id);
+    let updatedList = [...this.state.lists];
+    updatedList[INDEX].employees = params.employees
+    this.setStoreState({lists: updatedList}).emit("change");
   }
 
   _setLists({data}) {
-    this.setStoreState({ lists: [...data] }).emit("change");
+    let ownedLists = data.filter(list => list.owner.id === EmployerStore.getEmployer().id)
+    this.setStoreState({ lists: [...ownedLists] }).emit("change");
+  }
+
+  _renameList(params) {
+    let updatedList = [...this.state.lists];
+    const INDEX = updatedList.findIndex(s => s.id === params.id);
+    updatedList[INDEX][params.param] = params.value;
+    this.setStoreState({lists: updatedList}).emit("change");
+  }
+
+  _removeList(params) {
+    let updatedList = [...this.state.lists];
+    const INDEX = updatedList.findIndex(s => s.id === params.id);
+    updatedList.splice(INDEX, 1);
+    this.setStoreState({lists: updatedList}).emit("change");
   }
 
   getAll() {
@@ -24,14 +47,14 @@ class FavoriteListStore extends Flux.Store {
    }
 
   getById(id) {
-    return this.state.badge.find((item) => {
+    return this.state.lists.find((item) => {
       return (item.id.toString() === id.toString());
     });
   }
 
   /**
  * Check if Employee is in any of the favorites lis
- * @param {string} id Id of the employee
+ * @param {float} id Id of the employee
  * @returns {bool}
  * @memberof EmployerStore
  */
@@ -41,7 +64,7 @@ class FavoriteListStore extends Flux.Store {
       list => {
         let employeesIdArr = [];
         list.employees.forEach(employee => employeesIdArr.push(employee.id));
-        return isFavorite = employeesIdArr.includes(id);
+        return isFavorite = employeesIdArr.includes(id) ? true : isFavorite;
       }
     );
     return isFavorite;
@@ -49,9 +72,15 @@ class FavoriteListStore extends Flux.Store {
 
   getEmployees = () => {
     let employeeList = [];
-    const ID = EmployerStore.getEmployer().id;
-    const EMPLOYER_LISTS = this.state.lists.filter(list => list.owner.id === ID);
-    EMPLOYER_LISTS.forEach(list => employeeList = [...list.employees])
+    let idArr = [];
+    this.state.lists.map(list => list.employees.map(employee => idArr.push(employee.id)));
+    this.state.lists.forEach(list => employeeList = [ ...employeeList,...list.employees]);
+    idArr = [...new Set(idArr)];
+    employeeList = employeeList.filter(employee => {
+      let result = idArr.includes(employee.id);
+      idArr.shift();
+      return result;
+    }) ;
     return employeeList;
   }
 
@@ -61,14 +90,10 @@ class FavoriteListStore extends Flux.Store {
   }
 
   getListWhereEmployeeIsFavorite = (id) => {
-    let favoritedInLists = this.state.lists.filter(list => {
-      list.employees.forEach(employee => {
-        if (employee.id === id) {
-          return true;
-        }
-      })
-      return false;
-    });
+    let favoritedInLists = []
+    this.state.lists.map(list =>
+        list.employees.map(employee => id === employee.id ? favoritedInLists.push(list) : null)
+    );
     return favoritedInLists;
   }
 }

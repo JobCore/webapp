@@ -46,7 +46,7 @@ const Shift = ({ item, ...props }) => {
       </div>
       <div className="shift-card__content">
         <div className="shift-card__content__upper-side">
-          {item.position.title} @ {item.venue.title}, {item.start_time} - {item.finish_time} {/*({item.duration}hrs)*/}
+          {item.position.title} @ {item.venue.title}, {item.start_time.match(/[0-9]{2}:[0-9]{2}/)} - {item.finish_time.match(/[0-9]{2}:[0-9]{2}/)} ({parseFloat(item.finish_time) - parseFloat(item.start_time)}hrs)
         </div>
         <div className="shift-card__content__bottom-side">
           <span className={item.application_restriction === "FAVORITES" ? "favorite" : "anyone"}>

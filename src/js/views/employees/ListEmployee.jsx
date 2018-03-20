@@ -78,7 +78,6 @@ export class ListEmployee extends Flux.View {
       badges: BadgesStore.getAll(),
       positions: PositionsStore.getAll(),
     }
-    console.log(category);
     let arr = [];
     categories[category].forEach(
       ({ id, title }) => arr.push({ label: title, value: id, }));
@@ -229,7 +228,6 @@ export class ListEmployee extends Flux.View {
   }
 
   render() {
-    console.log(this.state);
     // console.log(this.state.filteredData.length, this.state.filteredData);
     // console.log("FILTER", this.state.filterConfig);
     return (

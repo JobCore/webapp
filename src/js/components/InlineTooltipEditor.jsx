@@ -103,6 +103,7 @@ class InlineTooltipEditor extends React.Component {
                 type={this.props.type.toLowerCase()}
                 min={this.props.min || 0}
                 max={this.props.max || 99}
+                step={this.props.step || null}
                 defaultValue={this.state.value}
                 onChange={event => this.handleChange(event.target.value)} />
             }

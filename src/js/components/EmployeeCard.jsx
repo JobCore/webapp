@@ -4,12 +4,13 @@ import swal from 'sweetalert2';
 import ReactStars from 'react-stars';
 import ShiftActions from '../actions/shiftActions';
 import ShiftsStore from '../store/ShiftsStore';
-import EmployeeActions from '../actions/employeeActions';
 import FavoriteListStore from "../store/FavoriteListStore";
 
 const EmployeeCard = ({ item, ...props }) => {
   let cardClasses = "list-item like-card";
-  cardClasses += props.acceptedCandidates && props.acceptedCandidates.includes(item.id) ? " approved" : "";
+
+  cardClasses += props.acceptedCandidates &&
+    props.acceptedCandidates.filter(candidate => candidate.id === item.id).length > 0 ? " approved" : "";
 
   let formatedSubheading;
   item = typeof item === "string" ? ShiftsStore.getById(item) : item;
@@ -60,7 +61,8 @@ const EmployeeCard = ({ item, ...props }) => {
         </div>
       </div>
       {
-        props.acceptedCandidates && props.acceptedCandidates.includes(item.id) ?
+        props.acceptedCandidates &&
+          props.acceptedCandidates.filter(candidate => candidate.id === item.id).length > 0 ?
           <div className="side">
             <p className="approved">Approved</p>
             <p className="reject"
@@ -90,28 +92,30 @@ const EmployeeCard = ({ item, ...props }) => {
           :
           props.AcceptRejectButtons ?
             <div className="side">
-              <button className="btn btn-success accept-btn"
-                onClick={() => swal({
-                  position: 'top',
-                  html: '<p class="alert-message">Approving this candidate will make him fill your shift position</p>',
-                  type: 'info',
-                  showCloseButton: true,
-                  showCancelButton: true,
-                  confirmButtonText: 'Approve',
-                  confirmButtonColor: '#28a745',
-                  cancelButtonText: 'Cancel',
-                  cancelButtonColor: '#3085d6',
-                }).then(result => {
-                  if (result.value) {
-                    ShiftActions.acceptCandidate(props.currentShiftId, item.id);
-                    EmployeeActions.acceptedInShift(props.currentShiftId, item.id);
-                    swal({
-                      position: 'top',
-                      type: "success",
-                      html: '<p class="alert-message">Candidate accepted</p>'
-                    })
-                  }
-                })}></button>
+              {
+                ShiftsStore.getById("shift", props.currentShiftId).status !== "FILLED" &&
+                <button className="btn btn-success accept-btn"
+                  onClick={() => swal({
+                    position: 'top',
+                    html: '<p class="alert-message">Approving this candidate will make him fill your shift position</p>',
+                    type: 'info',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Approve',
+                    confirmButtonColor: '#28a745',
+                    cancelButtonText: 'Cancel',
+                    cancelButtonColor: '#3085d6',
+                  }).then(result => {
+                    if (result.value) {
+                      ShiftActions.acceptCandidate(props.currentShiftId, item.id);
+                      swal({
+                        position: 'top',
+                        type: "success",
+                        html: '<p class="alert-message">Candidate accepted</p>'
+                      })
+                    }
+                  })}></button>
+              }
               <button className="btn btn-danger cancel-btn"
                 onClick={() => swal({
                   position: 'top',
