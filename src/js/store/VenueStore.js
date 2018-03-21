@@ -18,5 +18,11 @@ class VenueStore extends Flux.Store {
     return this.state.venues;
   }
 
+  getById(id) {
+    return this.state.venues.find((item) => {
+      return (item.id.toString() === id.toString());
+    });
+  }
+
 }
 export default new VenueStore();

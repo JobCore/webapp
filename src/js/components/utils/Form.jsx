@@ -5,6 +5,20 @@ import Select from "react-select";
 import "react-select/dist/react-select.css";
 
 class Form extends Component {
+  _convertTimestamp = (timestamp) => {
+    // Convert Timestramp into date object
+    let date = new Date(timestamp);
+    date = new Date(date.setDate(date.getDate() + 1));
+
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    month = (month < 10 ? "0" : "") + month;
+    day = (day < 10 ? "0" : "") + day;
+
+    let str = date.getFullYear() + "-" + month + "-" + day;
+    return str;
+  }
+
   render() {
 
     let inputStyles = "inputs ";
@@ -16,9 +30,9 @@ class Form extends Component {
         const currentShift = this.props.shifts[i];
         let shift = {
           value: currentShift.id,
-          label: `${currentShift.date} |
-          ${currentShift.start} - ${currentShift.end}
-          ${currentShift.position}`,
+          label: `${this._convertTimestamp(currentShift.date)} |
+          ${currentShift.start_time.match(/[0-9]{2}:[0-9]{2}/)} - ${currentShift.finish_time.match(/[0-9]{2}:[0-9]{2}/)}
+          ${currentShift.position.title}`,
         };
         options.push(shift);
       }

@@ -23,7 +23,6 @@ class EmployerStore extends Flux.Store {
    * @memberof EmployerStore
    */
   _addEmployer = () => {
-    // this.state.employer.push(Seeder.make(1, "employer"));
     this.emit("change");
   }
 

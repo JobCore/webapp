@@ -19,11 +19,11 @@ export class FavoriteEmployeesList extends Flux.View {
   constructor() {
     super();
     this.state = {
-      employer: EmployerStore.getEmployer(),
-      employee: FavoriteListStore.getEmployees(),
       filterConfig: {
         ...FilterConfigStore.getConfigFor("favoritesList"),
       },
+      employer: EmployerStore.getEmployer(),
+      employee: FavoriteListStore.getEmployees(),
       favoritesLists: FavoriteListStore.getAll(),
       shouldListUpdate: true,
       modalOpened: false,
@@ -47,7 +47,7 @@ export class FavoriteEmployeesList extends Flux.View {
 
   getFavorites = () => {
     this.setState({
-      employee: FavoriteListStore.getEmployees(),
+      employee: this.state.filterConfig.favoritesList ? this.state.filterConfig.favoritesList.employees : FavoriteListStore.getEmployees(),
       favoritesLists: FavoriteListStore.getAll(),
     });
   }
@@ -88,10 +88,15 @@ export class FavoriteEmployeesList extends Flux.View {
     switch (order) {
       case 'name':
         sortedList = list.sort((a, b) => {
-          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          const name1 = `${a.profile.user.first_name} ${a.profile.user.last_name}`;
+          const name2 = `${b.profile.user.first_name} ${b.profile.user.last_name}`;
+          if (name1.toLowerCase() < name2.toLowerCase()) return -1;
+          if (name1.toLowerCase() > name2.toLowerCase()) return 1;
           return 0;
         });
+        break;
+      case 'responsetime':
+        sortedList = list.sort((a, b) => a.response_time - b.response_time);
         break;
       default:
         sortedList = list.sort((a, b) => a[order] - b[order]);
@@ -222,14 +227,13 @@ export class FavoriteEmployeesList extends Flux.View {
   clearFilters = () => {
     FilterActions.clearConfigFor("favoritesList");
     this.setState({
-      employee: FavoriteListStore.getAll()
+      employee: FavoriteListStore.getEmployees()
     });
     let forms = document.getElementsByClassName("form-component");
     for (const form of forms) form.reset();
   }
 
   render() {
-    // console.log(this.state);
     return (
       <div className="container-fluid favorites-area" style={{ position: "relative", }}>
         <div className="form-area" >
@@ -241,13 +245,14 @@ export class FavoriteEmployeesList extends Flux.View {
                 options={this.createOptionsObject("favoritesList")}
                 value={
                   {
-                    value: this.state.filterConfig.favoritesList,
-                    label: this.state.filterConfig.favoritesList
+                    value: this.state.filterConfig.favoritesList ? this.state.filterConfig.favoritesList.id : null,
+                    label: this.state.filterConfig.favoritesList ? this.state.filterConfig.favoritesList.title : null
                   } || []}
                 onChange={option => {
-                  FilterActions.updateConfig(option.value, "favoritesList", "favoritesList")
+                  FilterActions.updateConfig(option.value, "favoritesList", "favoritesList");
+                  let index = this.state.favoritesLists.findIndex(list => list.id === option.value)
                   this.setState({
-                    employee: FavoriteListStore.getAll(),
+                    employee: this.state.favoritesLists[index].employees,
                     shouldListUpdate: true,
                   })
                 }} />
@@ -272,7 +277,7 @@ export class FavoriteEmployeesList extends Flux.View {
             items={this.state.employee}
             type="componentList"
             heading="Favorite employees"
-            sortOptions={["name", "rating", "response-Time"]}
+            sortOptions={["name", "rating", "response-time"]}
             sort={this.sortBy}
             removeItem={this.toggleAlert}
             component={EmployeeCard} />

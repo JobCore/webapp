@@ -32,7 +32,7 @@ const EmployeeCard = ({ item, ...props }) => {
           );
         case "badges":
           if (!item[option]) { return "" }
-          let badges = item[option].map(badge => <span key={badge} className="badge">{badge.title}</span>)
+          let badges = item[option].map(badge => <span key={badge.id} className="badge">{badge.title}</span>)
           return (
             <span className={option} key={option}>
               {badges}
@@ -93,7 +93,7 @@ const EmployeeCard = ({ item, ...props }) => {
           props.AcceptRejectButtons ?
             <div className="side">
               {
-                ShiftsStore.getById("shift", props.currentShiftId).status !== "FILLED" &&
+                ShiftsStore.getById(props.currentShiftId).status !== "FILLED" &&
                 <button className="btn btn-success accept-btn"
                   onClick={() => swal({
                     position: 'top',

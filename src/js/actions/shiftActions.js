@@ -27,7 +27,7 @@ class ShiftActions extends Flux.Action{
   }
 
   acceptCandidate(shiftId, employeeId) {
-    let shift = ShiftsStore.getById("shift", shiftId);
+    let shift = ShiftsStore.getById(shiftId);
     let employees = shift.employees;
     employees = employees.map(employee => employee.id);
 
@@ -45,7 +45,7 @@ class ShiftActions extends Flux.Action{
   }
 
   rejectCandidate(shiftId, employeeId) {
-    let shift = ShiftsStore.getById("shift", shiftId);
+    let shift = ShiftsStore.getById(shiftId);
     let candidates = shift.candidates;
     let employees = shift.employees;
 

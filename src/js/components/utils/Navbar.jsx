@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 
-import shiftsStore from "../../store/ShiftsStore.js";
+import MenuStore from "../../store/MenuStore.js";
 import uuidv4 from 'uuid';
 
 export class Navbar extends Component {
@@ -11,7 +11,7 @@ export class Navbar extends Component {
     super();
 
     this.state = {
-      data: shiftsStore.getAll("menu"),
+      data: MenuStore.getAll(),
     };
   }
 

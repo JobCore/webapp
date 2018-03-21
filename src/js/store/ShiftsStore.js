@@ -1,8 +1,5 @@
 import Flux from '../flux.js';
 import ShiftActions from '../actions/shiftActions';
-
-import Seeder from "./Seeder.js";
-
 class ShiftStore extends Flux.Store {
 
   constructor() {
@@ -11,8 +8,19 @@ class ShiftStore extends Flux.Store {
       shift: [],
       next_page: null,
       previous_page: null,
-      menu: Seeder.make(1, "menu"),
     };
+  }
+
+  _convertTimestamp = (timestamp) => {
+    // Convert Timestramp into date object
+    let date = new Date(timestamp);
+    date = new Date(date.setDate(date.getDate() + 1));
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    month = (month < 10 ? "0" : "") + month;
+    day = (day < 10 ? "0" : "") + day;
+    let str = date.getFullYear() + "-" + month + "-" + day;
+    return str;
   }
 
   _setShifts({data}) {
@@ -23,18 +31,12 @@ class ShiftStore extends Flux.Store {
     }).emit("change");
   }
 
-  addShift() {
-    this.state.shifts.push(Seeder.make(1, "shift"));
-    this.emit("change");
-  }
-
   _createShift(shiftData) {
     ShiftActions.getAll()
   }
 
-  getAll(type) {
-    if (typeof this.state[type] === "undefined") throw new Error("Invalid model type: " + type);
-    return this.state[type];
+  getAll() {
+    return this.state.shift;
   }
 
   getActiveShifts() {
@@ -56,11 +58,16 @@ class ShiftStore extends Flux.Store {
     return datesObj;
   }
 
-  getById(type, id) {
-    if (typeof this.state[type] === "undefined") throw new Error("Invalid model type: " + type);
-    return this.state[type].find((item) => {
-      return (item.id.toString() === id.toString());
-    });
+  getById(id) {
+    return this.state.shift.find((item) =>
+      (item.id.toString() === id.toString())
+    );
+  }
+
+  getByDate(date) {
+    return this.state.shift.filter(item =>
+      (this._convertTimestamp(item.date) === date)
+    )
   }
 
   _acceptCandidate(params) {

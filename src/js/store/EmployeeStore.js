@@ -11,8 +11,7 @@ class EmployeeStore extends Flux.Store {
     }
   }
 
-  addEmployee() {
-    // this.state.employee.push(Seeder.make(1, "employee"));
+  _addEmployee() {
     this.emit("change");
   }
 

@@ -1,4 +1,7 @@
 import Flux from "../flux";
+import FavoriteListStore from '../store/FavoriteListStore';
+import VenuesStore from '../store/VenueStore';
+import PositionsStore from '../store/PositionsStore';
 
 class FilterConfigStore extends Flux.Store {
 
@@ -33,6 +36,20 @@ class FilterConfigStore extends Flux.Store {
   }
 
   _updateConfig(params) {
+    switch (params.configOption) {
+      case "favoritesList":
+        params.value = FavoriteListStore.getById(params.value);
+        break;
+      case "shiftLocation":
+        params.value = VenuesStore.getById(params.value);
+        break;
+      case "shiftPosition":
+        params.value = PositionsStore.getById(params.value);
+        break;
+      default:
+        break;
+    }
+
     let updatedConfig = { ...this[params.listName + "Config"], };
     updatedConfig[params.configOption] = params.value;
     this[params.listName + "Config"] = updatedConfig;

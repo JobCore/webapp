@@ -21,7 +21,7 @@ export class ListShifts extends Flux.View {
   constructor(props) {
     super(props);
     this.state = {
-      shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+      shift: this.props.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll(),
       filteredData: [],
       modalOpened: false,
       currentShift: { id: null, },
@@ -41,7 +41,7 @@ export class ListShifts extends Flux.View {
   componentWillReceiveProps(nextProps) {
     if (this.props.match.path !== nextProps.match.path) {
       this.setState(prevState => ({
-        shift: nextProps.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll("shift"),
+        shift: nextProps.match.path === "/talent/:id/offer" ? ShiftsStore.getActiveShifts() : ShiftsStore.getAll(),
         shouldListUpdate: true
       }))
     }
@@ -100,36 +100,49 @@ export class ListShifts extends Flux.View {
     });
   }
 
+  // Output format XX-XX-XX
+  convertTimestamp(timestamp) {
+    // Convert Timestramp into date object
+    let date = new Date(timestamp);
+    date = new Date(date.setDate(date.getDate() + 1));
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    month = (month < 10 ? "0" : "") + month;
+    day = (day < 10 ? "0" : "") + day;
+    return date.getFullYear() + "-" + month + "-" + day;
+  }
+
   filterList = (listItems, filterOption) => {
     let currentOption = this.state.filterConfig[filterOption];
     let filteredList = [];
     if (this.state.filterConfig.date && this.state.filterConfig.untilDate) {
       const startDateArr = this.state.filterConfig.date.split("-");
       const endDateArr = this.state.filterConfig.untilDate.split("-");
-      const startDate = new Date(startDateArr[0], parseInt(startDateArr[1]) - 1, startDateArr[2]);
+      const startDate = new Date(startDateArr[0], parseInt(startDateArr[1]) - 1, startDateArr[2], 0, 0, 0);
       const endDate = new Date(endDateArr[0], parseInt(endDateArr[1]) - 1, endDateArr[2], 23, 59, 59);
       filteredList = listItems.filter(
         item => {
-          return (item.date >= startDate && item.date <= endDate)
+          let shiftDate = new Date(item.date);
+          shiftDate = new Date(shiftDate.setDate(shiftDate.getDate() + 1));
+          return (shiftDate >= startDate && shiftDate <= endDate)
         }
       )
     } else if (filterOption === "date") {
       filteredList = listItems.filter(
-        item => {
-          const dateArr = currentOption.split('-');
-          const shiftYear = new Date(item[filterOption]).getFullYear();
-          const shiftMonth = ('0' + (new Date(item[filterOption]).getMonth() + 1)).slice(-2);
-          const shiftDay = ('0' + new Date(item[filterOption]).getDate()).slice(-2);;
-          const shiftDate = `${shiftYear}-${shiftMonth}-${shiftDay}`
-          const dateOption = `${dateArr[0]}-${dateArr[1]}-${dateArr[2]}`
-          return shiftDate === dateOption;
-        }
+        item => this.convertTimestamp(item[filterOption]) === currentOption
+      );
+    } else if (filterOption === "status") {
+      filteredList = listItems.filter(
+        item => item.status === currentOption
+      );
+    } else if (filterOption === "location") {
+      filteredList = listItems.filter(
+        item => item.venue.id === currentOption
       );
     } else {
       filteredList = listItems.filter(
-        item => item[filterOption] === currentOption
+        item => item[filterOption].id === currentOption
       );
-
     }
     return filteredList;
   }

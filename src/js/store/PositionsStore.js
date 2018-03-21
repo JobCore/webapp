@@ -18,5 +18,11 @@ class PositionsStore extends Flux.Store {
     return this.state.positions;
   }
 
+  getById(id) {
+    return this.state.positions.find((item) => {
+      return (item.id.toString() === id.toString());
+    });
+  }
+
 }
 export default new PositionsStore();

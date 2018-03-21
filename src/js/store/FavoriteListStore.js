@@ -70,17 +70,21 @@ class FavoriteListStore extends Flux.Store {
     return isFavorite;
   }
 
-  getEmployees = () => {
+  getEmployees = (id = "") => {
     let employeeList = [];
     let idArr = [];
-    this.state.lists.map(list => list.employees.map(employee => idArr.push(employee.id)));
-    this.state.lists.forEach(list => employeeList = [ ...employeeList,...list.employees]);
-    idArr = [...new Set(idArr)];
-    employeeList = employeeList.filter(employee => {
-      let result = idArr.includes(employee.id);
-      idArr.shift();
-      return result;
-    }) ;
+    if (id === "") {
+      this.state.lists.map(list => list.employees.map(employee => idArr.push(employee.id)));
+      this.state.lists.forEach(list => employeeList = [ ...employeeList,...list.employees]);
+      idArr = [...new Set(idArr)];
+      employeeList = employeeList.filter(employee => {
+        let result = idArr.includes(employee.id);
+        idArr.shift();
+        return result;
+      }) ;
+    } else if (id != null) {
+      employeeList = this.state.lists[id].employees;
+    }
     return employeeList;
   }
 

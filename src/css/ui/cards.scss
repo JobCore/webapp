@@ -166,6 +166,10 @@
       font-size: 13px;
     }
 
+    .rating {
+      margin-right: 5px;
+    }
+
     .currentJobs {
       &:before {
         content: "in ";
@@ -178,6 +182,8 @@
     }
 
     .favorite {
+      padding: 3px 10px 3px 0;
+
       &:before {
         background-color: #FFD700;
         border-radius: 50%;
@@ -193,7 +199,7 @@
       }
     }
 
-    .responseTime {
+    .response_time {
       &:before {
         font-family: "FontAwesome";
         content: "\f253";

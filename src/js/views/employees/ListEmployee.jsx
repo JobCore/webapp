@@ -21,7 +21,7 @@ export class ListEmployee extends Flux.View {
     super();
     this.state = {
       employee: EmployeeStore.getAll(),
-      shift: ShiftsStore.getAll("shift"),
+      shift: ShiftsStore.getAll(),
       filteredData: [],
       filterConfig: {
         ...FilterConfigStore.getConfigFor("employeeList"),
@@ -101,7 +101,8 @@ export class ListEmployee extends Flux.View {
   }
 
   filterList = (listItems, filterOption) => {
-    let filterOptionValue = this.state.filterConfig[filterOption];
+    let filterOptionValue = this.state.filterConfig[filterOption].value ?
+      this.state.filterConfig[filterOption].value : this.state.filterConfig[filterOption];
     let filteredList;
     /* Remove prepended 'shift' or 'profile' of FilterConfigStore
        so that it matches Employee or Shift model atribute name */
@@ -109,17 +110,31 @@ export class ListEmployee extends Flux.View {
     filterOption = filterOption.charAt(0).toLowerCase() + filterOption.slice(1);
 
     if (filterOption === "responseTime") {
-      filteredList = listItems.filter(item => item["responseTime"] <= filterOptionValue);
+      filteredList = listItems.filter(item => item.response_time <= filterOptionValue);
     } else if (filterOption === "badges" && filterOptionValue.length > 0) {
-      filterOptionValue.forEach(valuesObj => {
-        filteredList = listItems.filter(item => item[filterOption].includes(valuesObj.value));
+      // Convert into an array if badges ids
+      filterOptionValue = filterOptionValue.map(optionValue => optionValue.value);
+
+      filteredList = listItems.filter(item => {
+        const badges = item.badges.map(badge => badge.id);
+        let hasAllBadges = true;
+        filterOptionValue.forEach(value => {
+          if (!badges.includes(value)) {
+            hasAllBadges = false;
+          }
+        });
+        return hasAllBadges;
       });
     } else if (filterOption === "badges" && filterOptionValue.length === 0) {
       filteredList = this.state.employee;
     } else if (filterOption === "position") {
-      filteredList = listItems.filter(item => Object.keys(item["positions"]).includes(filterOptionValue));
+      filteredList = listItems.filter(item => {
+        const positionIds = [];
+        item.positions.map(position => positionIds.push(position.id));
+        return positionIds.includes(filterOptionValue.id)
+      });
     } else if (filterOption === "minHourlyRate") {
-      filteredList = listItems.filter(item => parseFloat(item[filterOption].match(/\d+/g)) <= filterOptionValue);
+      filteredList = listItems.filter(item => parseFloat(item.minimum_hourly_rate) <= filterOptionValue);
     } else if (filterOption === "rating") {
       filteredList = listItems.filter(
         item => item[filterOption] >= filterOptionValue
@@ -129,20 +144,34 @@ export class ListEmployee extends Flux.View {
         this.state.filterConfig.shiftDate != null && this.state.filterConfig.shiftDate.length !== 0) {
         let filterFromTime = this.convertHoursStringIntoNumber(this.state.filterConfig.shiftFromTime);
         let filterDate = this.state.filterConfig.shiftDate;
+        let shifts = ShiftsStore.getByDate(filterDate);
+        if (shifts.length > 0) {
+          filteredList = listItems.filter(item => {
+            let isAvailable = true;
+            // Check every shift on the chosen date
+            shifts.forEach(shift => {
+              let shiftStartTime = this.convertHoursStringIntoNumber(shift.start_time) / 100
+              let shiftFinishTime = this.convertHoursStringIntoNumber(shift.finish_time) / 100
+              let shiftDuration = shiftFinishTime - shiftStartTime;
+              // Get ids of all employees from the current shift
+              let employeeIds = shift.employees.map(employee => employee.id);
+              /* Check if current employee is in the current shift
+                And if the chosen time is between the Shift's schedule
+                OR if the chosen time plus the shift's duration is between the Shift's schedule */
+              if (employeeIds.includes(item.id) && (
+                (filterFromTime >= shiftStartTime && filterFromTime <= shiftFinishTime) ||
+                (filterFromTime + shiftDuration >= shiftStartTime && filterFromTime + shiftDuration <= shiftFinishTime)
+              )) {
+                isAvailable = false;
+              }
+            })
+            return isAvailable;
+          })
+        } else {
+          filteredList = this.state.filteredData.length > 0 ?
+            this.state.filteredData : this.state.employee;
+        }
 
-        filteredList = listItems.filter(item => {
-          for (let i = 0; i < item.unavailableTimes.length; i++) {
-
-            const times = item.unavailableTimes[i];
-            const date = item.unavailableTimes[i].date;
-            let fromTime = this.convertHoursStringIntoNumber(times.fromTime);
-
-            if ((filterFromTime >= fromTime) && (date === filterDate)) {
-              return false;
-            }
-          }
-          return true;
-        });
       } else {
         filteredList = this.state.filteredData.length > 0 ?
           this.state.filteredData : this.state.employee;
@@ -183,7 +212,7 @@ export class ListEmployee extends Flux.View {
 
   setFilterConfigByShift = (option) => {
     if (option != null && option.length !== 0) {
-      let shift = ShiftsStore.getById("shift", option.value);
+      let shift = ShiftsStore.getById(option.value);
       this.updateFilterConfig(shift.id, "selectedShift");
       this.updateFilterConfig(shift.date, "shiftDate");
       this.updateFilterConfig(shift.start, "shiftFromTime");
@@ -215,10 +244,15 @@ export class ListEmployee extends Flux.View {
     switch (order) {
       case 'name':
         sortedList = list.sort((a, b) => {
-          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          const name1 = `${a.profile.user.first_name} ${a.profile.user.last_name}`;
+          const name2 = `${b.profile.user.first_name} ${b.profile.user.last_name}`;
+          if (name1.toLowerCase() < name2.toLowerCase()) return -1;
+          if (name1.toLowerCase() > name2.toLowerCase()) return 1;
           return 0;
         });
+        break;
+      case 'responseTime':
+        sortedList = list.sort((a, b) => a.response_time - b.response_time);
         break;
       default:
         sortedList = list.sort((a, b) => a[order] - b[order]);
@@ -297,13 +331,14 @@ export class ListEmployee extends Flux.View {
               <Select
                 placeholder="Select a position"
                 options={this.createOptionsObject("positions")}
-                value={this.state.filterConfig.position || ""}
-                onChange={option => this.updateFilterConfig(option ? option.value : null, "position")} />
-              {/* <Select
-                defaultValue={this.state.filterConfig.shiftPosition}
-                hide={false}
-                stuff={this.createSelectorOptionsObject("position")}
-                onChange={value => this.updateFilterConfig(value, "shiftPosition")} /> */}
+                value={
+                  this.state.filterConfig.shiftPosition ?
+                    {
+                      label: this.state.filterConfig.shiftPosition.title,
+                      value: this.state.filterConfig.shiftPosition.id
+                    } : ""
+                }
+                onChange={option => this.updateFilterConfig(option ? option.value : null, "shiftPosition")} />
             </div>
             <div className="form-group">
               <label htmlFor="shiftMinHourlyRate">Minimum Hourly Rate</label>
