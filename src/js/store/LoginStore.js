@@ -1,4 +1,11 @@
-import Flux from "../flux"
+import Flux from "../flux";
+import EmployeeActions from "../actions/employeeActions";
+import EmployerActions from "../actions/employerActions";
+import ShiftActions from "../actions/shiftActions";
+import FavoriteListActions from "../actions/favoriteListActions";
+import BadgesActions from "../actions/badgesActions";
+import VenueActions from "../actions/venueActions";
+import PositionsActions from "../actions/positionsActions";
 class LoginStore extends Flux.Store {
 
   constructor() {
@@ -10,7 +17,13 @@ class LoginStore extends Flux.Store {
       this.setStoreState({
         user: data
       }).emit("change");
-
+      EmployerActions.get();
+      EmployeeActions.getAll();
+      ShiftActions.getAll();
+      FavoriteListActions.getAll();
+      BadgesActions.getAll();
+      VenueActions.getAll();
+      PositionsActions.getAll();
       console.log("The user has logged in");
   }
   _loggoutUser(){

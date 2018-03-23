@@ -8,13 +8,6 @@ import { Navbar } from "../components/utils/Navbar";
 
 import LoginStore from "../store/LoginStore";
 import LoginActions from "../actions/loginActions";
-import EmployeeActions from "../actions/employeeActions";
-import EmployerActions from "../actions/employerActions";
-import ShiftActions from "../actions/shiftActions";
-import FavoriteListActions from "../actions/favoriteListActions";
-import BadgesActions from "../actions/badgesActions";
-import VenueActions from "../actions/venueActions";
-import PositionsActions from "../actions/positionsActions";
 
 import { Home } from "../views/Home";
 import { Login } from "../views/Login";
@@ -55,13 +48,6 @@ export class Layout extends Flux.View {
       authenticated: true,
       user: LoginStore.getUser(),
     });
-    EmployerActions.get();
-    EmployeeActions.getAll();
-    ShiftActions.getAll();
-    FavoriteListActions.getAll();
-    BadgesActions.getAll();
-    VenueActions.getAll();
-    PositionsActions.getAll();
   }
 
   render() {
