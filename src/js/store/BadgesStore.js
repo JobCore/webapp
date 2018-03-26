@@ -1,22 +1,21 @@
-import Flux from "../flux";
+import Flux from '../flux';
 
 class BadgesStore extends Flux.Store {
-
   constructor() {
     super();
     this.state = {
-      badges: []
-    }
+      badges: [],
+    };
   }
 
   addBadge() {
-    this.emit("change");
+    this.emit('change');
   }
 
-  _setBadges({data}) {
+  _setBadges({ data }) {
     this.setStoreState({
-      badges: [...data]
-    }).emit("change");
+      badges: [...data],
+    }).emit('change');
   }
 
   getAll() {

@@ -4,14 +4,14 @@ class VenueStore extends Flux.Store {
   constructor() {
     super();
     this.state = {
-      venues: []
-    }
+      venues: [],
+    };
   }
 
-  _setVenues({data}) {
+  _setVenues({ data }) {
     this.setStoreState({
-      venues: [...data]
-    }).emit("change");
+      venues: [...data],
+    }).emit('change');
   }
 
   getAll() {
@@ -19,10 +19,7 @@ class VenueStore extends Flux.Store {
   }
 
   getById(id) {
-    return this.state.venues.find((item) => {
-      return (item.id.toString() === id.toString());
-    });
+    return this.state.venues.find(item => item.id.toString() === id.toString());
   }
-
 }
 export default new VenueStore();

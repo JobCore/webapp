@@ -1,27 +1,28 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * @prop {string} width
  * @prop {string} height
  * @prop {boolean} rounded
  * @prop {boolean} squared
+ * @prop {boolean} imageUrl
+ * @prop {boolean} alt
  */
-const ProfilePic = (props) => {
-  let styles = {};
+const ProfilePic = props => {
+  const styles = {};
 
-  if (props.rounded) { styles.borderRadius = "50%"; }
-  else if (props.squared) { styles.borderRadius = "10px"; }
+  if (props.rounded) {
+    styles.borderRadius = '50%';
+  } else if (props.squared) {
+    styles.borderRadius = '10px';
+  }
 
-  styles.width = props.width;
-  styles.height = props.height;
+  styles.width = props.width || '200px';
+  styles.height = props.height || '200px';
+  styles.backgroundColor = '#ccc';
 
-  return (
-    <img
-      style={styles}
-      src={props.imageUrl}
-      alt="Profile Pic" />
-  );
+  return <img style={styles} src={props.imageUrl} alt={props.alt} />;
 };
 
 ProfilePic.propTypes = {
@@ -29,6 +30,8 @@ ProfilePic.propTypes = {
   height: PropTypes.string,
   rounded: PropTypes.bool,
   squared: PropTypes.bool,
+  imageUrl: PropTypes.string,
+  alt: PropTypes.string,
 };
 
 export default ProfilePic;

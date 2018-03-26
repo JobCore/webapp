@@ -1,15 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import "bootstrap";
-import { Layout } from "./js/views/Layout.jsx";
-import "font-awesome/css/font-awesome.min.css";
-require("./css/main/styles.scss");
+import 'bootstrap';
+import 'font-awesome/css/font-awesome.min.css';
+import { Layout } from './js/views/Layout.jsx';
+
+require('./css/main/styles.scss');
 
 // Add CSS files to bundle
-//require('../css/styles.scss');
+// require('../css/styles.scss');
 // Render application to DOM
-ReactDOM.render(
-  <Layout />,
-  document.querySelector("#app")
-);
+ReactDOM.render(<Layout />, document.querySelector('#app'));

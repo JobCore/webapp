@@ -1,6 +1,7 @@
 import React from 'react';
-import Shift from './Shift';
+import PropTypes from 'prop-types';
 import uuid from 'uuid/v4';
+import Shift from './Shift';
 
 const ShiftGroup = ({ heading, items, ...props }) => {
   function getOrdinalNum(n) {
@@ -14,20 +15,17 @@ const ShiftGroup = ({ heading, items, ...props }) => {
   return (
     <div className="shiftGroup">
       <div className="shiftGroup__header">
-        {
-          `${new Date(parseInt(heading))
-            .toLocaleDateString("en-us", { month: "long" })}
-          ${getOrdinalNum(new Date(parseInt(heading)).getDate())}`
-        }
+        {`${new Date(parseInt(heading)).toLocaleDateString('en-us', { month: 'long' })}
+          ${getOrdinalNum(new Date(parseInt(heading)).getDate())}`}
       </div>
-      <div className="shifts">
-        {
-          items.map(item =>
-            <Shift key={uuid()} item={item} {...props} />)
-        }
-      </div>
+      <div className="shifts">{items.map(item => <Shift key={uuid()} item={item} {...props} />)}</div>
     </div>
-  )
-}
+  );
+};
+
+ShiftGroup.propTypes = {
+  heading: PropTypes.string,
+  items: PropTypes.any,
+};
 
 export default ShiftGroup;

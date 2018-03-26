@@ -1,4 +1,4 @@
-import Flux from "../flux";
+import Flux from '../flux';
 
 class EmployerStore extends Flux.Store {
   /**
@@ -8,14 +8,14 @@ class EmployerStore extends Flux.Store {
   constructor() {
     super();
     this.state = {
-      employer: null
-    }
+      employer: null,
+    };
   }
 
-  _setEmployer({data}) {
+  _setEmployer({ data }) {
     this.setStoreState({
-      employer: data
-    }).emit("change");
+      employer: data,
+    }).emit('change');
   }
 
   /**
@@ -23,38 +23,36 @@ class EmployerStore extends Flux.Store {
    * @memberof EmployerStore
    */
   _addEmployer = () => {
-    this.emit("change");
-  }
+    this.emit('change');
+  };
 
   /**
    * Returns the info of the current Employer
    * @returns {Object}
    * @memberof EmployerStore
    */
-  getEmployer = () => {
-    return this.state.employer;
-  }
+  getEmployer = () => this.state.employer;
 
   /**
    * Creates a new List for the Employer
    * @param {string} listName Name of the list to be added
    * @memberof EmployerStore
    */
-  _addNewList = (params) => {
+  _addNewList = params => {
     this.state.employer.favoriteLists[params.listName] = [];
-    this.emit("change");
-  }
+    this.emit('change');
+  };
 
   /**
    * Delete list from Employer's Favorites Lists
    * @param {string} listName List to be deleted
    * @memberof EmployerStore
    */
-  _removeFavoritesLists = (params) => {
+  _removeFavoritesLists = params => {
     const lists = this.state.employer.favoriteLists;
     delete lists[params.listName];
-    this.emit("change");
-  }
+    this.emit('change');
+  };
 
   /**
    * Add a new employee to a list
@@ -62,10 +60,10 @@ class EmployerStore extends Flux.Store {
    * @param {string} list List where it should be added
    * @memberof EmployerStore
    */
-  _addEmployeeToFavList = (params) => {
+  _addEmployeeToFavList = params => {
     this.state.employer.favoriteLists[params.list].push(params.id);
-    this.emit("change");
-  }
+    this.emit('change');
+  };
 
   /**
    * Removes a certain employee from a list
@@ -74,19 +72,19 @@ class EmployerStore extends Flux.Store {
    * @param [{string}] list List where it should be removed
    * @memberof EmployerStore
    */
-  _removeEmployeeFromFavList = (params) => {
+  _removeEmployeeFromFavList = params => {
     if (!params.list) {
       for (const key in this.state.employer.favoriteLists) {
-        let index = this.state.employer.favoriteLists[key].indexOf(params.id);
+        const index = this.state.employer.favoriteLists[key].indexOf(params.id);
         if (index !== -1) this.state.employer.favoriteLists[key].splice(index, 1);
       }
-      this.emit("change");
+      this.emit('change');
     } else {
-      let index = this.state.employer.favoriteLists[params.list].indexOf(params.id);
+      const index = this.state.employer.favoriteLists[params.list].indexOf(params.id);
       this.state.employer.favoriteLists[params.list].splice(index, 1);
-      this.emit("change");
+      this.emit('change');
     }
-  }
+  };
 
   /**
    * Renames a list from employer's favorites lists
@@ -94,11 +92,20 @@ class EmployerStore extends Flux.Store {
    * @param {string} newListName New list name
    * @memberof EmployerStore
    */
-  _renameFavoritesLists = (params) => {
+  _renameFavoritesLists = params => {
     this.state.employer.favoriteLists[params.newListName] = this.state.employer.favoriteLists[params.prevListName];
     delete this.state.employer.favoriteLists[params.prevListName];
-    this.emit("change");
-  }
+    this.emit('change');
+  };
 
+  _updateEmployer = params => {
+    this.setStoreState({
+      employer: params.data,
+    }).emit();
+  };
+
+  _emitChange = () => {
+    this.emit('change');
+  };
 }
 export default new EmployerStore();

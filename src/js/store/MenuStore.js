@@ -1,13 +1,12 @@
 import Flux from '../flux.js';
 
-import Seeder from "./Seeder.js";
+import Seeder from './Seeder.js';
 
 class MenuStore extends Flux.Store {
-
   constructor() {
     super();
     this.state = {
-      menu: Seeder.make(1, "menu"),
+      menu: Seeder.make(1, 'menu'),
     };
   }
 

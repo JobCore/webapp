@@ -1,28 +1,27 @@
 import React from 'react';
-import Flux from "../../flux"
+import Flux from '../../flux';
 
-import shiftsStore from "../../store/ShiftsStore.js";
+import shiftsStore from '../../store/ShiftsStore.js';
 
 export class SingleShift extends Flux.View {
-
   /**
-  *
-  *   this.props = {
-  *   }
-  */
+   *
+   *   this.props = {
+   *   }
+   */
   constructor() {
     super();
     this.state = {
       data: {
-        location: "404",
+        location: '404',
       },
     };
   }
 
   componentWillMount() {
-    var shift = shiftsStore.getById(this.props.match.params.id);
-    if (typeof shift === "undefined" || shift == null) shift = { location: "404", };
-    this.setState({ data: shift, });
+    let shift = shiftsStore.getById(this.props.match.params.id);
+    if (typeof shift === 'undefined' || shift == null) shift = { location: '404' };
+    this.setState({ data: shift });
   }
 
   render() {

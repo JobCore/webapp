@@ -3,6 +3,22 @@
   margin-right: 0 !important;
 }
 
+.inline-editor-area {
+  display: flex;
+  flex-wrap: wrap;
+
+  input {
+    flex-basis: 400px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+  }
+
+  button {
+    width: 80px;
+    margin-left: 10px;
+  }
+}
+
 .editor {
   z-index: 9999;
   text-align: left;

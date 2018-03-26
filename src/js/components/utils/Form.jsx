@@ -1,34 +1,33 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import Select from "react-select";
-import "react-select/dist/react-select.css";
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
 
 class Form extends Component {
-  _convertTimestamp = (timestamp) => {
+  _convertTimestamp = timestamp => {
     // Convert Timestramp into date object
     let date = new Date(timestamp);
     date = new Date(date.setDate(date.getDate() + 1));
 
     let month = date.getMonth() + 1;
     let day = date.getDate();
-    month = (month < 10 ? "0" : "") + month;
-    day = (day < 10 ? "0" : "") + day;
+    month = (month < 10 ? '0' : '') + month;
+    day = (day < 10 ? '0' : '') + day;
 
-    let str = date.getFullYear() + "-" + month + "-" + day;
+    const str = `${date.getFullYear()}-${month}-${day}`;
     return str;
-  }
+  };
 
   render() {
+    let inputStyles = 'inputs ';
+    this.props.orderedAs === 'column' ? (inputStyles += 'inputs-as-column') : (inputStyles += 'inputs-as-row');
 
-    let inputStyles = "inputs ";
-    this.props.orderedAs === "column" ? inputStyles += "inputs-as-column" : inputStyles += "inputs-as-row";
-
-    let options = [];
+    const options = [];
     if (this.props.shifts) {
       for (let i = 0; i < this.props.shifts.length; i++) {
         const currentShift = this.props.shifts[i];
-        let shift = {
+        const shift = {
           value: currentShift.id,
           label: `${this._convertTimestamp(currentShift.date)} |
           ${currentShift.start_time.match(/[0-9]{2}:[0-9]{2}/)} - ${currentShift.finish_time.match(/[0-9]{2}:[0-9]{2}/)}
@@ -40,22 +39,20 @@ class Form extends Component {
 
     return (
       <form className="form-component" id="form-component">
-        {
-          this.props.shifts && this.props.shifts.length > 0 ?
-            <Select
-              className="header-select"
-              placeholder="Filter by Shift"
-              name="shifts"
-              value={this.props.selectedShift}
-              searchable={false}
-              onChange={value => this.props.onSelectChange(value)}
-              options={options}
-            /> :
-            <h5 className="title">{this.props.title}</h5>
-        }
-        <div className={inputStyles}>
-          {this.props.children}
-        </div>
+        {this.props.shifts && this.props.shifts.length > 0 ? (
+          <Select
+            className="header-select"
+            placeholder="Filter by Shift"
+            name="shifts"
+            value={this.props.selectedShift}
+            searchable={false}
+            onChange={value => this.props.onSelectChange(value)}
+            options={options}
+          />
+        ) : (
+          <h5 className="title">{this.props.title}</h5>
+        )}
+        <div className={inputStyles}>{this.props.children}</div>
       </form>
     );
   }
@@ -63,6 +60,11 @@ class Form extends Component {
 
 Form.propTypes = {
   title: PropTypes.string.isRequired,
+  orderedAs: PropTypes.string,
+  shifts: PropTypes.array,
+  selectedShift: PropTypes.object,
+  onSelectChange: PropTypes.func,
+  children: PropTypes.node,
 };
 
 export default Form;

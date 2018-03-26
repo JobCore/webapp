@@ -1,37 +1,39 @@
-import React, { Component } from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-class Modall extends Component {
-
+const Modal = ({ show, size, onClose, children, header }) => {
   /**
-  *
-  *   this.props = {
-  *   }
-  */
+   *
+   *   this.props = {
+   *   }
+   */
 
-  render() {
-    // Render nothing if the "show" prop is false
-    let classes = "backdrop";
-    classes += !this.props.show ? " closed" : "";
-    classes += this.props.size === "fullscreen" ? " fullscreen" : "";
+  // Render nothing if the "show" prop is false
+  let classes = 'backdrop';
+  classes += !show ? ' closed' : '';
+  classes += size === 'fullscreen' ? ' fullscreen' : '';
 
-    return (
-      <div className={classes}>
-        <div className="modal">
-          <button className="close-modal" onClick={this.props.onClose}>
-            X
-          </button>
-          <div className="modal-header">
-            <h3>
-              {this.props.header}
-            </h3>
-          </div>
-          <div className="modal-content">
-            {this.props.children}
-          </div>
+  return (
+    <div className={classes}>
+      <div className="modal">
+        <button className="close-modal" onClick={onClose}>
+          X
+        </button>
+        <div className="modal-header">
+          <h3>{header}</h3>
         </div>
+        <div className="modal-content">{children}</div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
-export default Modall;
+Modal.propTypes = {
+  show: PropTypes.bool,
+  size: PropTypes.string,
+  onClose: PropTypes.func,
+  header: PropTypes.string,
+  children: PropTypes.array,
+};
+
+export default Modal;

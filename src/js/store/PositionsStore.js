@@ -4,14 +4,14 @@ class PositionsStore extends Flux.Store {
   constructor() {
     super();
     this.state = {
-      positions: []
-    }
+      positions: [],
+    };
   }
 
-  _setPositions({data}) {
+  _setPositions({ data }) {
     this.setStoreState({
-      positions: [...data]
-    }).emit("change");
+      positions: [...data],
+    }).emit('change');
   }
 
   getAll() {
@@ -19,10 +19,7 @@ class PositionsStore extends Flux.Store {
   }
 
   getById(id) {
-    return this.state.positions.find((item) => {
-      return (item.id.toString() === id.toString());
-    });
+    return this.state.positions.find(item => item.id.toString() === id.toString());
   }
-
 }
 export default new PositionsStore();

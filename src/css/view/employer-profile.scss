@@ -1,0 +1,96 @@
+.employer-profile {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  padding: 10px 20px;
+  grid-gap: 20px;
+
+  .first-column {
+    .profile-pic {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      img {
+        margin-right: 20px;
+      }
+
+      .employer-info {
+        flex: 1;
+        display: grid;
+        grid-gap: 5px;
+        grid-template-columns: 1fr;
+
+        & > *:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .user-data {
+      width: 50%;
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      form {
+        display: grid;
+        grid-gap: 20px;
+        grid-auto-columns: minmax(300px, 1fr);
+
+        .input-group {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          label {
+            width: 80px;
+            margin: 0 10px 0 0;
+          }
+        }
+      }
+    }
+  }
+
+  .second-column {
+    .response-time,
+    .badges {
+      padding: 10px 20px;
+      background-color: #E8EBEE;
+    }
+
+    .response-time {
+      font-size: 1.1rem;
+      color: #e74c3c;
+
+      i {
+        margin-right: 10px;
+      }
+    }
+
+    .badges {
+      h2 {
+        border-top: 1px solid black;
+        font-size: 1.3rem;
+        font-weight: bold;
+        padding: 10px 0;
+      }
+
+      .tags-list {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+
+        .tag {
+          padding: 8px;
+          margin-bottom: 10px;
+          margin-right: 10px;
+          background-color: #34495e;
+          color: #eee;
+        }
+      }
+    }
+  }
+}
