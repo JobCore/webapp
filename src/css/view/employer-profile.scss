@@ -1,34 +1,85 @@
 .employer-profile {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-rows: auto 1fr;
   padding: 10px 20px;
   grid-gap: 20px;
 
-  .first-column {
-    .profile-pic {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+  .first-row {
+    display: grid;
+    grid-template-columns: 1fr 400px;
 
-      img {
-        margin-right: 20px;
-      }
+    .first-column {
+      .profile-pic {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-      .employer-info {
-        flex: 1;
-        display: grid;
-        grid-gap: 5px;
-        grid-template-columns: 1fr;
+        img {
+          margin-right: 20px;
+        }
 
-        & > *:hover {
-          cursor: pointer;
+        .employer-info {
+          flex: 1;
+          display: grid;
+          grid-gap: 5px;
+          grid-template-columns: 1fr;
+
+          & > *:hover {
+            cursor: pointer;
+          }
         }
       }
     }
 
-    .user-data {
-      width: 50%;
+    .second-column {
+      padding: 10px 20px;
+      background-color: #E8EBEE;
+
+      .response-time {
+        font-size: 1.1rem;
+        color: #e74c3c;
+        padding-bottom: 10px;
+
+        i {
+          margin-right: 10px;
+        }
+      }
+
+      .badges {
+        h2 {
+          border-top: 1px solid black;
+          font-size: 1.3rem;
+          font-weight: bold;
+          padding: 10px 0;
+        }
+
+        .tags-list {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+
+          .tag {
+            padding: 8px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            background-color: #34495e;
+            color: #eee;
+          }
+        }
+      }
+    }
+  }
+
+  .second-row {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: 1fr 1fr;
+
+    .user-data,
+    .change-password {
+      width: 100%;
 
       h2 {
         margin-bottom: 20px;
@@ -45,7 +96,7 @@
           justify-content: flex-end;
 
           label {
-            width: 80px;
+            width: 105px;
             margin: 0 10px 0 0;
           }
         }
@@ -53,44 +104,4 @@
     }
   }
 
-  .second-column {
-    .response-time,
-    .badges {
-      padding: 10px 20px;
-      background-color: #E8EBEE;
-    }
-
-    .response-time {
-      font-size: 1.1rem;
-      color: #e74c3c;
-
-      i {
-        margin-right: 10px;
-      }
-    }
-
-    .badges {
-      h2 {
-        border-top: 1px solid black;
-        font-size: 1.3rem;
-        font-weight: bold;
-        padding: 10px 0;
-      }
-
-      .tags-list {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-
-        .tag {
-          padding: 8px;
-          margin-bottom: 10px;
-          margin-right: 10px;
-          background-color: #34495e;
-          color: #eee;
-        }
-      }
-    }
-  }
 }

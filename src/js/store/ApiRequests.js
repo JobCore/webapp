@@ -62,6 +62,20 @@ export const PUT = async (model, id, putData) => {
   return data;
 };
 
+export const PATCH = async (model, id, putData) => {
+  const response = await fetch(`${rootAPIendpoint}/${model}/${id}`, {
+    method: 'PATCH',
+    headers: new Headers({
+      ...HEADERS,
+    }),
+    body: putData,
+  }).catch(err => {
+    throw new Error(`Could not UPDATE model on API due to -> ${err}`);
+  });
+  const data = await response.json();
+  return data;
+};
+
 export const DELETE = async (model, id = '') => {
   await fetch(`${rootAPIendpoint}/${model}/${id}`, {
     method: 'DELETE',

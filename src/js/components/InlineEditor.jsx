@@ -33,6 +33,7 @@ class InlineEditor extends React.Component {
     this.state = {
       editing: false,
       value: props.currentValue,
+      isValid: true,
     };
   }
 
@@ -44,7 +45,8 @@ class InlineEditor extends React.Component {
   };
 
   handleChange = e => {
-    this.setState({ value: e.target.value });
+    const validInput = this.props.maxLength ? e.target.value.length <= parseInt(this.props.maxLength) : true;
+    this.setState({ value: e.target.value, isValid: validInput });
   };
 
   editParam = () => {
@@ -54,7 +56,11 @@ class InlineEditor extends React.Component {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, type, ...props } = this.props;
+    delete props.id;
+    delete props.currentValue;
+    delete props.param;
+    delete props.onEdit;
 
     // Clone children and add onClick prop
     const childrenWithProps = React.Children.map(children, child =>
@@ -63,14 +69,19 @@ class InlineEditor extends React.Component {
     // Config editor for data types
     const editor = (
       <span className="inline-editor-area">
-        <input
-          required
-          type={this.props.type || 'text'}
-          className="form-control"
-          value={this.state.value}
-          onChange={this.handleChange}
-        />
-        <button className="btn btn-primary" onClick={this.editParam}>
+        {type === 'textarea' ? (
+          <textarea className="form-control" value={this.state.value} onChange={this.handleChange} {...props} />
+        ) : (
+          <input
+            required
+            type={type || 'text'}
+            className="form-control"
+            value={this.state.value}
+            onChange={this.handleChange}
+            {...props}
+          />
+        )}
+        <button className="btn btn-primary" onClick={this.editParam} disabled={!this.state.isValid}>
           Save
         </button>
         <button className="btn btn-danger" onClick={this.toggleEditor}>
@@ -90,6 +101,7 @@ InlineEditor.propTypes = {
   id: PropTypes.number,
   param: PropTypes.string,
   onEdit: PropTypes.func,
+  maxLength: PropTypes.string,
 };
 
 export default InlineEditor;

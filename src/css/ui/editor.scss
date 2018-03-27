@@ -4,18 +4,33 @@
 }
 
 .inline-editor-area {
+  width: 80%;
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 5px;
 
   input {
+    flex: 1;
     flex-basis: 400px;
     margin-right: 10px;
-    margin-bottom: 5px;
   }
 
   button {
-    width: 80px;
-    margin-left: 10px;
+    flex: 1;
+    flex-basis: 80px;
+
+    &:last-child {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+  }
+
+  textarea {
+    flex: 1;
+    flex-basis: 100%;
+    resize: none;
+    margin-right: 10px;
+    min-height: 100px;
   }
 }
 
