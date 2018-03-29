@@ -1,41 +1,51 @@
 import Flux from '../flux';
-import EmployeeActions from '../actions/employeeActions';
-import EmployerActions from '../actions/employerActions';
-import ShiftActions from '../actions/shiftActions';
-import FavoriteListActions from '../actions/favoriteListActions';
-import BadgesActions from '../actions/badgesActions';
-import VenueActions from '../actions/venueActions';
-import PositionsActions from '../actions/positionsActions';
 
 class LoginStore extends Flux.Store {
   constructor() {
     super();
-    this.state.user = null;
+    this.state = {
+      user: null,
+    };
   }
 
   _setUserLogin({ data }) {
     this.setStoreState({
       user: data,
-    }).emit('change');
-    EmployerActions.get();
-    EmployeeActions.getAll();
-    ShiftActions.getAll();
-    FavoriteListActions.getAll();
-    BadgesActions.getAll();
-    VenueActions.getAll();
-    PositionsActions.getAll();
+    }).emit();
     console.log('The user has logged in');
   }
-  _loggoutUser() {
+
+  _setUserToken({ data }) {
+    this.setStoreState({
+      user: {
+        ...this.state.user,
+        token: {
+          token: data,
+          expired: false,
+        },
+      },
+    }).emit();
+  }
+
+  _logoutUser() {
     this.setStoreState({ user: null }).emit();
+    console.log('The user has logged out');
+  }
+
+  isAuthenticated() {
+    return this.state.user != null;
   }
 
   // Just getters for the properties it got from the action.
   getUser() {
     return this.state.user;
   }
-  isLoggedIn() {
-    return !!this.state.user;
+
+  getToken() {
+    if (this.state.user && this.state.user.token) {
+      return this.state.user.token.token;
+    }
+    return null;
   }
 }
 export default new LoginStore();

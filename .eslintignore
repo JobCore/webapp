@@ -1,0 +1,9 @@
+node_modules/
+server/
+public/
+build/
+scripts/
+config/
+src/registerServiceWorker.js
+src/js/flux.js
+.vscode

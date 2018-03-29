@@ -8,6 +8,13 @@ import { Navbar } from '../components/utils/Navbar';
 
 import LoginStore from '../store/LoginStore';
 import LoginActions from '../actions/loginActions';
+import EmployeeActions from '../actions/employeeActions';
+import EmployerActions from '../actions/employerActions';
+import ShiftActions from '../actions/shiftActions';
+import FavoriteListActions from '../actions/favoriteListActions';
+import BadgesActions from '../actions/badgesActions';
+import VenueActions from '../actions/venueActions';
+import PositionsActions from '../actions/positionsActions';
 
 import { Home } from '../views/Home';
 import { Login } from '../views/Login';
@@ -23,64 +30,81 @@ import EmployerProfile from './employer/EmployerProfile';
 export class Layout extends Flux.View {
   constructor() {
     super();
-
     this.state = {
-      authenticated: false,
-      user: null,
-      // user: EmployerStore.getEmployer(),
+      isAuthenticated: LoginStore.isAuthenticated(),
+      user: LoginStore.getUser(),
     };
     this.bindStore(LoginStore, this.setUser.bind(this));
-    // this.bindStore(LoginStore, this.handleAutentication.bind(this));
   }
 
-  // handleAutentication() {
-  //   let isLoggedIn = LoginStore.isLoggedIn();
-  //   console.log("User autentication status: ", );
-  //   this.setState({
-  //     authenticated: isLoggedIn,
-  //     user: EmployerStore.getEmployer(),
-  //   });
-  // }
+  updateResources = () => {
+    if (this.state.user && this.state.user.token && !this.state.user.token.expired) {
+      EmployerActions.get();
+      EmployeeActions.getAll();
+      ShiftActions.getAll();
+      FavoriteListActions.getAll();
+      BadgesActions.getAll();
+      VenueActions.getAll();
+      PositionsActions.getAll();
+    }
+  };
+
+  checkIfTokenRemembered = () => {
+    if (!this.state.user && localStorage.getItem('token')) {
+      LoginActions.getUserFromLocalToken(localStorage.getItem('token'), createBrowserHistory());
+    }
+  };
 
   setUser = () => {
     this.setState({
-      authenticated: true,
       user: LoginStore.getUser(),
+      isAuthenticated: LoginStore.isAuthenticated(),
     });
   };
 
   render() {
-    // console.log(this.state.user);
+    this.updateResources();
+    this.checkIfTokenRemembered();
     return (
       <BrowserRouter>
         <div>
           <Navbar
-            authenticated={this.state.authenticated}
+            authenticated={this.state.isAuthenticated}
             onLogout={() => LoginActions.logoutUser(createBrowserHistory())}
           />
           <div className="content-wrapper">
             <Switch>
               <PrivateRoute exact path="/" component={Home} />
               <Route exact path="/login" component={Login} />
-              <PrivateRoute exact path="/private" loggedIn={this.state.authenticated} component={Private} />
-              <PrivateRoute exact path="/profile" loggedIn={this.state.authenticated} component={EmployerProfile} />
-              <PrivateRoute exact path="/shift/create" loggedIn={this.state.authenticated} component={CreateShift} />
-              <PrivateRoute exact path="/shift/list" loggedIn={this.state.authenticated} component={ListShifts} />
+              <PrivateRoute exact path="/private" loggedIn={this.state.isAuthenticated} component={Private} />
+              <PrivateRoute exact path="/profile" loggedIn={this.state.isAuthenticated} component={EmployerProfile} />
+              <PrivateRoute exact path="/shift/create" loggedIn={this.state.isAuthenticated} component={CreateShift} />
+              <PrivateRoute exact path="/shift/list" loggedIn={this.state.isAuthenticated} component={ListShifts} />
               <PrivateRoute
                 exact
                 path="/shift/:id/:isEditing?"
-                loggedIn={this.state.authenticated}
+                loggedIn={this.state.isAuthenticated}
                 component={ShiftDetails}
               />
               <PrivateRoute
                 exact
                 path="/talent/favorites"
-                loggedIn={this.state.authenticated}
+                loggedIn={this.state.isAuthenticated}
                 component={FavoriteEmployeesList}
               />
-              <PrivateRoute exact path="/talent/list" loggedIn={this.state.authenticated} component={ListEmployee} />
-              <PrivateRoute exact path="/talent/:id/offer" loggedIn={this.state.authenticated} component={ListShifts} />
-              <PrivateRoute exact path="/talent/:id" loggedIn={this.state.authenticated} component={EmployeeDetails} />
+              <PrivateRoute exact path="/talent/list" loggedIn={this.state.isAuthenticated} component={ListEmployee} />
+              <PrivateRoute
+                exact
+                path="/talent/:id/offer"
+                loggedIn={this.state.isAuthenticated}
+                component={ListShifts}
+              />
+              <PrivateRoute
+                exact
+                path="/talent/:id"
+                loggedIn={this.state.isAuthenticated}
+                component={EmployeeDetails}
+              />
               <Route render={() => <p className="text-center mt-5">Not found</p>} />
             </Switch>
             <footer className="sticky-footer">

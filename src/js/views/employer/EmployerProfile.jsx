@@ -10,6 +10,7 @@ import { PUT, PATCH } from '../../store/ApiRequests';
 import InlineEditor from '../../components/InlineEditor';
 import EmployerActions from '../../actions/employerActions';
 import ProfileActions from '../../actions/profileActions';
+import LoginStore from '../../store/LoginStore';
 
 class EmployerProfile extends Flux.View {
   constructor(props) {
@@ -58,7 +59,7 @@ class EmployerProfile extends Flux.View {
     const EMPLOYER = this.state.employer;
     let responseTime = EMPLOYER.response_time || 0;
     responseTime = responseTime > 59 ? `${Math.ceil(responseTime / 60)} hour(s)` : `${responseTime} minute(s)`;
-
+    console.log(LoginStore.getUser());
     return (
       <div className="employer-profile">
         <div className="first-row">
@@ -73,7 +74,7 @@ class EmployerProfile extends Flux.View {
                   placeholder="Company name"
                   param="title"
                 >
-                  <h2>{EMPLOYER.title}</h2>
+                  <h2>{EMPLOYER.title || 'Click to edit title'}</h2>
                 </InlineEditor>
 
                 <InlineEditor
@@ -83,7 +84,7 @@ class EmployerProfile extends Flux.View {
                   placeholder="Website"
                   param="website"
                 >
-                  <p>{EMPLOYER.website}</p>
+                  <p>{EMPLOYER.website || 'Click to edit website'}</p>
                 </InlineEditor>
 
                 <InlineEditor
@@ -94,7 +95,7 @@ class EmployerProfile extends Flux.View {
                   onEdit={ProfileActions.updateProfile}
                   param="location"
                 >
-                  <p>{EMPLOYER.profile.location}</p>
+                  <p>{EMPLOYER.profile.location || 'Click to edit location'}</p>
                 </InlineEditor>
 
                 <InlineEditor
@@ -106,7 +107,7 @@ class EmployerProfile extends Flux.View {
                   onEdit={ProfileActions.updateProfile}
                   param="bio"
                 >
-                  <p>{EMPLOYER.profile.bio}</p>
+                  <p>{EMPLOYER.profile.bio || 'Click to edit bio'}</p>
                 </InlineEditor>
               </div>
             </div>

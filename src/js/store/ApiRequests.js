@@ -1,9 +1,20 @@
+import loginActions from '../actions/loginActions';
+import LoginStore from './LoginStore';
+
 const rootAPIendpoint = 'http://127.0.0.1:8000/api';
 
 const HEADERS = {
   'Content-Type': 'application/json',
 };
 
+const getToken = () => {
+  if (localStorage.getItem('token')) {
+    return localStorage.getItem('token');
+  } else if (LoginStore) {
+    return LoginStore.getToken();
+  }
+  return null;
+};
 /* AVAILABLE MODELS
   - badges
   - employees
@@ -13,6 +24,8 @@ const HEADERS = {
   - profiles
   - shifts
   - venues
+  - oauth/token (generate token)
+  - tokenuser (get user data from local saved token)
 */
 
 /**
@@ -25,11 +38,16 @@ export const GET = async (model, id = '') => {
     method: 'GET',
     headers: new Headers({
       ...HEADERS,
+      Authorization: `Bearer ${getToken()}`,
     }),
   }).catch(err => {
     throw new Error(`Could not GET models from API due to -> ${err}`);
   });
   const data = await response.json();
+  if (data.detail) {
+    loginActions.logoutUser();
+    return 0;
+  }
   return data;
 };
 
@@ -38,13 +56,17 @@ export const POST = async (model, postData) => {
     method: 'POST',
     headers: new Headers({
       ...HEADERS,
+      Authorization: `Bearer ${getToken()}`,
     }),
     body: postData,
   }).catch(err => {
     throw new Error(`Could not POST model to API due to -> ${err}`);
   });
-  console.log(postData);
   const data = await response.json();
+  if (data.detail) {
+    loginActions.logoutUser();
+    return 0;
+  }
   return data;
 };
 
@@ -53,12 +75,17 @@ export const PUT = async (model, id, putData) => {
     method: 'PUT',
     headers: new Headers({
       ...HEADERS,
+      Authorization: `Bearer ${getToken()}`,
     }),
     body: putData,
   }).catch(err => {
     throw new Error(`Could not UPDATE model on API due to -> ${err}`);
   });
   const data = await response.json();
+  if (data.detail) {
+    loginActions.logoutUser();
+    return 0;
+  }
   return data;
 };
 
@@ -67,12 +94,17 @@ export const PATCH = async (model, id, putData) => {
     method: 'PATCH',
     headers: new Headers({
       ...HEADERS,
+      Authorization: `Bearer ${getToken()}`,
     }),
     body: putData,
   }).catch(err => {
     throw new Error(`Could not UPDATE model on API due to -> ${err}`);
   });
   const data = await response.json();
+  if (data.detail) {
+    loginActions.logoutUser();
+    return 0;
+  }
   return data;
 };
 
