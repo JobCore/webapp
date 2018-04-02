@@ -23,7 +23,12 @@ class FavoriteListStore extends Flux.Store {
   }
 
   _setLists({ data }) {
-    const ownedLists = data.filter(list => list.owner.id === EmployerStore.getEmployer().id);
+    const ownedLists = data.filter(list => {
+      if (list.owner && EmployerStore.getEmployer()) {
+        return list.owner.id === EmployerStore.getEmployer().id;
+      }
+      return false;
+    });
     this.setStoreState({ lists: [...ownedLists] }).emit('change');
   }
 

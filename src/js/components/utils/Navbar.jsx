@@ -104,7 +104,12 @@ export class Navbar extends Component {
             JobCore
           </NavLink>
           <div className="navbar-nav ml-auto">
-            <NavLink to="/login">Login</NavLink>
+            <NavLink className="nav-item nav-link" to="/login">
+              Login
+            </NavLink>
+            <NavLink className="nav-item nav-link" to="/register">
+              Register
+            </NavLink>
           </div>
         </nav>
       );

@@ -2,6 +2,7 @@ import React from 'react';
 import uuid from 'uuid/v4';
 import ReactStars from 'react-stars';
 import swal from 'sweetalert2';
+import { Redirect } from 'react-router-dom';
 
 import Flux from '../../flux';
 import EmployerStore from '../../store/EmployerStore';
@@ -10,7 +11,6 @@ import { PUT, PATCH } from '../../store/ApiRequests';
 import InlineEditor from '../../components/InlineEditor';
 import EmployerActions from '../../actions/employerActions';
 import ProfileActions from '../../actions/profileActions';
-import LoginStore from '../../store/LoginStore';
 
 class EmployerProfile extends Flux.View {
   constructor(props) {
@@ -40,10 +40,18 @@ class EmployerProfile extends Flux.View {
           }
           return 1;
         });
-        return swal({
+        return 1;
+      })
+      .then(() => {
+        let message = `Password changed`;
+        if (METHOD === PUT) {
+          EmployerActions.get();
+          message = `Changes saved`;
+        }
+        swal({
           type: 'success',
           showCloseButton: true,
-          html: `Changes saved`,
+          html: message,
         });
       })
       .catch(err =>
@@ -56,10 +64,12 @@ class EmployerProfile extends Flux.View {
   };
 
   render() {
+    if (!EmployerStore.getEmployer()) {
+      return <Redirect to="private" />;
+    }
     const EMPLOYER = this.state.employer;
     let responseTime = EMPLOYER.response_time || 0;
     responseTime = responseTime > 59 ? `${Math.ceil(responseTime / 60)} hour(s)` : `${responseTime} minute(s)`;
-    console.log(LoginStore.getUser());
     return (
       <div className="employer-profile">
         <div className="first-row">
@@ -136,6 +146,7 @@ class EmployerProfile extends Flux.View {
           <div className="user-data">
             <h2>Update user profile</h2>
             <form
+              className="profile-data"
               onSubmit={e => {
                 e.preventDefault();
                 const data = {
@@ -145,7 +156,10 @@ class EmployerProfile extends Flux.View {
                   email: this['email-input'].value || null,
                 };
                 Object.keys(data).map(key => (data[key] == null ? delete data[key] : null));
-                this.updateUser(data);
+                if (Object.keys(data).length > 0) {
+                  this.updateUser(data);
+                }
+                return 0;
               }}
             >
               <div className="input-group">
@@ -155,7 +169,7 @@ class EmployerProfile extends Flux.View {
                   name="first-name"
                   type="text"
                   maxLength="250"
-                  defaultValue={EMPLOYER.profile.user.first_name}
+                  placeholder={EMPLOYER.profile.user.first_name}
                   ref={el => {
                     this['first-name-input'] = el;
                   }}
@@ -167,7 +181,7 @@ class EmployerProfile extends Flux.View {
                   className="form-control"
                   name="last-name"
                   type="text"
-                  defaultValue={EMPLOYER.profile.user.last_name}
+                  placeholder={EMPLOYER.profile.user.last_name}
                   ref={el => {
                     this['last-name-input'] = el;
                   }}
@@ -179,7 +193,7 @@ class EmployerProfile extends Flux.View {
                   className="form-control"
                   name="email"
                   type="email"
-                  defaultValue={EMPLOYER.profile.user.email}
+                  placeholder={EMPLOYER.profile.user.email}
                   ref={el => {
                     this['email-input'] = el;
                   }}
@@ -192,7 +206,7 @@ class EmployerProfile extends Flux.View {
                   className="form-control"
                   name="username"
                   type="text"
-                  defaultValue={EMPLOYER.profile.user.username}
+                  placeholder={EMPLOYER.profile.user.username}
                   ref={el => {
                     this['user-input'] = el;
                   }}
@@ -209,6 +223,7 @@ class EmployerProfile extends Flux.View {
           <div className="change-password">
             <h2>Change password</h2>
             <form
+              className="password-data"
               onSubmit={e => {
                 e.preventDefault();
                 const data = {

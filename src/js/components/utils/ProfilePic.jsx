@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import noPic from '../../../img/no-photo.jpg';
 
 /**
  * @prop {string} width
@@ -22,7 +23,7 @@ const ProfilePic = props => {
   styles.height = props.height || '200px';
   styles.backgroundColor = '#ccc';
 
-  return <img style={styles} src={props.imageUrl} alt={props.alt} />;
+  return <img style={styles} src={props.imageUrl || noPic} alt={props.alt} />;
 };
 
 ProfilePic.propTypes = {

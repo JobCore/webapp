@@ -1,4 +1,5 @@
 import { createBrowserHistory } from 'history';
+import swal from 'sweetalert2';
 
 import Flux from '../flux';
 import { POST } from '../store/ApiRequests';
@@ -31,6 +32,30 @@ const generateToken = (user, email, password, remember) => {
 };
 
 class LoginActions extends Flux.Action {
+  registerUser(params) {
+    if (params.email.length < 1 || params.password.length < 6 || params.username.length < 1) {
+      return swal({
+        title: 'Empty fields',
+        type: 'error',
+        html: 'One of the following fields might be empty: <br/> username, email, password',
+      });
+    }
+    // Send the action to all stores through the Dispatcher
+    const DATA = JSON.stringify({
+      username: params.username,
+      first_name: params.firstname || '',
+      last_name: params.lastname || '',
+      email: params.email,
+      password: params.password,
+      type: params.isEmployer ? 'employer' : 'employee',
+    });
+    POST('register', DATA)
+      .then(() => {
+        this.loginUser(params);
+      })
+      .catch(err => console.error(err));
+  }
+
   loginUser(params) {
     if (params.email.length < 1 || params.password.length < 1) {
       return null;
