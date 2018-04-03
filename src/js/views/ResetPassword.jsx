@@ -45,7 +45,7 @@ const ResetPassword = () => (
                 swal({
                   type: 'error',
                   title: 'Error sending email',
-                  html: err,
+                  html: `${err}`,
                 })
               );
           }

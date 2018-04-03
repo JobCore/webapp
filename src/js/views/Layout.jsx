@@ -28,6 +28,8 @@ import ShiftDetails from '../views/shifts/ShiftDetails';
 import EmployerProfile from './employer/EmployerProfile';
 import Register from './Register';
 import ResetPassword from './ResetPassword';
+import MenuStore from '../store/MenuStore';
+import EmployeeProfile from './employees/EmployeeProfile';
 
 export class Layout extends Flux.View {
   constructor() {
@@ -48,6 +50,7 @@ export class Layout extends Flux.View {
       BadgesActions.getAll();
       VenueActions.getAll();
       PositionsActions.getAll();
+      MenuStore.generateMenu();
     }
   };
 
@@ -81,7 +84,8 @@ export class Layout extends Flux.View {
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/private" loggedIn={this.state.isAuthenticated} component={Private} />
-              <PrivateRoute exact path="/profile" loggedIn={this.state.isAuthenticated} component={EmployerProfile} />
+              <PrivateRoute exact path="/employee" loggedIn={this.state.isAuthenticated} component={EmployeeProfile} />
+              <PrivateRoute exact path="/employer" loggedIn={this.state.isAuthenticated} component={EmployerProfile} />
               <PrivateRoute exact path="/shift/create" loggedIn={this.state.isAuthenticated} component={CreateShift} />
               <PrivateRoute exact path="/shift/list" loggedIn={this.state.isAuthenticated} component={ListShifts} />
               <PrivateRoute

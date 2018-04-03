@@ -1,22 +1,29 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import uuidv4 from 'uuid';
 
+import Flux from '../../flux';
 import MenuStore from '../../store/MenuStore.js';
 
-export class Navbar extends Component {
+export class Navbar extends Flux.View {
   constructor() {
     super();
 
     this.state = {
       data: MenuStore.getAll(),
     };
+    this.bindStore(MenuStore, this.setMenu.bind(this));
   }
+
+  setMenu = () => {
+    this.setState({
+      data: MenuStore.getAll(),
+    });
+  };
 
   renderMenuItems(menuData) {
     const items = menuData.map(item => this.renderNavItem(item));
-
     return items;
   }
 

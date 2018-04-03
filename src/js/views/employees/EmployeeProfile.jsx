@@ -4,34 +4,35 @@ import ReactStars from 'react-stars';
 import swal from 'sweetalert2';
 
 import Flux from '../../flux';
-import EmployerStore from '../../store/EmployerStore';
+import EmployeeStore from '../../store/EmployeeStore';
 import ProfilePic from '../../components/utils/ProfilePic';
 import { PUT, PATCH } from '../../store/ApiRequests';
 import InlineEditor from '../../components/InlineEditor';
-import EmployerActions from '../../actions/employerActions';
+import EmployeeActions from '../../actions/employeeActions';
 import ProfileActions from '../../actions/profileActions';
+import LoginStore from '../../store/LoginStore';
 
-class EmployerProfile extends Flux.View {
+class EmployeeProfile extends Flux.View {
   constructor(props) {
     super(props);
     this.state = {
-      employer: EmployerStore.getEmployer(),
+      employee: EmployeeStore.getById(LoginStore.getUser().employee),
     };
 
-    this.bindStore(EmployerStore, this.setEmployer);
+    this.bindStore(EmployeeStore, this.setEmployee);
   }
 
-  setEmployer = () => {
+  setEmployee = () => {
     this.setState({
-      employer: EmployerStore.getEmployer(),
+      employee: EmployeeStore.getById(LoginStore.getUser().employee),
     });
   };
 
   updateUser = data => {
-    const EMPLOYER = this.state.employer;
+    const EMPLOYEE = this.state.employee;
     const METHOD = data.new_password ? PATCH : PUT;
     data = JSON.stringify(data);
-    METHOD('user', EMPLOYER.profile.user.id, data)
+    METHOD('user', EMPLOYEE.profile.user.id, data)
       .then(data => {
         Object.keys(data).map(key => {
           if (Array.isArray(data[key])) {
@@ -44,7 +45,7 @@ class EmployerProfile extends Flux.View {
       .then(() => {
         let message = `Password changed`;
         if (METHOD === PUT) {
-          EmployerActions.get();
+          EmployeeActions.getAll();
           message = `Changes saved`;
         }
         swal({
@@ -63,62 +64,44 @@ class EmployerProfile extends Flux.View {
   };
 
   render() {
-    const EMPLOYER = this.state.employer;
-    let responseTime = EMPLOYER.response_time || 0;
+    const EMPLOYEE = this.state.employee;
+    let responseTime = EMPLOYEE.response_time || 0;
     responseTime = responseTime > 59 ? `${Math.ceil(responseTime / 60)} hour(s)` : `${responseTime} minute(s)`;
     return (
-      <div className="employer-profile">
+      <div className="employee-profile">
         <div className="first-row">
           <div className="first-column">
             <div className="profile-pic">
-              <ProfilePic rounded imageUrl={EMPLOYER.profile.picture} alt={`${EMPLOYER.title}'s profile`} />
-              <div className="employer-info">
-                <InlineEditor
-                  id={EMPLOYER.id}
-                  currentValue={EMPLOYER.title}
-                  onEdit={EmployerActions.updateEmployer}
-                  placeholder="Company name"
-                  param="title"
-                >
-                  <h2>{EMPLOYER.title || 'Click to edit title'}</h2>
-                </InlineEditor>
+              <ProfilePic rounded imageUrl={EMPLOYEE.profile.picture} alt={`${EMPLOYEE.title}'s profile`} />
+              <div className="employee-info">
+                <h2>{`${EMPLOYEE.profile.user.first_name} ${EMPLOYEE.profile.user.last_name}`}</h2>
 
                 <InlineEditor
-                  id={EMPLOYER.id}
-                  currentValue={EMPLOYER.website}
-                  onEdit={EmployerActions.updateEmployer}
-                  placeholder="Website"
-                  param="website"
-                >
-                  <p>{EMPLOYER.website || 'Click to edit website'}</p>
-                </InlineEditor>
-
-                <InlineEditor
-                  id={EMPLOYER.profile.id}
+                  id={EMPLOYEE.profile.id}
                   placeholder="Location"
                   maxLength="30"
-                  currentValue={EMPLOYER.profile.location}
+                  currentValue={EMPLOYEE.profile.location}
                   onEdit={ProfileActions.updateProfile}
                   param="location"
                 >
-                  <p>{EMPLOYER.profile.location || 'Click to edit location'}</p>
+                  <p>{EMPLOYEE.profile.location || 'Click to edit location'}</p>
                 </InlineEditor>
 
                 <InlineEditor
                   type="textarea"
-                  id={EMPLOYER.profile.id}
+                  id={EMPLOYEE.profile.id}
                   maxLength="250"
-                  placeholder="Write a short description of your company"
-                  currentValue={EMPLOYER.profile.bio}
+                  placeholder="Write a short description about yourself"
+                  currentValue={EMPLOYEE.profile.bio}
                   onEdit={ProfileActions.updateProfile}
                   param="bio"
                 >
-                  <p>{EMPLOYER.profile.bio || 'Click to edit bio'}</p>
+                  <p>{EMPLOYEE.profile.bio || 'Click to edit bio'}</p>
                 </InlineEditor>
               </div>
             </div>
 
-            <ReactStars edit={false} size={40} value={parseFloat(EMPLOYER.rating)} />
+            <ReactStars edit={false} size={40} value={parseFloat(EMPLOYEE.rating)} />
           </div>
 
           <div className="second-column">
@@ -129,7 +112,7 @@ class EmployerProfile extends Flux.View {
             <div className="badges">
               <h2>Badges earned</h2>
               <div className="tags-list">
-                {EMPLOYER.badges.map(badge => (
+                {EMPLOYEE.badges.map(badge => (
                   <span key={uuid()} className="tag badge badge-pill">
                     {badge.title}
                   </span>
@@ -165,7 +148,7 @@ class EmployerProfile extends Flux.View {
                   name="first-name"
                   type="text"
                   maxLength="250"
-                  placeholder={EMPLOYER.profile.user.first_name}
+                  placeholder={EMPLOYEE.profile.user.first_name}
                   ref={el => {
                     this['first-name-input'] = el;
                   }}
@@ -177,7 +160,7 @@ class EmployerProfile extends Flux.View {
                   className="form-control"
                   name="last-name"
                   type="text"
-                  placeholder={EMPLOYER.profile.user.last_name}
+                  placeholder={EMPLOYEE.profile.user.last_name}
                   ref={el => {
                     this['last-name-input'] = el;
                   }}
@@ -189,7 +172,7 @@ class EmployerProfile extends Flux.View {
                   className="form-control"
                   name="email"
                   type="email"
-                  placeholder={EMPLOYER.profile.user.email}
+                  placeholder={EMPLOYEE.profile.user.email}
                   ref={el => {
                     this['email-input'] = el;
                   }}
@@ -202,7 +185,7 @@ class EmployerProfile extends Flux.View {
                   className="form-control"
                   name="username"
                   type="text"
-                  placeholder={EMPLOYER.profile.user.username}
+                  placeholder={EMPLOYEE.profile.user.username}
                   ref={el => {
                     this['user-input'] = el;
                   }}
@@ -264,4 +247,4 @@ class EmployerProfile extends Flux.View {
   }
 }
 
-export default EmployerProfile;
+export default EmployeeProfile;

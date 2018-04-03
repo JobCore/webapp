@@ -1,5 +1,5 @@
 import Flux from '../flux';
-import { GET } from '../store/ApiRequests';
+import { GET, PUT } from '../store/ApiRequests';
 
 class EmployeeActions extends Flux.Action {
   getAll() {
@@ -12,5 +12,12 @@ class EmployeeActions extends Flux.Action {
   acceptedInShift(shiftId, employeeId) {
     this.dispatch('EmployeeStore.acceptedInShift', { employeeId, shiftId });
   }
+
+  updateEmployee = (id, employeeData) => {
+    employeeData = JSON.stringify({
+      ...employeeData,
+    });
+    PUT('employees', id, employeeData).then(() => this.getAll());
+  };
 }
 export default new EmployeeActions();
