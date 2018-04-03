@@ -26,7 +26,8 @@ import { FavoriteEmployeesList } from '../views/employees/FavoriteEmployeesList'
 import CreateShift from '../views/shifts/CreateShift';
 import ShiftDetails from '../views/shifts/ShiftDetails';
 import EmployerProfile from './employer/EmployerProfile';
-import { Register } from './Register';
+import Register from './Register';
+import ResetPassword from './ResetPassword';
 
 export class Layout extends Flux.View {
   constructor() {
@@ -76,6 +77,7 @@ export class Layout extends Flux.View {
           <div className="content-wrapper">
             <Switch>
               <PrivateRoute exact path="/" component={Home} />
+              <Route exact path="/reset" component={ResetPassword} />
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <PrivateRoute exact path="/private" loggedIn={this.state.isAuthenticated} component={Private} />

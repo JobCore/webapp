@@ -1,5 +1,5 @@
 .form-signin {
-  max-width: 330px;
+  max-width: 370px;
   padding: 15px;
   margin: 0 auto;
   .form-signin-heading {
@@ -13,8 +13,16 @@
     font-weight: 400;
     color: #434343;
 
+    label {
+      margin: 0;
+    }
+
     input[type="checkbox"] {
       margin-right: 5px;
+    }
+
+    .forgot-password {
+      text-align: right;
     }
   }
   .form-control {

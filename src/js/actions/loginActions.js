@@ -72,6 +72,8 @@ class LoginActions extends Flux.Action {
             ...user,
             token: JSON.parse(user.token),
           };
+        } else if (user.error) {
+          throw Error(user.error);
         }
         this.dispatch('LoginStore.setUserLogin', {
           data: user,
@@ -88,7 +90,12 @@ class LoginActions extends Flux.Action {
           localStorage.setItem('token', `${token.token}`);
         }
       })
-      .catch(err => console.error(err));
+      .catch(err =>
+        swal({
+          type: 'error',
+          title: `${err}`,
+        })
+      );
   }
 
   logoutUser() {

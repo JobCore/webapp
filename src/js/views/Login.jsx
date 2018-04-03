@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 import Flux from '../flux';
 import LoginActions from '../actions/loginActions.js';
@@ -50,6 +50,9 @@ export class Login extends Flux.View {
               />
               Remember me
             </label>
+            <Link className="forgot-password" to="reset">
+              Forgot password?
+            </Link>
           </div>
           <button
             onClick={() =>

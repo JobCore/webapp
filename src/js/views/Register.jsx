@@ -5,7 +5,7 @@ import Flux from '../flux';
 import LoginStore from '../store/LoginStore';
 import LoginActions from '../actions/loginActions.js';
 
-export class Register extends Flux.View {
+export default class Register extends Flux.View {
   render() {
     if (LoginStore.getUser()) {
       return <Redirect to="private" />;

@@ -15,6 +15,7 @@ const getToken = () => {
   }
   return null;
 };
+
 /* AVAILABLE MODELS
   - badges
   - employees
@@ -33,11 +34,12 @@ const getToken = () => {
  * @param {string} model Model data to be fetched. **Must be plural**
  * @returns {data}
  */
-export const GET = async (model, id = '') => {
+export const GET = async (model, id = '', extraHeaders = {}) => {
   const response = await fetch(`${rootAPIendpoint}/${model}/${id}`, {
     method: 'GET',
     headers: new Headers({
       ...HEADERS,
+      ...extraHeaders,
       Authorization: `Bearer ${getToken()}`,
     }),
   }).catch(err => {
@@ -51,11 +53,12 @@ export const GET = async (model, id = '') => {
   return data;
 };
 
-export const POST = async (model, postData) => {
+export const POST = async (model, postData, extraHeaders = {}) => {
   const response = await fetch(`${rootAPIendpoint}/${model}/`, {
     method: 'POST',
     headers: new Headers({
       ...HEADERS,
+      ...extraHeaders,
       Authorization: `Bearer ${getToken()}`,
     }),
     body: postData,
@@ -70,11 +73,12 @@ export const POST = async (model, postData) => {
   return data;
 };
 
-export const PUT = async (model, id, putData) => {
+export const PUT = async (model, id, putData, extraHeaders = {}) => {
   const response = await fetch(`${rootAPIendpoint}/${model}/${id}`, {
     method: 'PUT',
     headers: new Headers({
       ...HEADERS,
+      ...extraHeaders,
       Authorization: `Bearer ${getToken()}`,
     }),
     body: putData,
@@ -89,11 +93,12 @@ export const PUT = async (model, id, putData) => {
   return data;
 };
 
-export const PATCH = async (model, id, putData) => {
+export const PATCH = async (model, id, putData, extraHeaders = {}) => {
   const response = await fetch(`${rootAPIendpoint}/${model}/${id}`, {
     method: 'PATCH',
     headers: new Headers({
       ...HEADERS,
+      ...extraHeaders,
       Authorization: `Bearer ${getToken()}`,
     }),
     body: putData,
@@ -108,11 +113,12 @@ export const PATCH = async (model, id, putData) => {
   return data;
 };
 
-export const DELETE = async (model, id = '') => {
+export const DELETE = async (model, id = '', extraHeaders = {}) => {
   await fetch(`${rootAPIendpoint}/${model}/${id}`, {
     method: 'DELETE',
     headers: new Headers({
       ...HEADERS,
+      extraHeaders,
     }),
   }).catch(err => {
     throw new Error(`Could not GET models from API due to -> ${err}`);
